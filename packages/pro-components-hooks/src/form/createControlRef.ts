@@ -1,6 +1,6 @@
 import { extendRef } from '@vueuse/core'
 import { ref } from 'vue-demi'
-import { get as _get, set as _set, isArray, isPlainObject, isUndefined, merge, toPath, unset } from 'lodash-es'
+import { get as _get, has as _has, set as _set, isArray, isPlainObject, isUndefined, merge, toPath, unset } from 'lodash-es'
 import type { InternalPath, Path } from './path'
 
 export interface UseControlRefOptions {
@@ -100,5 +100,9 @@ export function createControlRef<T extends (Record<string, any> | Array<any>)>(i
     return unset(initialRef.value, path)
   }
 
-  return extendRef(initialRef, { get, set, delete: remove })
+  function has(path: Path) {
+    return _has(initialRef.value, path)
+  }
+
+  return extendRef(initialRef, { get, set, has, delete: remove })
 }

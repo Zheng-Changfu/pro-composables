@@ -70,9 +70,9 @@ export interface BaseField<T = any> {
    */
   isListPath: boolean
   /**
-   * 列表是否在更新
+   * 是否在更新中
    */
-  listUpdating: boolean
+  updating: boolean
   /**
    * 字段值
    */

@@ -1,93 +1,121 @@
-import { onMounted, onUnmounted, watch } from 'vue-demi'
-import { uid } from '../utils/id'
+import { nextTick, onBeforeUpdate, onMounted, onUnmounted, onUpdated, watch } from 'vue-demi'
 import { usePath } from '../path/usePath'
 import { useInjectFormContext } from '../context'
+import { uid } from '../../utils/id'
 import { useInjectFieldContext } from './context'
 import type { BaseField, FieldOptions } from './types'
 import { useFieldProps } from './useFieldProps'
 import { useFormItemProps } from './useFormItemProps'
 import { useShow } from './useShow'
 import { useValue } from './useValue'
+import { getController } from './controllers'
 
-export function createField<T = any>(options: FieldOptions<T> = {}, isList = false) {
+interface CreateFieldOptions {
+  /**
+   * 是否为列表字段
+   * @default false
+   */
+  isList?: boolean
+}
+export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options: CreateFieldOptions = {}) {
+  const {
+    path,
+    value,
+    hidden,
+    visible,
+    initialValue,
+    preserve = true,
+    dependencies = [],
+    onChange,
+    postState,
+  } = fieldOptions
+
+  const {
+    isList = false,
+  } = options
+
+  return createBaseField(
+    {
+      path,
+      value,
+      hidden,
+      visible,
+      preserve,
+      initialValue,
+      dependencies,
+      onChange,
+      postState,
+    },
+    { isList },
+  )
+}
+
+function createBaseField<T = any>(
+  fieldOptions: FieldOptions<T> & Required<Pick<FieldOptions, 'preserve' | 'dependencies'>>,
+  options: Required<CreateFieldOptions>,
+) {
+  const {
+    onChange,
+    postState,
+    preserve,
+    dependencies,
+    path: userPath,
+    value: userValue,
+    hidden: userHidden,
+    visible: userVisible,
+    initialValue: userInitialValue,
+  } = fieldOptions
+
+  const {
+    isList,
+  } = options
+
+  const controller = getController()
   const form = useInjectFormContext()
   const parent = useInjectFieldContext()
   const isListPath = !!parent
 
-  const { path } = usePath(options.path)
-  const { show } = useShow(options.visible, options.hidden)
+  const { path } = usePath(userPath)
+  const { show } = useShow(userVisible, userHidden)
   const { fieldProps, doUpdateFieldProps } = useFieldProps()
   const { formItemProps, doUpdateFormItemProps } = useFormItemProps()
-  const { value, doUpdateValue } = useValue(options.value, { path, initialValue: options.initialValue })
+  const { value, doUpdateValue } = useValue(userValue, { path, initialValue: userInitialValue })
 
   const baseField: BaseField = {
     id: uid(),
     show,
     path,
     value,
-    isList,
     parent,
+    isList,
+    preserve,
     fieldProps,
     isListPath,
+    dependencies,
     formItemProps,
+    updating: false,
+
+    onChange,
+    postState,
     doUpdateValue,
     doUpdateFieldProps,
-    listUpdating: false,
     doUpdateFormItemProps,
-    onChange: options.onChange,
-    postState: options.postState,
-    preserve: options.preserve ?? true,
-    dependencies: options.dependencies ?? [],
   }
 
-  function isSameFieldByPath(path: string[] = []) {
-    const field = form.pathField.get(path)
-    return field?.id === baseField.id
-  }
+  onBeforeUpdate(() => {
+    baseField.updating = true
+  })
 
-  function unmountFieldPathValue(field: BaseField) {
-    const { path, preserve } = field
-    const p = path.value
-    const sameField = isSameFieldByPath(p)
-    if (!sameField)
-      return
-    form.pathField.delete(p)
-    if (preserve)
-      return
-    form.values.delete(p)
-  }
-
-  function mountFieldPathValue(field: BaseField) {
-    const { path, value, preserve } = field
-    const p = path.value
-    form.pathField.set(p, field)
-    if (preserve)
-      return
-    form.values.set(p, value.value)
-  }
-
-  function updateFieldPathValue(field: BaseField, newPath: string[], oldPath: string[] | undefined) {
-    form.pathField.set(newPath, field)
-    if (!oldPath)
-      return
-
-    const sameField = isSameFieldByPath(oldPath)
-    if (!sameField)
-      return
-
-    form.pathField.delete(oldPath)
-    if (parent?.listUpdating)
-      return
-
-    const val = form.values.get(oldPath)
-    form.values.delete(oldPath)
-    form.values.set(newPath, val)
-  }
+  onUpdated(() => {
+    baseField.updating = false
+  })
 
   watch(
     path,
     (newPath, oldPath) => {
-      updateFieldPathValue(baseField, newPath, oldPath)
+      !oldPath
+        ? controller.mount(baseField)
+        : controller.update(baseField, newPath, oldPath)
     },
     { immediate: true },
   )
@@ -96,12 +124,13 @@ export function createField<T = any>(options: FieldOptions<T> = {}, isList = fal
     show,
     (visible) => {
       visible
-        ? mountFieldPathValue(baseField)
-        : unmountFieldPathValue(baseField)
+        ? controller.mount(baseField)
+        : controller.unmount(baseField)
     },
+    { immediate: true },
   )
 
   onMounted(() => form.deps.add(baseField.dependencies))
-  onUnmounted(() => unmountFieldPathValue(baseField))
+  onUnmounted(() => controller.unmount(baseField))
   return baseField
 }

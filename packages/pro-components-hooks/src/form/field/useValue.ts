@@ -3,6 +3,7 @@ import { computed, onMounted, watch } from 'vue-demi'
 import { cloneDeep, get, has } from 'lodash-es'
 import { useInjectFormContext } from '../context'
 import type { InternalPath } from '../path'
+import { useInjectFieldContext } from './context'
 
 interface UseValueOptions<T = any> {
   /**
@@ -16,6 +17,7 @@ interface UseValueOptions<T = any> {
 }
 export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOptions) {
   const form = useInjectFormContext()
+  const parent = useInjectFieldContext()
   const { initialValue, path } = options
 
   const proxy = computed({
@@ -35,7 +37,8 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
   }
 
   onMounted(() => {
-    if (!form.mounted) {
+    const updating = parent?.updating
+    if (!updating) {
       // priority：value > initialValue > initialValues
       let val
       const p = path.value

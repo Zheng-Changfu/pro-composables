@@ -15,10 +15,18 @@ export class PathField {
   getAll = () => {
     const res = {} as any
     this.map.forEach((field, key) => {
-      const val = field.value.value
-      const condition1 = !field.isList
-      const condition2 = field.isList && (!val || val.length <= 0)
-      if (condition1 || condition2)
+      const { isList, value } = field
+      const val = value.value
+      if (isList) {
+        const len = (val ?? []).length
+        set(res, key, Array.from(Array(len), () => ({})))
+      }
+    })
+
+    this.map.forEach((field, key) => {
+      const { isList, value } = field
+      const val = value.value
+      if (!isList)
         set(res, key, toRaw(val))
     })
     return res

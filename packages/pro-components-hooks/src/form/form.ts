@@ -1,6 +1,6 @@
 import { onMounted } from 'vue-demi'
 import { createEventHook } from '@vueuse/core'
-import { uid } from './utils/id'
+import { uid } from '../utils/id'
 import type { BaseForm, FormOptions } from './types'
 import { useFormValues } from './useFormValues'
 import { provideFormContext } from './context'
