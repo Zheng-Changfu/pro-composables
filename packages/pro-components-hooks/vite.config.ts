@@ -25,7 +25,6 @@ export default defineConfig({
     },
   },
   plugins: [dts({
-    root: resolve(__dirname, './packages/pro-components-hooks'),
-    exclude: ['vite.config.ts'],
+    rollupTypes: true,
   })],
 })
