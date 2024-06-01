@@ -1,4 +1,4 @@
-import { nextTick } from 'vue'
+import { nextTick } from 'vue-demi'
 import {
   insert as baseInsert,
   move as baseMove,
