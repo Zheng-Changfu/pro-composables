@@ -1,0 +1,25 @@
+{
+  "name": "pro-components-hooks",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "方便搭建业务组件库的一些 hooks，代码都不难，懒得写文档，估计也没人看",
+  "author": "zhengchangfu",
+  "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest",
+    "build": "vite build"
+  }
+}
