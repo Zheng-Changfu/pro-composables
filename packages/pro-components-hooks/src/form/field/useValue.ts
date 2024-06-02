@@ -60,7 +60,7 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
   })
 
   return {
-    value: proxy,
+    value: proxy as ComputedRef<T>,
     doUpdateValue: (val: T) => proxy.value = val,
   }
 }
