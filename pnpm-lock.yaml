@@ -18,6 +18,9 @@ importers:
       '@antfu/eslint-config':
         specifier: ^2.18.0
         version: 2.18.0(@vue/compiler-sfc@3.4.27)(eslint@8.57.0)(typescript@5.4.5)(vitest@1.6.0(@types/node@20.12.11)(jsdom@24.0.0))
+      '@changesets/changelog-git':
+        specifier: ^0.2.0
+        version: 0.2.0
       '@changesets/cli':
         specifier: ^2.27.1
         version: 2.27.1
@@ -57,6 +60,8 @@ importers:
       vue:
         specifier: ^3.4.27
         version: 3.4.27(typescript@5.4.5)
+
+  packages/pro-components-hooks: {}
 
   packages/pro-ui-hooks: {}
 
