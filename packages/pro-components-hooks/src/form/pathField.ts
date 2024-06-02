@@ -44,6 +44,10 @@ export class PathField {
     this.map.delete(stringifyPath(path))
   }
 
+  keys = () => {
+    return [...this.map.keys()]
+  }
+
   query = () => {}
 
   match = (key: string) => {

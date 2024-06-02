@@ -93,7 +93,7 @@ export interface BaseField<T = any> {
   /**
    * 字段关联的依赖项
    */
-  dependencies: string[]
+  dependencies: Dependencie | Dependencie[]
   /**
    * 更新值
    */
@@ -153,4 +153,10 @@ export interface ArrayField<T = any> extends BaseField<T[]> {
    * 下移数据
    */
   moveDown: (index: number) => void
+}
+
+export type Dependencie = string | InternalDependencie
+
+export interface InternalDependencie {
+  match: string | RegExp | ((path: string, paths: string[]) => boolean)
 }

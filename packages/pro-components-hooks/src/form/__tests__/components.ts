@@ -9,7 +9,7 @@ export const Form = defineComponent({
     'initialValues',
     'expressionContext',
     'onFieldValueChange',
-    'onDependenciesChange',
+    'onDependenciesValueChange',
     'onFormMounted',
   ],
   setup(props, { slots }) {
@@ -17,7 +17,7 @@ export const Form = defineComponent({
       initialValues: props.initialValues ?? {},
       expressionContext: props.expressionContext,
       onFieldValueChange: props.onFieldValueChange,
-      onDependenciesChange: props.onDependenciesChange,
+      onDependenciesValueChange: props.onDependenciesValueChange,
     })
 
     onMounted(() => {

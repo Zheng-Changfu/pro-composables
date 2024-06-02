@@ -1,7 +1,7 @@
 import type { createControlRef } from './createControlRef'
 import type { Deps } from './deps'
 import type { ArrayField, BaseField } from './field'
-import type { InternalPath, Path } from './path'
+import type { Path } from './path'
 import type { PathField } from './pathField'
 
 export type Value = any
@@ -21,11 +21,11 @@ export interface FormOptions<Values = any> {
    */
   onFieldValueChange?: (opt: { field: BaseField | ArrayField, value: any }) => void
   /**
-   * 依赖项发生变化后的回调
+   * 依赖项的值发生变化后的回调
    * @param depPath 依赖项的路径
    * @param val 依赖项的值
    */
-  onDependenciesChange?: (opt: { path: InternalPath, value: any }) => void
+  onDependenciesValueChange?: (opt: { path: string, value: any }) => void
 }
 
 export interface BaseForm {

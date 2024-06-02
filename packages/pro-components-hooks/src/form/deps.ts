@@ -1,57 +1,59 @@
 import { onScopeDispose } from 'vue-demi'
-import { isString } from 'lodash-es'
-import type { FormOptions } from './types'
-import { stringifyPath, toRegexp } from './utils/path'
+import { isArray, isRegExp, isString } from 'lodash-es'
+import type { BaseForm, FormOptions } from './types'
+import { stringifyPath } from './utils/path'
+import type { Dependencie } from './field'
 
 export class Deps {
   private options!: FormOptions
-  private depSet!: Set<string>
-  private cache!: Map<string, RegExp>
+  private depSet!: Set<(path: string, paths: string[]) => boolean>
 
   constructor(options: FormOptions) {
     this.options = options
     this.initialize()
   }
 
-  add = (deps: string | string[]) => {
-    if (isString(deps))
-      deps = [deps]
-
-    deps.forEach((dep) => {
-      // this.cache.set(dep,)
-      this.depSet.add(dep)
-    })
-  }
-
-  delete = (deps: string | string[]) => {
-    if (isString(deps))
-      deps = [deps]
-    deps.forEach((dep) => {
-      this.cache.delete(dep)
-      this.depSet.delete(dep)
-    })
-  }
-
   initialize = () => {
-    this.cache = new Map()
     this.depSet = new Set()
     onScopeDispose(() => {
-      this.cache.clear()
       this.depSet.clear()
     })
   }
 
-  notify = (path: string[], params: any) => {
-    const sp = stringifyPath(path)
-    const onDependenciesChange = this.options.onDependenciesChange
-    if (!onDependenciesChange)
+  private normalizeDep = (dep: Dependencie) => {
+    return (path: string, paths: string[]) => {
+      if (isString(dep)) {
+        dep = {
+          match: dep,
+        }
+      }
+      const { match } = dep
+      if (isString(match))
+        return match === path
+      if (isRegExp(match))
+        return match.test(path)
+      return match(path, paths)
+    }
+  }
+
+  add = (deps: Dependencie | Dependencie[]) => {
+    if (!isArray(deps))
+      deps = [deps]
+    deps.forEach((dep) => {
+      const normalizedDep = this.normalizeDep(dep)
+      this.depSet.add(normalizedDep)
+    })
+  }
+
+  notify = (form: BaseForm, path: string[], params: any) => {
+    const onDependenciesValueChange = this.options.onDependenciesValueChange
+    if (!onDependenciesValueChange)
       return
-    this.depSet.forEach((key) => {
-      if (!this.cache.has(key))
-        this.cache.set(key, toRegexp(key))
-      const reg = this.cache.get(key)!
-      if (reg.test(sp))
-        onDependenciesChange(params)
+    const sp = stringifyPath(path)
+    const paths = form.pathField.keys()
+    this.depSet.forEach((match) => {
+      if (match(sp, paths))
+        onDependenciesValueChange(params)
     })
   }
 }

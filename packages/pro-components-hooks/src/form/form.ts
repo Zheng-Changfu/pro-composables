@@ -67,7 +67,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   function onDependenciesChange(opt: { field: BaseField, value: any }) {
     const { field, value } = opt
     const path = field.path.value
-    deps.notify(path, { path, value })
+    deps.notify(form, path, { path, value })
   }
 
   function postState(path: InternalPath | null, val: any) {
