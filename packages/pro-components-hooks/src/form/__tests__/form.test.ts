@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { defineComponent, h, onMounted } from 'vue-demi'
+import { defineComponent, h, nextTick, onMounted } from 'vue-demi'
 import { mount } from '../../__tests__/mount'
 import type { BaseForm } from '../types'
 import { useInjectExpressionContext } from '../expression'
@@ -102,8 +102,13 @@ describe('form props', () => {
     vm.unmount()
   })
 
-  it('onDependenciesChange', async () => {
-    const onDependenciesChange = vi.fn()
+  it('onDependenciesValueChange', async () => {
+    const matchFnArguments: any = []
+    const match = vi.fn((path, paths) => {
+      matchFnArguments.push(path, paths)
+      return path === 'b'
+    })
+    const onDependenciesValueChange = vi.fn()
     const Comp = defineComponent({
       setup() {
         let _form: BaseForm
@@ -116,34 +121,28 @@ describe('form props', () => {
         return () => {
           return h(Form, {
             onFormMounted,
-            onDependenciesChange,
+            onDependenciesValueChange,
           }, [
-            /**
-             * formily
-             *  dependencies:[`list`]
-             *
-             * {
-             *  list:[
-             *    {a:1,b:2,c:[
-             *        {a:1,b:2} // `list[${index}.(a|b)]`
-             *    ]}
-             * ]
-             *
-             * {{}}
-             *
-             *
-             * }
-             */
-
             h(FormItem, { path: 'a', dependencies: ['b'] }),
             h(FormItem, { path: 'b' }),
+            h(FormItem, { path: 'c', dependencies: 'b' }),
+            h(FormItem, { path: 'd', dependencies: { match: 'b' } }),
+            h(FormItem, { path: 'e', dependencies: { match: /b/ } }),
+            h(FormItem, { path: 'f', dependencies: { match } }),
+            h(FormItem, { path: 'g', dependencies: ['a', 'b'] }),
           ])
         }
       },
     })
 
     const vm = mount(Comp)
-    expect(onDependenciesChange).toBeCalledTimes(1)
+    await nextTick()
+    expect(onDependenciesValueChange).toBeCalledTimes(6)
+    expect(match).toHaveReturnedWith(true)
+    expect(matchFnArguments).toStrictEqual([
+      'b',
+      ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+    ])
     vm.unmount()
   })
 })
