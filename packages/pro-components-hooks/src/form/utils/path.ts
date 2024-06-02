@@ -4,7 +4,8 @@ import type { Path } from '../path'
 /**
  * @example
  * ```js
- * _toStringPath(['list','0','name']) // 'list[0].name' a.b.0.c
+ * _toStringPath(['list','0','name']) // 'list[0].name'
+ * _toStringPath(['a','b','0','c']) // 'a.b[0].c'
  * ```
  */
 function _toStringPath(path: string[]) {
