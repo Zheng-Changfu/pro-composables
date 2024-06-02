@@ -14,9 +14,13 @@ export class Deps {
   }
 
   add = (deps: string | string[]) => {
-    isString(deps)
-      ? this.depSet.add(deps)
-      : deps.forEach(dep => this.depSet.add(dep))
+    if (isString(deps))
+      deps = [deps]
+
+    deps.forEach((dep) => {
+      // this.cache.set(dep,)
+      this.depSet.add(dep)
+    })
   }
 
   delete = (deps: string | string[]) => {
