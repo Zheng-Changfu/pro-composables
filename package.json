@@ -13,19 +13,6 @@
     "changeset:publish": "changeset publish",
     "release": "pnpm test && pnpm build:pro-components-hooks && pnpm changeset && pnpm changeset:version && pnpm changeset:publish"
   },
-  "peerDependencies": {
-    "@vue/composition-api": "^1.0.0-rc.1",
-    "vue": "^2.7.0 || >=3.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@vue/composition-api": {
-      "optional": true
-    }
-  },
-  "dependencies": {
-    "@vueuse/core": "^10.9.0",
-    "vue-demi": "^0.14.7"
-  },
   "devDependencies": {
     "@antfu/eslint-config": "^2.18.0",
     "@changesets/changelog-git": "^0.2.0",
