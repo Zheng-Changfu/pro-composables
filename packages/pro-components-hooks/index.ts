@@ -1,5 +1,1 @@
-import * as Form from './src/form'
-
-export {
-  Form,
-}
+export * from './src/form'
