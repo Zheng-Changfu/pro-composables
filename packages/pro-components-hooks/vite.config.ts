@@ -12,6 +12,7 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions: {
+      external: ['@vueuse/core', 'vue-demi'],
       output: [
         {
           format: 'es',
