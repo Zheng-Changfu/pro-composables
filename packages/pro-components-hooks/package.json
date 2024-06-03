@@ -22,7 +22,8 @@
     "dist"
   ],
   "scripts": {
-    "test": "vitest",
+    "test:watch": "vitest",
+    "test": "vitest run",
     "build": "vite build"
   },
   "peerDependencies": {
@@ -37,5 +38,9 @@
   "dependencies": {
     "@vueuse/core": "^10.9.0",
     "vue-demi": "^0.14.7"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0",
+    "vitest": "^1.6.0"
   }
 }

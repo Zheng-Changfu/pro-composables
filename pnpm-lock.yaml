@@ -29,9 +29,6 @@ importers:
       esno:
         specifier: ^4.7.0
         version: 4.7.0
-      jsdom:
-        specifier: ^24.0.0
-        version: 24.0.0
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -47,9 +44,6 @@ importers:
       vite-plugin-dts:
         specifier: ^3.9.1
         version: 3.9.1(@types/node@20.12.11)(rollup@3.29.4)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.11))
-      vitest:
-        specifier: ^1.6.0
-        version: 1.6.0(@types/node@20.12.11)(jsdom@24.0.0)
       vue:
         specifier: ^3.4.27
         version: 3.4.27(typescript@5.4.5)
@@ -68,6 +62,13 @@ importers:
       vue-demi:
         specifier: ^0.14.7
         version: 0.14.7(@vue/composition-api@1.7.2(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
+    devDependencies:
+      jsdom:
+        specifier: ^24.0.0
+        version: 24.0.0
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.0(@types/node@20.12.11)(jsdom@24.0.0)
 
 packages:
 
