@@ -43,4 +43,5 @@ export interface BaseForm {
   resetFieldsValue: () => void
   setInitialValue: (path: Path, value: any) => void
   setInitialValues: (values: Store) => void
+  getFieldsTransformedValue: () => Store
 }

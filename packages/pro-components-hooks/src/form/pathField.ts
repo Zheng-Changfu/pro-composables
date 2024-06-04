@@ -1,18 +1,19 @@
-import { set } from 'lodash-es'
+import { get, isPlainObject, merge, set } from 'lodash-es'
 import { toRaw } from 'vue-demi'
-import type { BaseField } from './field'
+import type { ArrayField, BaseField } from './field'
 import { stringifyPath, toRegexp } from './utils/path'
+import type { InternalPath } from './path/types'
 
 export class PathField {
   private map: Map<string, BaseField> = new Map()
 
-  get = (path: Array<string | number>) => {
+  get = (path: InternalPath) => {
     if (path.length <= 0)
       return
     return this.map.get(toRaw(stringifyPath(path)))
   }
 
-  getAll = () => {
+  getValues = () => {
     const res = {} as any
     this.map.forEach((field, key) => {
       const { isList, value } = field
@@ -28,6 +29,72 @@ export class PathField {
       const val = value.value
       if (!isList)
         set(res, key, toRaw(val))
+    })
+    return res
+  }
+
+  getTransformedValues = () => {
+    const res = {} as any
+    const haveTransformListFields: ArrayField[] = []
+
+    function internalTranform(field: BaseField, fieldKey: string) {
+      const {
+        index,
+        value,
+        parent,
+        isList,
+        transform,
+      } = field
+      /**
+       * transform:
+       *  返回值不是对象，直接修改字段对应的结果
+       *  返回值是对象，和当前字段所在层级的对象进行合并
+       */
+      const val = isList ? get(res, fieldKey) : value.value
+      const rawVal = toRaw(val)
+      const transformedValue = transform!(rawVal, fieldKey)
+      if (!isPlainObject(transformedValue)) {
+        set(res, fieldKey, transformedValue)
+        return
+      }
+
+      if (!parent) {
+        merge(res, transformedValue)
+        return
+      }
+      const currentLevelPath = [...parent.path.value, index.value]
+      const beMergeObj = get(res, currentLevelPath)
+      merge(beMergeObj, transformedValue)
+    }
+
+    this.map.forEach((field, key) => {
+      const { isList, transform, value } = field
+      const val = value.value
+      if (isList) {
+        const len = (val ?? []).length
+        set(res, key, Array.from(Array(len), () => ({})))
+        if (transform)
+          haveTransformListFields.push(field as ArrayField)
+      }
+    })
+
+    this.map.forEach((field, key) => {
+      const { isList, transform, value } = field
+      const val = value.value
+      if (isList)
+        return
+      const rawVal = toRaw(val)
+      if (!transform) {
+        set(res, key, rawVal)
+        return
+      }
+      internalTranform(field, key)
+    })
+
+    haveTransformListFields.forEach((field) => {
+      const { path } = field
+      const key = stringifyPath(path.value)
+      internalTranform(field, key)
     })
     return res
   }

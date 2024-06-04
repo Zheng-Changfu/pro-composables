@@ -1,4 +1,4 @@
-import { nextTick, onBeforeUpdate, onMounted, onUnmounted, onUpdated, watch } from 'vue-demi'
+import { onBeforeUpdate, onMounted, onUnmounted, onUpdated, watch } from 'vue-demi'
 import { usePath } from '../path/usePath'
 import { useInjectFormContext } from '../context'
 import { uid } from '../../utils/id'
@@ -28,6 +28,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
     dependencies = [],
     onChange,
     postState,
+    transform,
   } = fieldOptions
 
   const {
@@ -45,6 +46,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
       dependencies,
       onChange,
       postState,
+      transform,
     },
     { isList },
   )
@@ -57,6 +59,7 @@ function createBaseField<T = any>(
   const {
     onChange,
     postState,
+    transform,
     preserve,
     dependencies,
     path: userPath,
@@ -75,7 +78,7 @@ function createBaseField<T = any>(
   const parent = useInjectFieldContext()
   const isListPath = !!parent
 
-  const { path } = usePath(userPath)
+  const { path, index } = usePath(userPath)
   const { show } = useShow(userVisible, userHidden)
   const { fieldProps, doUpdateFieldProps } = useFieldProps()
   const { formItemProps, doUpdateFormItemProps } = useFormItemProps()
@@ -86,6 +89,7 @@ function createBaseField<T = any>(
     show,
     path,
     value,
+    index,
     parent,
     isList,
     preserve,
@@ -94,9 +98,9 @@ function createBaseField<T = any>(
     dependencies,
     formItemProps,
     updating: false,
-
     onChange,
     postState,
+    transform,
     doUpdateValue,
     doUpdateFieldProps,
     doUpdateFormItemProps,

@@ -24,7 +24,7 @@ export function useFormValues(options: FormOptions<any>, config: UseFormValuesOp
 
     if (!paths) {
       // 拿到存在的表单值返回
-      return config.pathField.getAll()
+      return config.pathField.getValues()
     }
 
     return paths.reduce<Record<string, any>>(
@@ -35,6 +35,10 @@ export function useFormValues(options: FormOptions<any>, config: UseFormValuesOp
       },
       {},
     )
+  }
+
+  function getFieldsTransformedValue() {
+    return config.pathField.getTransformedValues()
   }
 
   function setFieldValue(path: Path, value: any) {
@@ -83,5 +87,6 @@ export function useFormValues(options: FormOptions<any>, config: UseFormValuesOp
     resetFieldsValue,
     setInitialValue,
     setInitialValues,
+    getFieldsTransformedValue,
   }
 }

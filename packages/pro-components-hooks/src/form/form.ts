@@ -30,6 +30,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     resetFieldsValue,
     setInitialValue,
     setInitialValues,
+    getFieldsTransformedValue,
   } = useFormValues(options, {
     pathField,
     onChange,
@@ -52,6 +53,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     resetFieldsValue,
     setInitialValue,
     setInitialValues,
+    getFieldsTransformedValue,
   }
 
   function onChange(path: InternalPath | null, val: any) {

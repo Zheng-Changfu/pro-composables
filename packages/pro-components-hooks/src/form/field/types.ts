@@ -34,6 +34,22 @@ export interface FieldOptions<T = any> {
    */
   dependencies?: string[]
   /**
+   * 转换字段的值，通过 getFieldsTransformedValue 可触发
+   * @param val 当前字段的值
+   * @param path 当前字段的路径
+   * @returns 新的值,如果返回的是一个对象，将和当前字段所在层级的对象进行深度合并(lodash-es merge)
+   * @example
+   * ```js
+   * // key:['a','b']} => key:'a,b'
+   * transform:val => val.join()
+   * // b:val => a:val
+   * transform:val => ({a:val})
+   * // date:[startDate,endDate] => {startDate,endDate}
+   * transform:val => ({startDate:val[0],endDate:val[1]})
+   * ```
+   */
+  transform?: (val: T, path: string) => any
+  /**
    * 后置状态钩子，可以二次修改值
    */
   postState?: (val: T) => T
@@ -48,6 +64,10 @@ export interface BaseField<T = any> {
    * 唯一id
    */
   id: string
+  /**
+   * 字段索引
+   */
+  index: ComputedRef<number>
   /**
    * 父级 field
    */
@@ -106,6 +126,10 @@ export interface BaseField<T = any> {
    * 设置 formItem 控件的属性
    */
   doUpdateFormItemProps: (props: Record<string, any>) => void
+  /**
+   * 转换字段的值，通过 getFieldsTransformedValue 可触发
+   */
+  transform?: (val: T, path: string) => any
   /**
    * 后置状态钩子，可以二次修改值
    */
