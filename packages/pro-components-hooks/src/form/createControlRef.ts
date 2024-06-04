@@ -36,8 +36,7 @@ export function createControlRef<T extends (Record<string, any> | Array<any>)>(i
 
   function joinPath(...args: Array<Path | number | null>) {
     return args.reduce<Array<string | number>>((p, path) => {
-      const normalizedPath = Array.isArray(path) ? path : toPath(path)
-      p = p.concat(normalizedPath)
+      p = p.concat(toPath(path))
       return p
     }, [])
   }
