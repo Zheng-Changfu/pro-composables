@@ -32,7 +32,7 @@ export interface FieldOptions<T = any> {
   /**
    * 字段关联的依赖项
    */
-  dependencies?: string[]
+  dependencies?: Dependencie | Dependencie[]
   /**
    * 转换字段的值，通过 getFieldsTransformedValue 可触发
    * @param val 当前字段的值
