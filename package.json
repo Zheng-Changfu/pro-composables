@@ -10,7 +10,8 @@
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
-    "release": "pnpm test && pnpm build && pnpm changeset && pnpm changeset:version && pnpm changeset:publish"
+    "lint:fix": "eslint . --fix",
+    "release": "pnpm lint:fix && pnpm test && pnpm build && pnpm changeset && pnpm changeset:version && pnpm changeset:publish"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.18.0",
