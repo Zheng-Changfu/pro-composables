@@ -1,7 +1,7 @@
 import type { Ref } from 'vue-demi'
 import { computed } from 'vue-demi'
 
-export function useShow(visible: Ref<boolean> | undefined, hidden: Ref<boolean> | undefined) {
+export function useShow(visible: Ref<boolean | undefined> | undefined, hidden: Ref<boolean | undefined> | undefined) {
   const showRef = computed(() => {
     // priority：visible > hidden
     if (visible !== undefined && visible.value !== undefined)

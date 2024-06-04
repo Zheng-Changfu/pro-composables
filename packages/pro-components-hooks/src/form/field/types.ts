@@ -14,7 +14,7 @@ export interface FieldOptions<T = any> {
   /**
    * 字段路径
    */
-  path?: Ref<Path>
+  path?: Ref<Path | undefined>
   /**
    * 字段值
    */
@@ -23,12 +23,12 @@ export interface FieldOptions<T = any> {
    * 是否显示
    * @default true
    */
-  visible?: Ref<boolean>
+  visible?: Ref<boolean | undefined>
   /**
    * 是否隐藏
    * @default false
    */
-  hidden?: Ref<boolean>
+  hidden?: Ref<boolean | undefined>
   /**
    * 字段关联的依赖项
    */
