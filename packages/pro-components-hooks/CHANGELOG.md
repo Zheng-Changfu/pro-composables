@@ -1,5 +1,17 @@
 # pro-components-hooks
 
+## 0.0.9
+
+### Patch Changes
+
+- feat: 变更 changeset 配置
+
+## 0.0.8
+
+### Patch Changes
+
+- feat:release@0.0.8
+
 ## 0.0.7
 
 ### Patch Changes

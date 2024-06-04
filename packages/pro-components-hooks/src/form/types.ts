@@ -1,4 +1,4 @@
-import type { createControlRef } from './createControlRef'
+import type { createControlRef } from '../hooks/createControlRef'
 import type { Deps } from './deps'
 import type { ArrayField, BaseField } from './field'
 import type { Path } from './path'
