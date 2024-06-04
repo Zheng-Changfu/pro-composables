@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { computed, ref, watch } from 'vue-demi'
-import { createControlRef } from '../createControlRef'
+import { createControlRef } from './createControlRef'
 
 describe('createControlRef', () => {
   it('get', () => {

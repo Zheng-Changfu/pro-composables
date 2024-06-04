@@ -1,7 +1,9 @@
 import { extendRef } from '@vueuse/core'
 import { ref } from 'vue-demi'
 import { get as _get, has as _has, set as _set, isArray, isPlainObject, isUndefined, merge, toPath, unset } from 'lodash-es'
-import type { InternalPath, Path } from './path'
+
+type InternalPath = Array<string | number>
+type Path = string | InternalPath
 
 export interface UseControlRefOptions {
   /**
