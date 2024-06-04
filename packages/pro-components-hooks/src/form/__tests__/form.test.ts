@@ -3,7 +3,8 @@ import { defineComponent, h, nextTick, onMounted } from 'vue-demi'
 import { mount } from '../../__tests__/mount'
 import type { BaseForm } from '../types'
 import { useInjectExpressionContext } from '../expression'
-import { Form, FormItem } from './components'
+import type { ArrayField } from '../field'
+import { Form, FormItem, FormList } from './components'
 
 describe('form props', () => {
   it('initialValues', async () => {
@@ -213,6 +214,104 @@ describe('form api', () => {
     expect(vals[0]).toStrictEqual({ a: 1, b: 2 })
     expect(vals[1]).toStrictEqual({ a: 1, b: 2 })
     expect(vals[2]).toStrictEqual({ a: 1 })
+    vm.unmount()
+  })
+
+  it('getFieldsTransformedValue', async () => {
+    const vals: any[] = []
+    const paths: string[] = []
+    const transformA = vi.fn((val, path) => {
+      paths.push(path)
+      return val
+    })
+    const transformB = vi.fn((val, path) => {
+      paths.push(path)
+      return { c: val }
+    })
+    const transformListA = vi.fn((val, path) => {
+      paths.push(path)
+      return val.toString()
+    })
+    const transformListB = vi.fn((val, path) => {
+      paths.push(path)
+      return { c: val }
+    })
+    const transformList = vi.fn((val, path) => {
+      paths.push(path)
+      return val.map((item: any) => ({ ...item, z: 'z' }))
+    })
+
+    const Comp = defineComponent({
+      setup() {
+        let _form: BaseForm
+        let _field: ArrayField
+
+        function onFormMounted(form: BaseForm) {
+          _form = form
+        }
+
+        function onArrayFieldMounted(field: ArrayField) {
+          _field = field
+        }
+
+        onMounted(async () => {
+          await nextTick()
+          vals.push(
+            { ..._form.getFieldsValue() },
+            { ..._form.getFieldsTransformedValue() },
+          )
+        })
+
+        return () => {
+          return h(Form, {
+            onFormMounted,
+            initialValues: {
+              a: 1,
+              b: 2,
+              list: [
+                { a: 1, b: 1, d: 1, dd2: 3 },
+              ],
+            },
+          }, [
+            h(FormItem, { path: 'a', transform: transformA }),
+            h(FormItem, { path: 'b', transform: transformB }),
+            h(FormList, {
+              path: 'list',
+              onArrayFieldMounted,
+              transform: transformList,
+            }, [
+              h(FormItem, { path: 'a', transform: transformListA }),
+              h(FormItem, { path: 'b', transform: transformListB }),
+              h(FormItem, { path: 'd' }),
+            ]),
+          ])
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    await nextTick()
+    expect(vals[0]).toStrictEqual({
+      a: 1,
+      b: 2,
+      list: [
+        { a: 1, b: 1, d: 1 },
+      ],
+    })
+    expect(vals[1]).toStrictEqual({
+      a: 1,
+      c: 2,
+      list: [
+        { a: '1', c: 1, d: 1, z: 'z' },
+      ],
+    })
+    expect(paths).toStrictEqual([
+      'a',
+      'b',
+      'list[0].a',
+      'list[0].b',
+      'list',
+    ])
     vm.unmount()
   })
 

@@ -2,7 +2,7 @@ import { computed, defineComponent, h, onMounted, toRef } from 'vue-demi'
 import { createForm } from '../form'
 import { createArrayField, createField, useInjectFieldContext } from '../field'
 import { uid } from '../../utils/id'
-import { providePathContext } from '../path'
+import { providePathContext, providePathIndexContext } from '../path'
 
 export const Form = defineComponent({
   props: [
@@ -40,6 +40,7 @@ export const FormItem = defineComponent({
     'visible',
     'hidden',
     'preserve',
+    'transform',
   ],
   setup(props, { slots }) {
     const field = createField({
@@ -52,6 +53,7 @@ export const FormItem = defineComponent({
       hidden: toRef(props, 'hidden'),
       visible: toRef(props, 'visible'),
       preserve: props.preserve,
+      transform: props.transform,
     })
     onMounted(() => {
       props.onFieldMounted?.(field)
@@ -74,6 +76,7 @@ export const FormListItem = defineComponent({
       ]
     })
     providePathContext(path)
+    providePathIndexContext(toRef(props, 'index'))
 
     return () => {
       return slots.default?.(props.index)
@@ -93,6 +96,7 @@ export const FormList = defineComponent({
     'visible',
     'hidden',
     'preserve',
+    'transform',
     'onArrayFieldMounted',
   ],
   setup(props, { slots }) {
@@ -105,6 +109,7 @@ export const FormList = defineComponent({
       hidden: toRef(props, 'hidden'),
       visible: toRef(props, 'visible'),
       preserve: props.preserve,
+      transform: props.transform,
       postState: (val) => {
         if (!val)
           return []
