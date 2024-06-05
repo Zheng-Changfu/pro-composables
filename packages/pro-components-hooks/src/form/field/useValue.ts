@@ -36,7 +36,10 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
   if (value) {
     watch(
       value,
-      val => proxy.value = val,
+      (val) => {
+        if (form.values.has(path.value))
+          proxy.value = val
+      },
     )
   }
 
