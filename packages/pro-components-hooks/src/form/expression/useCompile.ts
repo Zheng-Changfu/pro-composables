@@ -1,5 +1,5 @@
 import { isArray, isPlainObject, isString } from 'lodash-es'
-import type { ComputedRef, Ref } from 'vue-demi'
+import type { ComputedRef, Ref, UnwrapRef } from 'vue-demi'
 import { computed, unref } from 'vue-demi'
 import type { ExcludeExpression } from './types'
 
@@ -25,7 +25,7 @@ export interface UseCompileOptions {
 export function useCompile<T extends (string | Record<string, any> | Ref<any> | ComputedRef<Record<string, any>>)>(
   value: T,
   options: UseCompileOptions = {},
-): ComputedRef<ExcludeExpression<T>> {
+): ComputedRef<ExcludeExpression<UnwrapRef<T>>> {
   const { scope = {} } = options
   return computed(() => {
     if (isString(value))
