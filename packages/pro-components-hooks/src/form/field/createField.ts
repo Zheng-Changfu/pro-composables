@@ -23,6 +23,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
     value,
     hidden,
     visible,
+    defaultValue,
     initialValue,
     preserve = true,
     dependencies = [],
@@ -42,6 +43,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
       hidden,
       visible,
       preserve,
+      defaultValue,
       initialValue,
       dependencies,
       onChange,
@@ -66,6 +68,7 @@ function createBaseField<T = any>(
     value: userValue,
     hidden: userHidden,
     visible: userVisible,
+    defaultValue: userDefaultValue,
     initialValue: userInitialValue,
   } = fieldOptions
 
@@ -82,7 +85,14 @@ function createBaseField<T = any>(
   const { show } = useShow(userVisible, userHidden)
   const { fieldProps, doUpdateFieldProps } = useFieldProps()
   const { formItemProps, doUpdateFormItemProps } = useFormItemProps()
-  const { value, doUpdateValue } = useValue(userValue, { path, initialValue: userInitialValue })
+  const { value, doUpdateValue } = useValue(
+    userValue,
+    {
+      path,
+      defaultValue: userDefaultValue,
+      initialValue: userInitialValue,
+    },
+  )
 
   const baseField: BaseField = {
     id: uid(),

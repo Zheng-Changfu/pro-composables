@@ -11,6 +11,10 @@ interface UseValueOptions<T = any> {
    */
   initialValue?: T
   /**
+   * 默认值,优先级最低
+   */
+  defaultValue?: T
+  /**
    * 字段路径
    */
   path: ComputedRef<InternalPath>
@@ -18,7 +22,7 @@ interface UseValueOptions<T = any> {
 export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOptions) {
   const form = useInjectFormContext()
   const parent = useInjectFieldContext()
-  const { initialValue, path } = options
+  const { initialValue, defaultValue, path } = options
 
   const proxy = computed({
     get() {
@@ -39,7 +43,7 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
   onMounted(() => {
     const updating = parent?.updating
     if (!updating) {
-      // priority：value > initialValue > initialValues
+      // priority：value > initialValue > initialValues > defaultValue
       let val
       const p = path.value
       if (p.length > 0 && has(form.initialValues, p))
@@ -50,6 +54,9 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
 
       if (value && value.value !== undefined)
         val = value.value
+
+      if (val === undefined && defaultValue !== undefined)
+        val = defaultValue
 
       if (val !== undefined) {
         proxy.value = val
