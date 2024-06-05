@@ -1,3 +1,4 @@
+import { get } from 'lodash-es'
 import { useInjectFormContext } from '../context'
 import { useInjectFieldContext } from './context'
 import type { BaseField } from './types'
@@ -6,12 +7,13 @@ function getBaseFieldController() {
   const form = useInjectFormContext()
 
   function mountFieldPathValue(field: BaseField) {
-    const { path, value, preserve } = field
+    const { path, preserve } = field
     const p = path.value
     form.pathField.set(p, field)
     if (preserve)
       return
-    form.values.set(p, value.value)
+    const initial = get(form.initialValues, p)
+    form.values.set(p, initial)
   }
 
   function unmountFieldPathValue(field: BaseField) {
