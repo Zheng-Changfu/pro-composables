@@ -350,6 +350,8 @@ describe('baseField', () => {
     const Comp = defineComponent({
       setup() {
         let _form: BaseForm
+        const value1Ref = ref(3)
+        const value2Ref = ref(4)
         const visibleRef1 = ref(true)
         const visibleRef2 = ref(true)
 
@@ -358,24 +360,25 @@ describe('baseField', () => {
         }
 
         onMounted(async () => {
+          value1Ref.value = 456
           visibleRef1.value = false
           await nextTick()
           vals.push(
-            _form.getFieldsValue(), // {b:4}
-            _form.getFieldsValue(true), // {b:4}
+            { ..._form.getFieldsValue() }, // {b:4}
+            { ..._form.getFieldsValue(true) }, // {b:4}
           )
           visibleRef1.value = true
           visibleRef2.value = false
           await nextTick()
           vals.push(
-            _form.getFieldsValue(), // {a:undefined}
-            _form.getFieldsValue(true),
+            { ..._form.getFieldsValue() },
+            { ..._form.getFieldsValue(true) },
           )
         })
         return () => {
           return h(Form, { onFormMounted }, [
-            h(FormItem, { path: 'a', preserve: false, visible: visibleRef1.value, value: 3 }),
-            h(FormItem, { path: 'b', preserve: false, visible: visibleRef2.value, value: 4 }),
+            h(FormItem, { path: 'a', preserve: false, visible: visibleRef1.value, value: value1Ref.value }),
+            h(FormItem, { path: 'b', preserve: false, visible: visibleRef2.value, value: value2Ref.value }),
           ])
         }
       },
@@ -386,8 +389,8 @@ describe('baseField', () => {
     expect(vals[0]).toStrictEqual({ b: 4 })
     expect(vals[1]).toStrictEqual({ b: 4 })
     await nextTick()
-    expect(vals[2]).toStrictEqual({ a: undefined })
-    expect(vals[3]).toStrictEqual({ a: undefined })
+    expect(vals[2]).toStrictEqual({ a: 3 })
+    expect(vals[3]).toStrictEqual({ a: 3 })
     vm.unmount()
   })
 })
