@@ -32,6 +32,7 @@ export const FormItem = defineComponent({
   props: [
     'path',
     'value',
+    'defaultValue',
     'initialValue',
     'dependencies',
     'onFieldMounted',
@@ -48,6 +49,7 @@ export const FormItem = defineComponent({
       value: toRef(props, 'value'),
       dependencies: props.dependencies,
       initialValue: props.initialValue,
+      defaultValue: props.defaultValue,
       postState: props.postState,
       onChange: props.onChange,
       hidden: toRef(props, 'hidden'),
