@@ -4,8 +4,7 @@ import { computed, unref } from 'vue-demi'
 import type { ExcludeExpression } from './types'
 
 const expressionReg = /\{\{([\s\S]*)\}\}/
-
-function compile(source: any, scope: Record<string, any>) {
+function baseCompile(source: any, scope: Record<string, any>) {
   if (!isString(source))
     return source
   const [,expression] = source.match(expressionReg) ?? []
@@ -13,6 +12,26 @@ function compile(source: any, scope: Record<string, any>) {
     return source
   // eslint-disable-next-line no-new-func
   return new Function('$ctx', `with($ctx){ return ${expression} }`)(scope)
+}
+
+export function compile<T = any>(source: T, scope: Record<string, any>): ExcludeExpression<T> {
+  if (isString(source))
+    return baseCompile(source, scope)
+
+  if (source === undefined)
+    return source as any
+
+  const traverse = (data: any) => {
+    if (!isArray(data) && !isPlainObject(data))
+      return data
+    const ret: any = isArray(data) ? [] : {}
+    for (const key in data) {
+      const val = traverse(data[key])
+      ret[key] = baseCompile(val, scope)
+    }
+    return ret
+  }
+  return traverse(source)
 }
 
 export interface UseCompileOptions {
@@ -28,26 +47,7 @@ export function useCompile<T extends (string | Record<string, any> | Ref<any> | 
 ): ComputedRef<ExcludeExpression<UnwrapRef<T>>> {
   const { scope = {} } = options
   return computed(() => {
-    if (isString(value))
-      return compile(value, scope)
-
-    const records = unref(value)
-    if (records === undefined)
-      return records
-
-    if (!isArray(records) && !isPlainObject(records))
-      return records
-
-    const traverse = (data: any) => {
-      if (!isArray(data) && !isPlainObject(data))
-        return data
-      const ret: any = isArray(data) ? [] : {}
-      for (const key in data) {
-        const val = traverse(data[key])
-        ret[key] = compile(val, scope)
-      }
-      return ret
-    }
-    return traverse(records) as T
+    const source = unref(value)
+    return compile(source, scope)
   })
 }

@@ -1,5 +1,6 @@
-import { toPath } from 'lodash-es'
+import { isMap, isRegExp, isString, toPath } from 'lodash-es'
 import type { Path } from '../path'
+import type { PathMatch } from '../field'
 
 /**
  * @example
@@ -24,6 +25,36 @@ export function stringifyPath(path: Path) {
     : ''
 }
 
-export function toRegexp(path: string) {
-  return new RegExp(path)
+export function normalizePathMatch(pathMatch: PathMatch) {
+  return (path: string, paths: string[]) => {
+    if (isString(pathMatch))
+      return pathMatch === path
+    if (isRegExp(pathMatch))
+      return pathMatch.test(path)
+    return pathMatch(path, paths)
+  }
+}
+
+export function matchPath(
+  target: Map<string, any> | Record<string, any>,
+  pathMatch: PathMatch,
+) {
+  const matchFn = normalizePathMatch(pathMatch)
+  const matchedPaths: string[] = []
+
+  if (isMap(target)) {
+    const keys = [...target.keys()]
+    target.forEach((_, key) => {
+      if (matchFn(key, keys))
+        matchedPaths.push(key)
+    })
+    return matchedPaths
+  }
+
+  const keys = Object.keys(target)
+  for (const key in target) {
+    if (matchFn(key, keys))
+      matchedPaths.push(key)
+  }
+  return matchedPaths
 }

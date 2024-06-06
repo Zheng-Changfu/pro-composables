@@ -1,14 +1,29 @@
-import type { Ref } from 'vue-demi'
 import { computed } from 'vue-demi'
+import { isBoolean } from 'lodash-es'
+import { useCompile } from '../../hooks'
+import type { ExpressionScope, FieldOptions } from './types'
 
-export function useShow(visible: Ref<boolean | undefined> | undefined, hidden: Ref<boolean | undefined> | undefined) {
+interface UseShowOptions {
+  scope: ExpressionScope
+}
+export function useShow(
+  hidden: FieldOptions['hidden'],
+  visible: FieldOptions['visible'],
+  options: UseShowOptions,
+) {
+  const { scope } = options
+  const compiledHidden = useCompile(hidden!, { scope })
+  const compiledVisible = useCompile(visible!, { scope })
+
   const showRef = computed(() => {
     // priority：visible > hidden
-    if (visible !== undefined && visible.value !== undefined)
-      return visible.value
+    const visible = compiledVisible.value
+    if (isBoolean(visible))
+      return visible
 
-    if (hidden !== undefined && hidden.value !== undefined)
-      return !hidden.value
+    const hidden = compiledHidden.value
+    if (isBoolean(hidden))
+      return !hidden
 
     return true
   })

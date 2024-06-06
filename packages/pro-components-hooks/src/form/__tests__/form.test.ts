@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, onMounted } from 'vue-demi'
 import { mount } from '../../__tests__/mount'
 import type { BaseForm } from '../types'
-import { useInjectExpressionContext } from '../expression'
 import type { ArrayField } from '../field'
+import { useInjectCompileScopeContext } from '../../hooks'
 import { Form, FormItem, FormList } from './components'
 
 describe('form props', () => {
@@ -50,7 +50,7 @@ describe('form props', () => {
     let val: any
     const T = defineComponent({
       setup() {
-        const expression = useInjectExpressionContext()
+        const expression = useInjectCompileScopeContext()
         val = expression
         return () => ''
       },

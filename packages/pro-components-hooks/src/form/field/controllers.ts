@@ -1,6 +1,6 @@
 import { get } from 'lodash-es'
 import { useInjectFormContext } from '../context'
-import { useInjectFieldContext } from './context'
+import { useInjectParentFieldContext } from './context'
 import type { BaseField } from './types'
 
 function getBaseFieldController() {
@@ -73,7 +73,7 @@ function getArrayFieldController() {
 }
 
 export function getController() {
-  const parent = useInjectFieldContext()
+  const parent = useInjectParentFieldContext()
   const baseFieldController = getBaseFieldController()
   const listFieldController = getArrayFieldController()
 

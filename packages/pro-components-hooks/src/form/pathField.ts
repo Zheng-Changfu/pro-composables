@@ -1,10 +1,13 @@
 import { get, isPlainObject, merge, set } from 'lodash-es'
 import { toRaw } from 'vue-demi'
-import type { ArrayField, BaseField } from './field'
-import { stringifyPath, toRegexp } from './utils/path'
+import type { ArrayField, BaseField, PathMatch } from './field'
+import { matchPath as baseMatchPath, stringifyPath } from './utils/path'
 import type { InternalPath } from './path/types'
 
 export class PathField {
+  /**
+   * 所有字段的映射表
+   */
   private map: Map<string, BaseField> = new Map()
 
   get = (path: InternalPath) => {
@@ -115,15 +118,7 @@ export class PathField {
     return [...this.map.keys()]
   }
 
-  query = () => {}
-
-  match = (key: string) => {
-    const reg = toRegexp(key)
-    const ret: BaseField[] = []
-    this.map.forEach((field, path) => {
-      if (reg.test(path))
-        ret.push(field)
-    })
-    return ret
+  matchPath = (pathMatch: PathMatch) => {
+    return baseMatchPath(this.map, pathMatch)
   }
 }

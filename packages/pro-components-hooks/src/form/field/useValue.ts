@@ -3,7 +3,9 @@ import { computed, onMounted, watch } from 'vue-demi'
 import { cloneDeep, get, has } from 'lodash-es'
 import { useInjectFormContext } from '../context'
 import type { InternalPath } from '../path'
-import { useInjectFieldContext } from './context'
+import { useCompile } from '../../hooks'
+import { useInjectParentFieldContext } from './context'
+import type { ExpressionScope } from './types'
 
 interface UseValueOptions<T = any> {
   /**
@@ -18,11 +20,21 @@ interface UseValueOptions<T = any> {
    * 字段路径
    */
   path: ComputedRef<InternalPath>
+  /**
+   * 表达式读取到的上下文
+   */
+  scope: ExpressionScope
 }
 export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOptions) {
   const form = useInjectFormContext()
-  const parent = useInjectFieldContext()
-  const { initialValue, defaultValue, path } = options
+  const parent = useInjectParentFieldContext()
+
+  const {
+    path,
+    scope,
+    initialValue,
+    defaultValue,
+  } = options
 
   const proxy = computed({
     get() {
@@ -33,15 +45,14 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
     },
   })
 
-  if (value) {
-    watch(
-      value,
-      (val) => {
-        if (form.values.has(path.value))
-          proxy.value = val
-      },
-    )
-  }
+  const compiledUserValue = useCompile(value!, { scope })
+  watch(
+    compiledUserValue,
+    (val) => {
+      if (form.values.has(path.value))
+        proxy.value = val
+    },
+  )
 
   onMounted(() => {
     const updating = parent?.updating
@@ -49,6 +60,10 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
       // priority：value > initialValue > initialValues > defaultValue
       let val
       const p = path.value
+
+      if (defaultValue !== undefined)
+        val = defaultValue
+
       if (p.length > 0 && has(form.initialValues, p))
         val = get(form.initialValues, path.value)
 
@@ -56,10 +71,7 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
         val = initialValue
 
       if (value && value.value !== undefined)
-        val = value.value
-
-      if (val === undefined && defaultValue !== undefined)
-        val = defaultValue
+        val = compiledUserValue.value
 
       if (val !== undefined) {
         proxy.value = val

@@ -9,7 +9,7 @@ import {
   shift as baseShift,
   unshift as baseUnshift,
 } from '../utils/array'
-import { provideFieldContext } from './context'
+import { provideParentFieldContext } from './context'
 import { createField } from './createField'
 import type { ArrayField, FieldOptions } from './types'
 
@@ -65,6 +65,6 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     moveUp,
     moveDown,
   })
-  provideFieldContext(arrayField)
+  provideParentFieldContext(arrayField)
   return arrayField
 }

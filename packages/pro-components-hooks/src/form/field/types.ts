@@ -1,5 +1,8 @@
 import type { ComputedRef, Ref } from 'vue-demi'
 import type { Path } from '../path'
+import type { MaybeExpression } from '../../hooks'
+
+export type ExpressionScope = Record<string, any>
 
 export interface FieldOptions<T = any> {
   /**
@@ -20,19 +23,21 @@ export interface FieldOptions<T = any> {
    */
   path?: Ref<Path | undefined>
   /**
-   * 字段值
+   * 字段值，支持表达式
    */
   value?: Ref<T>
   /**
-   * 是否显示
-   * @default true
+   * 表达式可以读取到的上下文
    */
-  visible?: Ref<boolean | undefined>
+  scope?: ExpressionScope
   /**
-   * 是否隐藏
-   * @default false
+   * 是否显示，支持表达式
    */
-  hidden?: Ref<boolean | undefined>
+  visible?: Ref<MaybeExpression<boolean | undefined>>
+  /**
+   * 是否隐藏，支持表达式
+   */
+  hidden?: Ref<MaybeExpression<boolean | undefined>>
   /**
    * 字段关联的依赖项
    */
@@ -106,6 +111,10 @@ export interface BaseField<T = any> {
    * @default true
    */
   show: ComputedRef<boolean>
+  /**
+   * 表达式可以读取到的上下文
+   */
+  scope: ExpressionScope
   /**
    * 表单控件的属性
    */
@@ -184,7 +193,8 @@ export interface ArrayField<T = any> extends BaseField<T[]> {
 }
 
 export type Dependencie = string | InternalDependencie
+export type PathMatch = string | RegExp | ((path: string, paths: string[]) => boolean)
 
 export interface InternalDependencie {
-  match: string | RegExp | ((path: string, paths: string[]) => boolean)
+  match: PathMatch
 }

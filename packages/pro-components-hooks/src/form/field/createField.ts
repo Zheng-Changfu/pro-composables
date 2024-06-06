@@ -2,13 +2,14 @@ import { onBeforeUpdate, onMounted, onUnmounted, onUpdated, watch } from 'vue-de
 import { usePath } from '../path/usePath'
 import { useInjectFormContext } from '../context'
 import { uid } from '../../utils/id'
-import { useInjectFieldContext } from './context'
+import { useInjectParentFieldContext } from './context'
 import type { BaseField, FieldOptions } from './types'
 import { useFieldProps } from './useFieldProps'
 import { useFormItemProps } from './useFormItemProps'
 import { useShow } from './useShow'
 import { useValue } from './useValue'
 import { getController } from './controllers'
+import { getFieldExpressionScope } from './getFieldExpressionScope'
 
 interface CreateFieldOptions {
   /**
@@ -23,6 +24,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
     value,
     hidden,
     visible,
+    scope = {},
     defaultValue,
     initialValue,
     preserve = true,
@@ -40,6 +42,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
     {
       path,
       value,
+      scope,
       hidden,
       visible,
       preserve,
@@ -55,7 +58,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
 }
 
 function createBaseField<T = any>(
-  fieldOptions: FieldOptions<T> & Required<Pick<FieldOptions, 'preserve' | 'dependencies'>>,
+  fieldOptions: FieldOptions<T> & Required<Pick<FieldOptions, 'scope' | 'preserve' | 'dependencies'>>,
   options: Required<CreateFieldOptions>,
 ) {
   const {
@@ -66,6 +69,7 @@ function createBaseField<T = any>(
     dependencies,
     path: userPath,
     value: userValue,
+    scope: userScope,
     hidden: userHidden,
     visible: userVisible,
     defaultValue: userDefaultValue,
@@ -78,17 +82,40 @@ function createBaseField<T = any>(
 
   const controller = getController()
   const form = useInjectFormContext()
-  const parent = useInjectFieldContext()
+  const parent = useInjectParentFieldContext()
   const isListPath = !!parent
 
-  const { path, index } = usePath(userPath)
-  const { show } = useShow(userVisible, userHidden)
-  const { fieldProps, doUpdateFieldProps } = useFieldProps()
-  const { formItemProps, doUpdateFormItemProps } = useFormItemProps()
+  const {
+    path,
+    index,
+  } = usePath(userPath)
+
+  const { scope } = getFieldExpressionScope(
+    path,
+    { scope: userScope },
+  )
+
+  const { show } = useShow(
+    userHidden,
+    userVisible,
+    { scope },
+  )
+
+  const {
+    fieldProps,
+    doUpdateFieldProps,
+  } = useFieldProps({ scope })
+
+  const {
+    formItemProps,
+    doUpdateFormItemProps,
+  } = useFormItemProps({ scope })
+
   const { value, doUpdateValue } = useValue(
     userValue,
     {
       path,
+      scope,
       defaultValue: userDefaultValue,
       initialValue: userInitialValue,
     },
@@ -99,6 +126,7 @@ function createBaseField<T = any>(
     show,
     path,
     value,
+    scope,
     index,
     parent,
     isList,

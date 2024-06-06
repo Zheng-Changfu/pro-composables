@@ -1,7 +1,7 @@
 import { onScopeDispose } from 'vue-demi'
-import { isArray, isRegExp, isString } from 'lodash-es'
+import { isArray, isString } from 'lodash-es'
 import type { BaseForm, FormOptions } from './types'
-import { stringifyPath } from './utils/path'
+import { normalizePathMatch, stringifyPath } from './utils/path'
 import type { Dependencie } from './field'
 
 export class Deps {
@@ -21,19 +21,8 @@ export class Deps {
   }
 
   private normalizeDep = (dep: Dependencie) => {
-    return (path: string, paths: string[]) => {
-      if (isString(dep)) {
-        dep = {
-          match: dep,
-        }
-      }
-      const { match } = dep
-      if (isString(match))
-        return match === path
-      if (isRegExp(match))
-        return match.test(path)
-      return match(path, paths)
-    }
+    const pathMatch = isString(dep) ? dep : dep.match
+    return normalizePathMatch(pathMatch)
   }
 
   add = (deps: Dependencie | Dependencie[]) => {
