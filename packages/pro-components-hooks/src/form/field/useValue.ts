@@ -1,8 +1,7 @@
 import type { ComputedRef, Ref } from 'vue-demi'
-import { computed, onMounted, watch } from 'vue-demi'
+import { computed, watch } from 'vue-demi'
 import { cloneDeep, get, has } from 'lodash-es'
 import { useInjectFormContext } from '../context'
-import type { InternalPath } from '../path'
 import { useCompile } from '../../hooks'
 import { useInjectParentFieldContext } from './context'
 import type { ExpressionScope } from './types'
@@ -19,11 +18,15 @@ interface UseValueOptions<T = any> {
   /**
    * 字段路径
    */
-  path: ComputedRef<InternalPath>
+  path: ComputedRef<string[]>
   /**
    * 表达式读取到的上下文
    */
   scope: ExpressionScope
+  /**
+   * 后置状态钩子，可以再次更改值
+   */
+  postState: ((val: T) => T) | undefined
 }
 export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOptions) {
   const form = useInjectFormContext()
@@ -32,6 +35,7 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
   const {
     path,
     scope,
+    postState,
     initialValue,
     defaultValue,
   } = options
@@ -54,32 +58,37 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
     },
   )
 
-  onMounted(() => {
-    const updating = parent?.updating
-    if (!updating) {
-      // priority：value > initialValue > initialValues > defaultValue
-      let val
-      const p = path.value
-
-      if (defaultValue !== undefined)
-        val = defaultValue
-
-      if (p.length > 0 && has(form.initialValues, p))
-        val = get(form.initialValues, path.value)
-
-      if (initialValue !== undefined)
-        val = initialValue
-
-      if (value && value.value !== undefined)
-        val = compiledUserValue.value
-
-      if (val !== undefined) {
-        proxy.value = val
-        if (p.length > 0)
-          form.setInitialValue(p, cloneDeep(val))
-      }
+  const updating = parent?.updating
+  if (!updating) {
+    // priority：value > initialValue > initialValues > defaultValue
+    let val
+    const p = path.value
+    if (postState && !form.pathField.has(p)) {
+      /**
+       * 初始值的设置不应该放在 onMounted 中，因为会二次更新
+       * 所以将 postState 先存进去，防止 postState 没有被触发
+       */
+      form.pathField.set(p, { postState } as any)
     }
-  })
+
+    if (defaultValue !== undefined)
+      val = defaultValue
+
+    if (p.length > 0 && has(form.initialValues, p))
+      val = get(form.initialValues, path.value)
+
+    if (initialValue !== undefined)
+      val = initialValue
+
+    if (value && value.value !== undefined)
+      val = compiledUserValue.value
+
+    if (val !== undefined) {
+      proxy.value = val
+      if (p.length > 0)
+        form.setInitialValue(p, cloneDeep(val))
+    }
+  }
 
   return {
     value: proxy as ComputedRef<T>,

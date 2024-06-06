@@ -116,6 +116,7 @@ function createBaseField<T = any>(
     {
       path,
       scope,
+      postState,
       defaultValue: userDefaultValue,
       initialValue: userInitialValue,
     },
