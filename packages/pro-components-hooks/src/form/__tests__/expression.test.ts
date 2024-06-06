@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, onMounted } from 'vue-demi'
 import { mount } from '../../__tests__/mount'
 import type { ArrayField, BaseField } from '../field'
+import type { BaseForm } from '../types'
 import { Form, FormItem, FormList } from './components'
 
 describe('builtIn expression context', () => {
@@ -239,6 +240,40 @@ describe('builtIn expression context', () => {
     await nextTick()
     expect($indexs[4]).toBe(2)
     expect($rowIndexs[4]).toBe(2)
+    vm.unmount()
+  })
+
+  it('$values', async () => {
+    const vals: any[] = []
+    const Comp = defineComponent({
+      setup() {
+        let _form: BaseForm
+        function onFormMounted(form: BaseForm) {
+          _form = form
+        }
+        onMounted(async () => {
+          _form.setFieldValue('a', 222)
+          await nextTick()
+          vals.push(_form.getFieldsValue())
+        })
+        return () => {
+          return h(Form, {
+            initialValues: {
+              a: 1,
+              b: 2,
+            },
+            onFormMounted,
+          }, [
+            h(FormItem, { path: 'a' }),
+            h(FormItem, { path: 'b', hidden: '{{$values.a === 222}}' }),
+          ])
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    await nextTick()
+    expect(vals[0]).toStrictEqual({ a: 222 })
     vm.unmount()
   })
 })
