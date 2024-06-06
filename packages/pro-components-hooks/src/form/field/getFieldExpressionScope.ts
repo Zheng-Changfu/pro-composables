@@ -27,10 +27,6 @@ export function getFieldExpressionScope(
     return values
   }
 
-  const selfValue = computed(() => {
-    return form.values.get(path.value)
-  })
-
   const row = computed(() => {
     const field = form.pathField.get(path.value)
     if (
@@ -40,6 +36,12 @@ export function getFieldExpressionScope(
     )
       return {}
     return getRowValues(field)
+  })
+
+  const len = computed(() => {
+    return parent
+      ? parent.value.value.length
+      : 0
   })
 
   const rowIndex = computed(() => {
@@ -53,13 +55,9 @@ export function getFieldExpressionScope(
     return field.index.value
   })
 
-  const len = computed(() => {
-    return parent
-      ? parent.value.value.length
-      : 0
+  const selfValue = computed(() => {
+    return form.values.get(path.value)
   })
-
-  const values = computed(() => form.values.value)
 
   const scope = {
     /**
@@ -81,7 +79,7 @@ export function getFieldExpressionScope(
     /**
      * 整个表单的值，等同于 getFieldsValue(true)
      */
-    $values: values,
+    $values: form.values.value,
     /**
      * @alias $row
      */
@@ -89,7 +87,7 @@ export function getFieldExpressionScope(
     /**
      * @alias $values
      */
-    $vals: values,
+    $vals: form.values.value,
     /**
      * @alias $length
      */
