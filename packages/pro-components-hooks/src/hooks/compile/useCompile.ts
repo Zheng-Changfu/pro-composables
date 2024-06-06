@@ -1,17 +1,46 @@
 import { isArray, isPlainObject, isString } from 'lodash-es'
 import type { ComputedRef, Ref, UnwrapRef } from 'vue-demi'
-import { computed, unref } from 'vue-demi'
+import { computed, isRef, unref } from 'vue-demi'
 import type { ExcludeExpression } from './types'
 
 const expressionReg = /\{\{([\s\S]*)\}\}/
+const scopeToUnwrapScopeWeakMap = new WeakMap<Record<string, any>, Record<string, any>>()
+
+// scope 里面有的是 ref 数据，需要自动解包
+function unwrapScope(scope: Record<string, any>) {
+  if (scopeToUnwrapScopeWeakMap.has(scope))
+    return scopeToUnwrapScopeWeakMap.get(scope)!
+
+  // 这里用 defineProperty，不用 proxy，因为 2.7 版本某些情况下可能会不兼容
+  for (const key in scope) {
+    const value = scope[key]
+    if (isRef(value)) {
+      Object.defineProperty(scope, key, {
+        get() {
+          return value.value
+        },
+        set(val) {
+          value.value = val
+        },
+        enumerable: false,
+      })
+    }
+  }
+  scopeToUnwrapScopeWeakMap.set(scope, scope)
+  return scope
+}
+
 function baseCompile(source: any, scope: Record<string, any>) {
   if (!isString(source))
     return source
+
   const [,expression] = source.match(expressionReg) ?? []
   if (!expression)
     return source
+
+  const unwrapedScope = unwrapScope(scope)
   // eslint-disable-next-line no-new-func
-  return new Function('$ctx', `with($ctx){ return ${expression} }`)(scope)
+  return new Function('$ctx', `with($ctx){ return ${expression} }`)(unwrapedScope)
 }
 
 export function compile<T = any>(source: T, scope: Record<string, any>): ExcludeExpression<T> {
