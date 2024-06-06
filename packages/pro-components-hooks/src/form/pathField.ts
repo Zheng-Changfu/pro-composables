@@ -16,6 +16,12 @@ export class PathField {
     return this.map.get(toRaw(stringifyPath(path)))
   }
 
+  has = (path: InternalPath) => {
+    if (path.length <= 0)
+      return
+    return this.map.has(stringifyPath(path))
+  }
+
   getValues = () => {
     const res = {} as any
     this.map.forEach((field, key) => {
