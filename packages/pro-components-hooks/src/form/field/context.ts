@@ -12,7 +12,7 @@ export function useInjectParentFieldContext() {
 }
 
 export const fieldContextKey = Symbol('field') as InjectionKey<BaseField>
-export function provideFieldContext(field: ArrayField) {
+export function provideFieldContext(field: BaseField) {
   provide(fieldContextKey, field)
 }
 

@@ -2,7 +2,7 @@ import { onBeforeUpdate, onMounted, onUnmounted, onUpdated, watch } from 'vue-de
 import { usePath } from '../path/usePath'
 import { useInjectFormContext } from '../context'
 import { uid } from '../../utils/id'
-import { useInjectParentFieldContext } from './context'
+import { provideFieldContext, useInjectParentFieldContext } from './context'
 import type { BaseField, FieldOptions } from './types'
 import { useFieldProps } from './useFieldProps'
 import { useFormItemProps } from './useFormItemProps'
@@ -174,5 +174,6 @@ function createBaseField<T = any>(
 
   onMounted(() => form.deps.add(baseField.dependencies))
   onUnmounted(() => controller.unmount(baseField))
+  provideFieldContext(baseField)
   return baseField
 }
