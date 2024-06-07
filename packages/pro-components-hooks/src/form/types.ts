@@ -38,6 +38,10 @@ export interface BaseForm {
    */
   deps: Deps
   /**
+   * 表达式可以读取到的上下文
+   */
+  scope: ExpressionScope
+  /**
    * 表单是否挂载完成
    */
   mounted: boolean

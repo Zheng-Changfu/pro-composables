@@ -38,8 +38,24 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     skipTraversal,
   })
 
+  const scope = {
+    /**
+     * 整个表单的值，等同于 getFieldsValue(true)
+     */
+    $values: values.value,
+    /**
+     * @alias $values
+     */
+    $vals: values.value,
+    /**
+     * 用户传递的
+     */
+    ...(options.expressionContext ?? {}),
+  }
+
   const form: BaseForm = {
     deps,
+    scope,
     values,
     id: uid(),
     pathField,
@@ -102,7 +118,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   }
 
   provideFormContext(form)
-  provideCompileScopeContext(options.expressionContext ?? {})
+  provideCompileScopeContext(scope)
 
   onMounted(() => form.mounted = true)
   onFieldValueChange(onDependenciesChange)

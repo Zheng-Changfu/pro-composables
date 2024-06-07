@@ -77,17 +77,9 @@ export function getFieldExpressionScope(
      */
     $index: rowIndex,
     /**
-     * 整个表单的值，等同于 getFieldsValue(true)
-     */
-    $values: form.values.value,
-    /**
      * @alias $row
      */
     $record: row,
-    /**
-     * @alias $values
-     */
-    $vals: form.values.value,
     /**
      * @alias $length
      */
