@@ -61,10 +61,7 @@ describe('form props', () => {
         return () => {
           return h(Form, {
             expressionContext: {
-              $values: {
-                a: 1,
-                b: 2,
-              },
+              $t: 1,
             },
           }, h(T))
         }
@@ -73,10 +70,9 @@ describe('form props', () => {
 
     const vm = mount(Comp)
     expect(val).toStrictEqual({
-      $values: {
-        a: 1,
-        b: 2,
-      },
+      $t: 1,
+      $vals: {},
+      $values: {},
     })
     vm.unmount()
   })
