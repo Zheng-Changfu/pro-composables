@@ -63,7 +63,7 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
     // priority：value > initialValue > initialValues > defaultValue
     let val
     const p = path.value
-    if (postState && !form.pathField.has(p)) {
+    if (p.length > 0 && postState && !form.pathField.has(p)) {
       /**
        * 初始值的设置不应该放在 onMounted 中，因为会二次更新
        * 所以将 postState 先存进去，防止 postState 没有被触发
