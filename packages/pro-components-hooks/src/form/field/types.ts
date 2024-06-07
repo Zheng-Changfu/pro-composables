@@ -66,6 +66,10 @@ export interface FieldOptions<T = any> {
    * 值变化后的回调
    */
   onChange?: (val: T) => void
+  /**
+   * 用户自定义挂载进去的属性必须以 x- 开头
+   */
+  [key: `x-${string}`]: any
 }
 
 export interface BaseField<T = any> {
@@ -151,6 +155,10 @@ export interface BaseField<T = any> {
    * 值变化后的回调
    */
   onChange?: (val: T) => void
+  /**
+   * 用户自定义挂载进去的属性必须以 x- 开头
+   */
+  [key: `x-${string}`]: any
 }
 
 export interface ArrayField<T = any> extends BaseField<T[]> {

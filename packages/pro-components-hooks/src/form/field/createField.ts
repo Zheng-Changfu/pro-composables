@@ -32,6 +32,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
     onChange,
     postState,
     transform,
+    ...customValues
   } = fieldOptions
 
   const {
@@ -52,6 +53,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
       onChange,
       postState,
       transform,
+      ...customValues,
     },
     { isList },
   )
@@ -74,6 +76,7 @@ function createBaseField<T = any>(
     visible: userVisible,
     defaultValue: userDefaultValue,
     initialValue: userInitialValue,
+    ...customValues
   } = fieldOptions
 
   const {
@@ -143,6 +146,7 @@ function createBaseField<T = any>(
     doUpdateValue,
     doUpdateFieldProps,
     doUpdateFormItemProps,
+    ...customValues,
   }
 
   onBeforeUpdate(() => {
