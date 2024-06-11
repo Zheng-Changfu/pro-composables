@@ -1,6 +1,7 @@
 import type { Ref } from 'vue-demi'
 import { computed, unref } from 'vue-demi'
 import { toPath } from 'lodash-es'
+import { stringifyPath } from '../utils/path'
 import type { Path } from './types'
 import { useInjectPathContext, useInjectPathIndexContext } from './context'
 
@@ -26,5 +27,6 @@ export function usePath(path?: Ref<Path | undefined>) {
   return {
     path: pathRef,
     index: indexRef,
+    stringPath: computed(() => stringifyPath(pathRef.value)),
   }
 }

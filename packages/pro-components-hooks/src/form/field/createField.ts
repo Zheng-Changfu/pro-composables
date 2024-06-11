@@ -91,6 +91,7 @@ function createBaseField<T = any>(
   const {
     path,
     index,
+    stringPath,
   } = usePath(userPath)
 
   const { scope } = getFieldExpressionScope(
@@ -137,6 +138,7 @@ function createBaseField<T = any>(
     preserve,
     fieldProps,
     isListPath,
+    stringPath,
     dependencies,
     formItemProps,
     updating: false,

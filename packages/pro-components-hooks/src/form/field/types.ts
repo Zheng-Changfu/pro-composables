@@ -90,6 +90,10 @@ export interface BaseField<T = any> {
    */
   path: ComputedRef<string[]>
   /**
+   * 字段路径（字符串格式）
+   */
+  stringPath: ComputedRef<string>
+  /**
    * 当字段被卸载或者隐藏时是否保留字段值
    * @default true
    */
