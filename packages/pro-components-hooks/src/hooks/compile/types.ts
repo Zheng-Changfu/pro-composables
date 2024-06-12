@@ -1,5 +1,3 @@
-import type { CSSProperties, Ref } from 'vue-demi'
-
 type StringExpression = `{{${string}}}`
 type IsPlainString<T> = T extends string
   ? T extends StringExpression
@@ -9,6 +7,12 @@ type IsPlainString<T> = T extends string
 
 type IsNumber<T> = T extends number ? true : false
 type IsBoolean<T> = T extends boolean ? true : false
+type IsTuple<T> = T extends []
+  ? false
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  : T extends [infer F, ...infer Rest]
+    ? true
+    : false
 
 type IsBasicType<T> = IsPlainString<T> extends true
   ? true
@@ -29,32 +33,35 @@ type IsSpecialObject<T> = T extends
   ? true
   : false
 
-export type MaybeExpression<T> = T extends (infer U)[]
-  ? (MaybeExpression<U>)[]
-  : IsSpecialObject<T> extends true
-    ? T | StringExpression
-    : IsBasicType<T> extends true
-      ? T | StringExpression
-      : T extends object
-        ? { [K in keyof T]: MaybeExpression<T[K]> }
-        : T | StringExpression
-
-export type ExcludeExpression<T> = T extends (infer U)[]
-  ? (ExcludeExpression<U>)[]
-  : IsSpecialObject<T> extends true
+  type MaybeExpressionInternal<T> = T extends []
     ? T
-    : IsBasicType<T> extends true
-      ? T
-      : T extends object
-        ? { [K in keyof T]: ExcludeExpression<T[K]> }
-        : T extends StringExpression
-          ? never
-          : T
+    : IsTuple<T> extends true
+      ? { [K in keyof T]: MaybeExpression<T[K]> }
+      : T extends (infer U)[]
+        ? MaybeExpression<U>[]
+        : IsSpecialObject<T> extends true
+          ? T | StringExpression
+          : IsBasicType<T> extends true
+            ? T | StringExpression
+            : T extends object
+              ? { [K in keyof T]: MaybeExpression<T[K]> }
+              : T | StringExpression
 
-// eslint-disable-next-line ts/ban-types
-export type AnimationIterationCount = 'infinite' | (string & {}) | (number & {})
+type ExcludeExpressionInternal<T> = T extends []
+  ? T
+  : IsTuple<T> extends true
+    ? { [K in keyof T]: ExcludeExpression<T[K]> }
+    : T extends (infer U)[]
+      ? ExcludeExpression<U>[]
+      : IsSpecialObject<T> extends true
+        ? T
+        : IsBasicType<T> extends true
+          ? T
+          : T extends object
+            ? { [K in keyof T]: ExcludeExpression<T[K]> }
+            : T extends StringExpression
+              ? never
+              : T
 
-function t(t: AnimationIterationCount) {
-  console.log(t)
-}
-t({} as any as ExcludeExpression<MaybeExpression<AnimationIterationCount>>)
+export type MaybeExpression<T> = MaybeExpressionInternal<T>
+export type ExcludeExpression<T> = ExcludeExpressionInternal<T>
