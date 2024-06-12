@@ -44,16 +44,19 @@ export function createControlRef<T extends (Record<string, any> | Array<any>)>(i
   }
 
   function traverse<T extends (Record<string, any> | Array<any>)>(data: T, callback: (path: Array<string | number>, value: any) => void) {
-    const _traverse = (data: T, parentPath: InternalPath | null) => {
+    const _traverse = (data: T, parentPath: InternalPath | null, set = new Set()) => {
       for (const key in data) {
         const value = data[key]
+        if (set.has(value))
+          return value
+        set.add(value)
         const path = joinPath(parentPath, key)
         if (skipTraversal && skipTraversal(path, value))
           continue
 
         callback(path, value)
         if (isPlainObject(value) || isArray(value))
-          _traverse(value as T, path)
+          _traverse(value as T, path, set)
       }
     }
     _traverse(data, null)
