@@ -5,33 +5,37 @@ import type { Ref, WatchSource } from 'vue-demi'
 import { ref, watch } from 'vue-demi'
 
 type AnyFn = (...args: any[]) => any
-
-export type InferResponse<Response, TransformFn extends ((response: Response) => any) | undefined> = TransformFn extends AnyFn
-  ? ReturnType<TransformFn> extends infer R
-    ? R
-    : never
+type InferApiReturned<Api extends AnyFn> = Awaited<ReturnType<Api>>
+type InferApiParams<Api> = Api extends (...args: infer Args) => any ? Args : never
+export type InferResponse<
+Response,
+TransformFn extends AnyFn | undefined,
+> = TransformFn extends AnyFn
+  ? ReturnType<TransformFn>
   : Response
 
 export interface UseRequestReturned<
-Response,
-Api extends AnyFn,
-TransformFn extends ((response: Response) => any) | undefined,
+  Api extends AnyFn,
+  TransformFn extends AnyFn | undefined,
 > {
   error: Ref<any>
   loading: Ref<boolean>
   onFailure: EventHookOn<any>
-  data: Ref<InferResponse<Response, TransformFn>>
-  runBool: (...args: Parameters<Api>) => Promise<boolean>
-  onSuccess: EventHookOn<InferResponse<Response, TransformFn>>
-  run: (...args: Parameters<Api>) => Promise<[any, InferResponse<Response, TransformFn>]>
+  data: Ref<InferResponse<InferApiReturned<Api>, TransformFn>>
+  runBool: (...args: InferApiParams<Api>) => Promise<boolean>
+  onSuccess: EventHookOn<InferResponse<InferApiReturned<Api>, TransformFn>>
+  run: (...args: InferApiParams<Api>) => Promise<[any, InferResponse<InferApiReturned<Api>, TransformFn>]>
 }
 
-export interface UseRequestOptions<Response, Api extends (...args: any[]) => Promise<Response>, TransformFn extends ((response: Response) => any) | undefined> {
+export interface UseRequestOptions<
+Api extends AnyFn,
+TransformFn extends AnyFn | undefined,
+> {
   /**
-   * 初始值
+   * 初始值(使用 ts 时，请确保 initialValue 和预期类型一致，否则会导致推断错误)
    * @default undefined
    */
-  initialValue?: InferResponse<Response, TransformFn>
+  initialValue?: InferResponse<InferApiReturned<Api>, TransformFn>
   /**
    * 请求函数
    */
@@ -44,7 +48,7 @@ export interface UseRequestOptions<Response, Api extends (...args: any[]) => Pro
   /**
    * 请求成功后的提示，false 则不提示
    */
-  successTip?: string | false | ((response: InferResponse<Response, TransformFn>) => string | false)
+  successTip?: string | false | ((response: InferResponse<InferApiReturned<Api>, TransformFn>) => string | false)
   /**
    * 请求失败后的提示，false 则不提示
    */
@@ -61,7 +65,7 @@ export interface UseRequestOptions<Response, Api extends (...args: any[]) => Pro
    * 请求成功后调用的回调
    * @param response 成功后的结果，可能会被 transform 转换
    */
-  onSuccess?: (response: InferResponse<Response, TransformFn>) => void
+  onSuccess?: (response: InferResponse<InferApiReturned<Api>, TransformFn>) => void
   /**
    * 请求失败后调用的回调
    * @param error 错误原因
@@ -76,19 +80,16 @@ export interface UseRequestOptions<Response, Api extends (...args: any[]) => Pro
   tipApi?: (type: 'success' | 'failure', tipText: string, dataOrError: any) => void
 }
 export function useRequest<
-Response,
-Api extends (...args: any[]) => Promise<Response>,
->(options: UseRequestOptions<Response, Api, undefined>): UseRequestReturned<Response, Api, undefined>
+  Api extends AnyFn,
+>(options: UseRequestOptions<Api, undefined>): UseRequestReturned<Api, undefined>
 export function useRequest<
-  Response,
-  Api extends (...args: any[]) => Promise<Response>,
-  TransformFn extends (response: Response) => any,
->(options: UseRequestOptions<Response, Api, TransformFn>): UseRequestReturned<Response, Api, TransformFn>
+  Api extends AnyFn,
+  TransformFn extends (res: InferApiReturned<Api>) => any,
+>(options: UseRequestOptions<Api, TransformFn>): UseRequestReturned<Api, TransformFn>
 export function useRequest<
-  Response,
-  Api extends (...args: any[]) => Promise<Response>,
-  TransformFn extends AnyFn,
->(options: UseRequestOptions<Response, Api, TransformFn>) {
+  Api extends AnyFn,
+  TransformFn extends AnyFn | undefined,
+>(options: UseRequestOptions<Api, TransformFn>) {
   const {
     api,
     tipApi,
@@ -105,15 +106,15 @@ export function useRequest<
   const error = ref()
   const loading = ref(false)
   const data = ref(initialValue)
-  const { on: onSuccess, trigger: triggerSuccess } = createEventHook<InferResponse<Response, typeof transform>>()
+  const { on: onSuccess, trigger: triggerSuccess } = createEventHook<InferResponse<InferApiReturned<Api>, TransformFn>>()
   const { on: onFailure, trigger: triggerFailure } = createEventHook<any>()
 
   function fetch(...args: any[]) {
     // eslint-disable-next-line no-async-promise-executor
-    return new Promise<[any, InferResponse<Response, typeof transform>]>(async (resolve) => {
+    return new Promise<[any, InferResponse<InferApiReturned<Api>, TransformFn>]>(async (resolve) => {
       loading.value = true
       error.value = undefined
-      data.value = initialValue
+      data.value = initialValue as any
       try {
         const response = await api(...args)
         const transformedResponse = transform ? transform(response) : response
