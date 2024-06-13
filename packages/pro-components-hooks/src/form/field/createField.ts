@@ -179,7 +179,7 @@ function createBaseField<T = any>(
     { immediate: true },
   )
 
-  onMounted(() => form.deps.add(baseField.dependencies))
+  onMounted(() => form.deps.add(baseField))
   onUnmounted(() => controller.unmount(baseField))
   provideFieldContext(baseField)
   return baseField

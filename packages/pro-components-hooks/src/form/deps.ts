@@ -2,11 +2,15 @@ import { onScopeDispose } from 'vue-demi'
 import { isArray, isString } from 'lodash-es'
 import type { BaseForm, FormOptions } from './types'
 import { normalizePathMatch, stringifyPath } from './utils/path'
-import type { Dependencie } from './field'
+import type { BaseField, Dependencie } from './field'
 
+type DepMatch = (path: string, paths: string[]) => boolean
+interface DepMatchFn extends DepMatch {
+  field: BaseField
+}
 export class Deps {
   private options!: FormOptions
-  private depSet!: Set<(path: string, paths: string[]) => boolean>
+  private depSet!: Set<DepMatchFn>
 
   constructor(options: FormOptions) {
     this.options = options
@@ -25,12 +29,14 @@ export class Deps {
     return normalizePathMatch(pathMatch)
   }
 
-  add = (deps: Dependencie | Dependencie[]) => {
+  add = (field: BaseField) => {
+    let deps = field.dependencies
     if (!isArray(deps))
       deps = [deps]
     deps.forEach((dep) => {
-      const normalizedDep = this.normalizeDep(dep)
-      this.depSet.add(normalizedDep)
+      const normalizedDep = this.normalizeDep(dep) as any
+      normalizedDep.field = field
+      this.depSet.add(normalizedDep as DepMatchFn)
     })
   }
 
@@ -42,7 +48,7 @@ export class Deps {
     const paths = form.pathField.keys()
     this.depSet.forEach((match) => {
       if (match(sp, paths))
-        onDependenciesValueChange(params)
+        onDependenciesValueChange({ ...params, depPath: match.field.path.value })
     })
   }
 }

@@ -100,12 +100,16 @@ describe('form props', () => {
   })
 
   it('onDependenciesValueChange', async () => {
+    const depsAuguments: any = []
     const matchFnArguments: any = []
     const match = vi.fn((path, paths) => {
       matchFnArguments.push(path, paths)
       return path === 'b'
     })
-    const onDependenciesValueChange = vi.fn()
+    const onDependenciesValueChange = vi.fn(({ path, depPath }) => {
+      if (depsAuguments.length <= 0)
+        depsAuguments.push(path, depPath)
+    })
     const Comp = defineComponent({
       setup() {
         let _form: BaseForm
@@ -135,6 +139,7 @@ describe('form props', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onDependenciesValueChange).toBeCalledTimes(6)
+    expect(depsAuguments).toStrictEqual([['b'], ['a']])
     expect(match).toHaveReturnedWith(true)
     expect(matchFnArguments).toStrictEqual([
       'b',
