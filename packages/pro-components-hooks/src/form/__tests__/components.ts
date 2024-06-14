@@ -1,6 +1,6 @@
 import { computed, defineComponent, h, onMounted, toRef } from 'vue-demi'
 import { createForm } from '../form'
-import { createArrayField, createField, useInjectParentFieldContext } from '../field'
+import { createArrayField, createField, useInjectFieldContext, useInjectParentFieldContext } from '../field'
 import { uid } from '../../utils/id'
 import { providePathContext, providePathIndexContext } from '../path'
 
@@ -57,10 +57,16 @@ export const FormItem = defineComponent({
       preserve: props.preserve,
       transform: props.transform,
     })
+    const listField = useInjectFieldContext()
     onMounted(() => {
       props.onFieldMounted?.(field)
     })
-    return () => slots.default?.()
+    return () => {
+      if (listField?.show.value)
+        return slots.default?.()
+
+      return null
+    }
   },
 })
 
@@ -133,8 +139,10 @@ export const FormList = defineComponent({
 
     return () => {
       const list = field.value.value ?? []
-      return list.map((_, index) => {
-        return h(FormListItem, { key: _.id, index }, slots)
+      return h(FormItem, {}, {
+        default: () => list.map((_, index) => {
+          return h(FormListItem, { key: _.id, index }, slots)
+        }),
       })
     }
   },

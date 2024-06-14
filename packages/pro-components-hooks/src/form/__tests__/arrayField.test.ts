@@ -6,6 +6,55 @@ import type { BaseForm } from '../types'
 import { Form, FormItem, FormList } from './components'
 
 describe('arrayField api', () => {
+  it('hidden', async () => {
+    const vals: any[] = []
+    const Comp = defineComponent({
+      setup() {
+        let _form: BaseForm
+
+        function onFormMounted(form: BaseForm) {
+          _form = form
+        }
+
+        onMounted(async () => {
+          _form.setFieldValue('list[0].u1', '234')
+          await nextTick()
+          _form.setFieldValue('u1', '1')
+          await nextTick()
+          _form.setFieldValue('u1', '2')
+          await nextTick()
+          vals.push(
+            _form.getFieldsValue(),
+            _form.getFieldsValue(true),
+          )
+        })
+
+        return () => {
+          return h(Form, {
+            onFormMounted,
+          }, [
+            h(FormItem, { path: 'u1' }),
+            h(FormList, {
+              path: 'list',
+              hidden: '{{ $vals.u1 === \'1\' }}',
+            }, [
+              h(FormItem, { defaultValue: '', path: 'u1' }),
+            ]),
+          ])
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    await nextTick()
+    await nextTick()
+    await nextTick()
+    await nextTick()
+    expect(vals[0]).toStrictEqual({ u1: '2', list: [{ u1: '234' }] })
+    expect(vals[1]).toMatchObject({ u1: '2', list: [{ u1: '234' }] })
+    vm.unmount()
+  })
+
   it('push', async () => {
     const vals: any[] = []
     const Comp = defineComponent({
