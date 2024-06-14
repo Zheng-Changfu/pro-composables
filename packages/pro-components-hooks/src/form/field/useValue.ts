@@ -59,7 +59,7 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
   )
 
   const updating = parent?.updating
-  if (!updating) {
+  if (!updating && !form.values.has(path.value)) {
     // priority：value > initialValue > initialValues > defaultValue
     let val
     const p = path.value
