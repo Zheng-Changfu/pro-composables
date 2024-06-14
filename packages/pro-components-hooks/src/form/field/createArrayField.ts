@@ -19,39 +19,39 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
   })
 
   function push(...items: T[]) {
-    field.value.value = basePush(field.value.value, ...items)
+    field.value.value = basePush(field.value.value ?? [], ...items)
   }
 
   function pop() {
-    field.value.value = basePop(field.value.value)
+    field.value.value = basePop(field.value.value ?? [])
   }
 
   function insert(index: number, ...items: T[]) {
-    field.value.value = baseInsert(field.value.value, index, ...items)
+    field.value.value = baseInsert(field.value.value ?? [], index, ...items)
   }
 
   function remove(index: number) {
-    field.value.value = baseRemove(field.value.value, index)
+    field.value.value = baseRemove(field.value.value ?? [], index)
   }
 
   function shift() {
-    field.value.value = baseShift(field.value.value)
+    field.value.value = baseShift(field.value.value ?? [])
   }
 
   function unshift(...items: T[]) {
-    field.value.value = baseUnshift(field.value.value, ...items)
+    field.value.value = baseUnshift(field.value.value ?? [], ...items)
   }
 
   function move(from: number, to: number) {
-    field.value.value = baseMove(field.value.value, from, to)
+    field.value.value = baseMove(field.value.value ?? [], from, to)
   }
 
   function moveUp(index: number) {
-    field.value.value = baseMoveUp(field.value.value, index)
+    field.value.value = baseMoveUp(field.value.value ?? [], index)
   }
 
   function moveDown(index: number) {
-    field.value.value = baseMoveDown(field.value.value, index)
+    field.value.value = baseMoveDown(field.value.value ?? [], index)
   }
 
   const arrayField: ArrayField = Object.assign(field, {
