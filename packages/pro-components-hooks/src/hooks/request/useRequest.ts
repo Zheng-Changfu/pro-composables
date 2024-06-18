@@ -1,8 +1,8 @@
 import type { EventHookOn } from '@vueuse/core'
-import { createEventHook } from '@vueuse/core'
+import { createEventHook, useTimeoutFn } from '@vueuse/core'
 import { isFunction, isString, isUndefined } from 'lodash-es'
 import type { Ref, WatchSource } from 'vue-demi'
-import { ref, watch } from 'vue-demi'
+import { onMounted, ref, watch } from 'vue-demi'
 import { useInjectRequestTipConfigContext } from './context'
 
 type AnyFn = (...args: any[]) => any
@@ -196,11 +196,16 @@ export function useRequest<
   onUserFailure && onFailure(onUserFailure)
   onUserSuccess && onSuccess(onUserSuccess as any)
 
-  immediate && run()
-
   dependencies
   && dependencies.length > 0
   && watch(dependencies, () => run())
+
+  onMounted(() => {
+    /**
+     * 确保运行 run 时外界可以拿到组件实例
+     */
+    immediate && useTimeoutFn(run, 16)
+  })
 
   return {
     run,
