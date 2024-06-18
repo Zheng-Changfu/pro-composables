@@ -1,3 +1,3 @@
 export * from './compile'
+export * from './request'
 export * from './createControlRef'
-export * from './request/useRequest'

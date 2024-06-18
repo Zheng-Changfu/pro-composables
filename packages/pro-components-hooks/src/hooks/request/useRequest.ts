@@ -3,6 +3,7 @@ import { createEventHook } from '@vueuse/core'
 import { isFunction, isString, isUndefined } from 'lodash-es'
 import type { Ref, WatchSource } from 'vue-demi'
 import { ref, watch } from 'vue-demi'
+import { useInjectRequestTipConfigContext } from './context'
 
 type AnyFn = (...args: any[]) => any
 type InferApiReturned<Api extends AnyFn> = Awaited<ReturnType<Api>>
@@ -103,6 +104,16 @@ export function useRequest<
     onSuccess: onUserSuccess,
   } = options
 
+  const {
+    tipApi: globalTipApi,
+    successTip: globalSuccessTip,
+    failureTip: globalFailureTip,
+  } = useInjectRequestTipConfigContext()
+
+  const localTipApi = tipApi ?? globalTipApi
+  const localSuccessTip = successTip ?? globalSuccessTip
+  const localFailureTip = failureTip ?? globalFailureTip
+
   const error = ref()
   const loading = ref(false)
   const data = ref(initialValue)
@@ -157,23 +168,23 @@ export function useRequest<
   function onSuccessTip(res: any) {
     let successTipText: string | false
     if (
-      !tipApi
+      !localTipApi
       // eslint-disable-next-line no-cond-assign
-      || (successTipText = getTipText(res, successTip)) === false
+      || (successTipText = getTipText(res, localSuccessTip)) === false
     )
       return
-    tipApi('success', successTipText, res)
+    localTipApi('success', successTipText, res)
   }
 
   function onFailureTip(err: any) {
     let failureTipText: string | false
     if (
-      !tipApi
+      !localTipApi
       // eslint-disable-next-line no-cond-assign
-      || (failureTipText = getTipText(err, failureTip)) === false
+      || (failureTipText = getTipText(err, localFailureTip)) === false
     )
       return
-    tipApi('failure', failureTipText, err)
+    localTipApi('failure', failureTipText, err)
   }
 
   onFailure(onFailureTip)
