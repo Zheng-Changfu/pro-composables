@@ -1,6 +1,6 @@
 import { type InjectionKey, inject, provide } from 'vue-demi'
 
-interface RequestTipConfig {
+export interface RequestTipConfig {
   failureTip?: string | false | ((error: any) => string | false)
   successTip?: string | false | ((response: any) => string | false)
   tipApi?: (type: 'success' | 'failure', tipText: string, dataOrError: any) => void
