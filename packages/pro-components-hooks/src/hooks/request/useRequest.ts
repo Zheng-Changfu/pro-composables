@@ -123,14 +123,13 @@ export function useRequest<
   function fetch(...args: any[]) {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<[any, InferResponse<InferApiReturned<Api>, TransformFn>]>(async (resolve) => {
+      if (!api) {
+        resolve([undefined, initialValue as any])
+        return
+      }
       loading.value = true
       error.value = undefined
-      data.value = initialValue as any
       try {
-        if (!api) {
-          resolve([undefined, initialValue as any])
-          return
-        }
         const response = await api(...args)
         const transformedResponse = transform ? transform(response) : response
         data.value = transformedResponse
@@ -139,6 +138,7 @@ export function useRequest<
       }
       catch (err) {
         error.value = err
+        data.value = initialValue as any
         triggerFailure(err)
         resolve([err, undefined as any])
       }
