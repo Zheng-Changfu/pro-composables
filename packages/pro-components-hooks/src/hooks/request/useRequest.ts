@@ -127,6 +127,10 @@ export function useRequest<
       error.value = undefined
       data.value = initialValue as any
       try {
+        if (!api) {
+          resolve([undefined, initialValue as any])
+          return
+        }
         const response = await api(...args)
         const transformedResponse = transform ? transform(response) : response
         data.value = transformedResponse
