@@ -1,4 +1,4 @@
-import { get, isArray } from 'lodash-es'
+import { get, has, isArray } from 'lodash-es'
 
 type MapTreeData<R, F extends string | number | symbol> = Array<R & { [K in F]?: MapTreeData<R, K> }>
 
@@ -18,13 +18,17 @@ export function mapTree<T, R, F extends keyof T>(
     const children = get(item, childrenField, [])
     const returnedItem = callback(item, index, info, array)
     if (isArray(children)) {
-      info.level += 1
-      info.parent = item
-      const mappedChildren = mapTree(children, callback, childrenField, info)
-      return {
-        ...returnedItem,
-        [childrenField]: mappedChildren,
+      info = {
+        level: info.level + 1,
+        parent: item,
       }
+      const mappedChildren = mapTree(children, callback, childrenField, info)
+      return has(mappedChildren, childrenField)
+        ? {
+            ...returnedItem,
+            [childrenField]: mappedChildren,
+          }
+        : returnedItem
     }
     return returnedItem
   }) as MapTreeData<R, F>
@@ -41,8 +45,10 @@ export function eachTree<T, R, F extends keyof T>(
     const children = get(item, childrenField, [])
     callback(item, index, info, array)
     if (isArray(children)) {
-      info.level += 1
-      info.parent = item
+      info = {
+        level: info.level + 1,
+        parent: item,
+      }
       eachTree(children, callback, childrenField, info)
     }
   })
