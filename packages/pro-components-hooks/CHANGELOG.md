@@ -1,5 +1,17 @@
 # pro-components-hooks
 
+## 0.0.48
+
+### Patch Changes
+
+- feat:release@0.0.48
+
+## 0.0.47
+
+### Patch Changes
+
+- feat:release@0.0.47
+
 ## 0.0.46
 
 ### Patch Changes

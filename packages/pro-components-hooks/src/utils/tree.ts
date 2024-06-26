@@ -18,11 +18,15 @@ export function mapTree<T, R, F extends keyof T>(
     const children = get(item, childrenField, [])
     const returnedItem = callback(item, index, info, array)
     if (isArray(children)) {
-      info = {
-        level: info.level + 1,
-        parent: item,
-      }
-      const mappedChildren = mapTree(children, callback, childrenField, info)
+      const mappedChildren = mapTree(
+        children,
+        callback,
+        childrenField,
+        {
+          level: info.level + 1,
+          parent: item,
+        },
+      )
       return has(mappedChildren, childrenField)
         ? {
             ...returnedItem,
@@ -45,11 +49,12 @@ export function eachTree<T, R, F extends keyof T>(
     const children = get(item, childrenField, [])
     callback(item, index, info, array)
     if (isArray(children)) {
-      info = {
-        level: info.level + 1,
-        parent: item,
-      }
-      eachTree(children, callback, childrenField, info)
+      eachTree(
+        children,
+        callback,
+        childrenField,
+        { level: info.level + 1, parent: item },
+      )
     }
   })
 }
