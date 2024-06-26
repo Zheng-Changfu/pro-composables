@@ -27,7 +27,7 @@ export function mapTree<T, R, F extends keyof T>(
           parent: item,
         },
       )
-      return has(mappedChildren, childrenField)
+      return has(returnedItem, childrenField)
         ? {
             ...returnedItem,
             [childrenField]: mappedChildren,
