@@ -30,7 +30,7 @@ function unwrapScope(scope: Record<string, any>) {
   return scope
 }
 
-function baseCompile(source: any, scope: Record<string, any>) {
+export function baseCompile(source: any, scope: Record<string, any>) {
   if (!isString(source))
     return source
 
