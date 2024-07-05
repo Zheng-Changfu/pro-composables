@@ -1,6 +1,6 @@
-import { isArray, isObject, isPlainObject, isString } from 'lodash-es'
+import { isArray, isPlainObject, isString } from 'lodash-es'
 import type { ComputedRef, Ref, UnwrapRef } from 'vue-demi'
-import { computed, isProxy, isRef, unref } from 'vue-demi'
+import { computed, isRef, unref } from 'vue-demi'
 import type { ExcludeExpression } from './types'
 
 const expressionReg = /\{\{([\s\S]*)\}\}/
