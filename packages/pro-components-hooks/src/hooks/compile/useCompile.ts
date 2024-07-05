@@ -1,6 +1,6 @@
 import { isArray, isPlainObject, isString } from 'lodash-es'
 import type { ComputedRef, Ref, UnwrapRef } from 'vue-demi'
-import { computed, isRef, unref } from 'vue-demi'
+import { computed, isProxy, isRef, unref } from 'vue-demi'
 import type { ExcludeExpression } from './types'
 
 const expressionReg = /\{\{([\s\S]*)\}\}/
@@ -51,7 +51,7 @@ export function compile<T = any>(source: T, scope: Record<string, any>): Exclude
     return source as any
 
   const traverse = (data: any) => {
-    if (!isArray(data) && !isPlainObject(data))
+    if (!isArray(data) && !isProxy(data) && !isPlainObject(data))
       return data
     const ret: any = isArray(data) ? [] : {}
     for (const key in data) {
