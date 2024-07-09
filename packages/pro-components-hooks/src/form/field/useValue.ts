@@ -80,7 +80,7 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
     if (initialValue !== undefined)
       val = initialValue
 
-    if (value && value.value !== undefined)
+    if (value && value.value !== undefined && compiledUserValue.value !== undefined)
       val = compiledUserValue.value
 
     if (val !== undefined) {
