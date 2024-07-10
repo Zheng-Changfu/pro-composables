@@ -1,13 +1,15 @@
 import type { EventHookOn } from '@vueuse/core'
 import { createEventHook, useTimeoutFn } from '@vueuse/core'
-import { isFunction, isString, isUndefined } from 'lodash-es'
-import type { Ref, WatchSource } from 'vue-demi'
-import { onMounted, ref, watch } from 'vue-demi'
+import { has, isFunction, isString, isUndefined } from 'lodash-es'
+import type { ComputedRef, Ref, WatchSource } from 'vue-demi'
+import { onMounted, ref, toValue, watch } from 'vue-demi'
 import { useInjectRequestTipConfigContext } from './context'
 
+type MaybeArray<T> = T | Array<T>
 type AnyFn = (...args: any[]) => any
 type InferApiReturned<Api extends AnyFn> = Awaited<ReturnType<Api>>
 type InferApiParams<Api> = Api extends (...args: infer Args) => any ? Args : never
+
 export type InferResponse<
 Response,
 TransformFn extends AnyFn | undefined,
@@ -61,7 +63,7 @@ TransformFn extends AnyFn | undefined,
   /**
    * 依赖项数组，当依赖发生变化时，会重新调用 api
    */
-  dependencies?: WatchSource[]
+  dependencies?: MaybeArray<WatchSource> | { watch: MaybeArray<WatchSource>, runable: ComputedRef<boolean> | (() => boolean) }
   /**
    * 请求成功后调用的回调
    * @param response 成功后的结果，可能会被 transform 转换
@@ -196,16 +198,24 @@ export function useRequest<
   onUserFailure && onFailure(onUserFailure)
   onUserSuccess && onSuccess(onUserSuccess as any)
 
-  dependencies
-  && dependencies.length > 0
-  && watch(dependencies, () => run())
-
   onMounted(() => {
     /**
      * 确保运行 run 时外界可以拿到组件实例
      */
     immediate && useTimeoutFn(run, 16)
   })
+
+  if (dependencies) {
+    const {
+      runable,
+      watch: watchSource,
+    } = has(dependencies, 'runable') ? dependencies as any : { watch: dependencies, runable: true }
+
+    watch(
+      watchSource,
+      () => toValue(runable) && run(),
+    )
+  }
 
   return {
     run,
