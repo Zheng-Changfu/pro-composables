@@ -49,9 +49,9 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
     },
   })
 
-  const compiledUserValue = useCompile(value!, { scope })
+  const compiledPropValue = useCompile(value!, { scope })
   watch(
-    compiledUserValue,
+    compiledPropValue,
     (val) => {
       if (form.values.has(path.value))
         proxy.value = val
@@ -80,8 +80,8 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
     if (initialValue !== undefined)
       val = initialValue
 
-    if (value && value.value !== undefined && compiledUserValue.value !== undefined)
-      val = compiledUserValue.value
+    if (value && value.value !== undefined && compiledPropValue.value !== undefined)
+      val = compiledPropValue.value
 
     if (val !== undefined) {
       proxy.value = val

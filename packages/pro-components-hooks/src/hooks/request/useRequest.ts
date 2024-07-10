@@ -102,8 +102,8 @@ export function useRequest<
     initialValue,
     dependencies,
     immediate = true,
-    onFailure: onUserFailure,
-    onSuccess: onUserSuccess,
+    onFailure: onPropFailure,
+    onSuccess: onPropSuccess,
   } = options
 
   const {
@@ -195,8 +195,8 @@ export function useRequest<
 
   onFailure(onFailureTip)
   onSuccess(onSuccessTip as any)
-  onUserFailure && onFailure(onUserFailure)
-  onUserSuccess && onSuccess(onUserSuccess as any)
+  onPropFailure && onFailure(onPropFailure)
+  onPropSuccess && onSuccess(onPropSuccess as any)
 
   onMounted(() => {
     /**

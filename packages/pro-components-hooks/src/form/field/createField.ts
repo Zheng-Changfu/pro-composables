@@ -69,13 +69,13 @@ function createBaseField<T = any>(
     transform,
     preserve,
     dependencies,
-    path: userPath,
-    value: userValue,
-    scope: userScope,
-    hidden: userHidden,
-    visible: userVisible,
-    defaultValue: userDefaultValue,
-    initialValue: userInitialValue,
+    path: propPath,
+    value: propValue,
+    scope: propScope,
+    hidden: propHidden,
+    visible: propVisible,
+    defaultValue: propDefaultValue,
+    initialValue: propInitialValue,
     ...customValues
   } = fieldOptions
 
@@ -92,16 +92,16 @@ function createBaseField<T = any>(
     path,
     index,
     stringPath,
-  } = usePath(userPath)
+  } = usePath(propPath)
 
   const { scope } = getFieldExpressionScope(
     path,
-    { scope: userScope },
+    { scope: propScope },
   )
 
   const { show } = useShow(
-    userHidden,
-    userVisible,
+    propHidden,
+    propVisible,
     { scope },
   )
 
@@ -116,13 +116,13 @@ function createBaseField<T = any>(
   } = useFormItemProps({ scope })
 
   const { value, doUpdateValue } = useValue(
-    userValue,
+    propValue,
     {
       path,
       scope,
       postState,
-      defaultValue: userDefaultValue,
-      initialValue: userInitialValue,
+      defaultValue: propDefaultValue,
+      initialValue: propInitialValue,
     },
   )
 
