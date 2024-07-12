@@ -73,8 +73,8 @@ export function createControlRef<T extends (Record<string, any> | Array<any>)>(i
   }
 
   function set(val: Partial<T>, tactic?: '__v_merge__' | '__v_overlay__'): void
-  function set(path: Path, val: any): void
-  function set(pathOrVal: Path | Partial<T>, valOrTactic?: any) {
+  function set(path: Path, val: any, triggerChange?: boolean): void
+  function set(pathOrVal: Path | Partial<T>, valOrTactic?: any, triggerChange = true) {
     const args = arguments.length
     if (args === 1 || tactics.includes(valOrTactic)) {
       const tactic = valOrTactic ?? '__v_merge__'
@@ -98,7 +98,7 @@ export function createControlRef<T extends (Record<string, any> | Array<any>)>(i
         return
       const value = postState ? postState(path, val) : val
       _set(initialRef.value as T, path, value)
-      onChange && onChange(path, value)
+      onChange && triggerChange && onChange(path, value)
     }
   }
 

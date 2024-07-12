@@ -29,6 +29,7 @@ interface UseValueOptions<T = any> {
   postState: ((val: T) => T) | undefined
 }
 export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOptions) {
+  let triggerOnChange = true
   const form = useInjectFormContext()
   const parent = useInjectParentFieldContext()
 
@@ -45,7 +46,7 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
       return form.values.get(path.value)
     },
     set(val) {
-      form.values.set(path.value, val)
+      form.values.set(path.value, val, triggerOnChange)
     },
   })
 
@@ -84,7 +85,12 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
       val = compiledPropValue.value
 
     if (val !== undefined) {
+      /**
+       * 设置初始值不应该触发 onChange
+       */
+      triggerOnChange = false
       proxy.value = val
+      triggerOnChange = true
       if (p.length > 0)
         form.setInitialValue(p, cloneDeep(val))
     }
