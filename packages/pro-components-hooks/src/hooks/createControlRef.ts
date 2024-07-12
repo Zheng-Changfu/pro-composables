@@ -82,9 +82,12 @@ export function createControlRef<T extends (Record<string, any> | Array<any>)>(i
       traverse(
         pathOrVal as Partial<T>,
         (path, value) => {
-          const newValue = postState ? postState(path, value) : value
-          _set(source, path, newValue)
-          onChange && onChange(path, newValue)
+          const oldValue = _get(initialRef.value, path)
+          if (!Object.is(oldValue, value)) {
+            value = postState ? postState(path, value) : value
+            onChange && onChange(path, value)
+          }
+          _set(source, path, value)
         },
       )
       tactic === '__v_merge__'
@@ -96,9 +99,12 @@ export function createControlRef<T extends (Record<string, any> | Array<any>)>(i
       const path = toPath(pathOrVal)
       if (path.length <= 0)
         return
-      const value = postState ? postState(path, val) : val
-      _set(initialRef.value as T, path, value)
-      onChange && triggerChange && onChange(path, value)
+      const oldValue = _get(initialRef.value, path)
+      if (!Object.is(oldValue, val)) {
+        const value = postState ? postState(path, val) : val
+        _set(initialRef.value as T, path, value)
+        onChange && triggerChange && onChange(path, value)
+      }
     }
   }
 
