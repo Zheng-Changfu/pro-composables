@@ -1,7 +1,7 @@
 import type { EventHookOn } from '@vueuse/core'
 import { createEventHook, useTimeoutFn } from '@vueuse/core'
 import { has, isFunction, isString, isUndefined } from 'lodash-es'
-import type { ComputedRef, Ref, WatchSource } from 'vue-demi'
+import type { ComputedRef, MaybeRefOrGetter, Ref, WatchSource } from 'vue-demi'
 import { onMounted, ref, toValue, watch } from 'vue-demi'
 import { useInjectRequestTipConfigContext } from './context'
 
@@ -61,9 +61,9 @@ TransformFn extends AnyFn | undefined,
    */
   transform?: TransformFn
   /**
-   * 依赖项数组，当依赖发生变化时，会重新调用 api
+   * 依赖项，当依赖发生变化时，会重新调用 api
    */
-  dependencies?: MaybeArray<WatchSource> | { watch: MaybeArray<WatchSource>, runable: ComputedRef<boolean> | (() => boolean) }
+  dependencies?: { watch: MaybeArray<WatchSource>, runable?: ComputedRef<boolean> | (() => boolean) }
   /**
    * 请求成功后调用的回调
    * @param response 成功后的结果，可能会被 transform 转换
@@ -207,9 +207,9 @@ export function useRequest<
 
   if (dependencies) {
     const {
-      runable,
+      runable = true,
       watch: watchSource,
-    } = has(dependencies, 'runable') ? dependencies as any : { watch: dependencies, runable: true }
+    } = dependencies
 
     watch(
       watchSource,
