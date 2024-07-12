@@ -1,7 +1,7 @@
 import type { EventHookOn } from '@vueuse/core'
 import { createEventHook, useTimeoutFn } from '@vueuse/core'
-import { has, isFunction, isString, isUndefined } from 'lodash-es'
-import type { ComputedRef, MaybeRefOrGetter, Ref, WatchSource } from 'vue-demi'
+import { isFunction, isString, isUndefined } from 'lodash-es'
+import type { ComputedRef, Ref, WatchSource } from 'vue-demi'
 import { onMounted, ref, toValue, watch } from 'vue-demi'
 import { useInjectRequestTipConfigContext } from './context'
 
