@@ -569,7 +569,7 @@ describe('update value to trigger postState and onChange', () => {
 
   it('value', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val * 2)
+    const postState = vi.fn(val => val * 4)
     const Comp = defineComponent({
       setup() {
         const aRef = ref(1)
@@ -593,10 +593,10 @@ describe('update value to trigger postState and onChange', () => {
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(2)
     expect(postState).toHaveBeenCalledTimes(4)
-    expect(postState).toHaveNthReturnedWith(1, 2)
-    expect(postState).toHaveNthReturnedWith(2, 4)
-    expect(postState).toHaveNthReturnedWith(3, 4)
-    expect(postState).toHaveNthReturnedWith(4, 6)
+    expect(postState).toHaveNthReturnedWith(1, 4)
+    expect(postState).toHaveNthReturnedWith(2, 8)
+    expect(postState).toHaveNthReturnedWith(3, 8)
+    expect(postState).toHaveNthReturnedWith(4, 12)
     vm.unmount()
   })
 
