@@ -147,6 +147,45 @@ describe('form props', () => {
     ])
     vm.unmount()
   })
+
+  it('onDependenciesValueChange called should with nextTick', async () => {
+    let aVal: any
+    const onDependenciesValueChangeMock = vi.fn((form: BaseForm) => {
+      aVal = form.getFieldValue('a')
+    })
+    const Comp = defineComponent({
+      setup() {
+        let _form: BaseForm
+        function onFormMounted(form: BaseForm) {
+          _form = form
+        }
+        onMounted(() => {
+          _form.setFieldValue('b', 1)
+        })
+        return () => {
+          return h(Form, {
+            onFormMounted,
+            onDependenciesValueChange() {
+              onDependenciesValueChangeMock(_form)
+            },
+          }, [
+            h(FormItem, {
+              path: 'a',
+              dependencies: ['b'],
+              value: '{{ $vals.b === 1 ? 2 : null }}',
+            }),
+            h(FormItem, { path: 'b' }),
+          ])
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    await nextTick()
+    expect(onDependenciesValueChangeMock).toHaveBeenCalled()
+    expect(aVal).toBe(2)
+    vm.unmount()
+  })
 })
 
 describe('form api', () => {
