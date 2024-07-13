@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { defineComponent, h, nextTick, onMounted } from 'vue-demi'
+import { defineComponent, h, nextTick, onMounted, ref } from 'vue-demi'
 import { mount } from '../../__tests__/mount'
 import type { BaseForm } from '../types'
 import type { ArrayField } from '../field'
@@ -184,6 +184,37 @@ describe('form props', () => {
     await nextTick()
     expect(onDependenciesValueChangeMock).toHaveBeenCalled()
     expect(aVal).toBe(2)
+    vm.unmount()
+  })
+
+  it('onDependenciesValueChange guard', async () => {
+    const onDependenciesValueChange = vi.fn()
+    const Comp = defineComponent({
+      setup() {
+        let _form: BaseForm
+        const trigger = ref(false)
+
+        function onFormMounted(form: BaseForm) {
+          _form = form
+        }
+        onMounted(() => {
+          _form.setFieldValue('b', 1)
+        })
+        return () => {
+          return h(Form, {
+            onFormMounted,
+            onDependenciesValueChange,
+          }, [
+            h(FormItem, { path: 'a', dependencies: { match: 'b', triggerGuard: trigger } }),
+            h(FormItem, { path: 'b' }),
+          ])
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    await nextTick()
+    expect(onDependenciesValueChange).toHaveBeenCalledTimes(0)
     vm.unmount()
   })
 })
