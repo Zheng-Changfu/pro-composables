@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref } from 'vue-demi'
+import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue-demi'
 import type { Path } from '../path'
 import type { MaybeExpression } from '../../hooks'
 
@@ -209,4 +209,8 @@ export type PathMatch = string | RegExp | ((path: string, paths: string[]) => bo
 
 export interface InternalDependencie {
   match: PathMatch
+  /**
+   * 当依赖值发生变化后，触发拦截器，当拦截器通过后，onDependenciesChange 才会触发
+   */
+  triggerGuard?: MaybeRefOrGetter<boolean>
 }

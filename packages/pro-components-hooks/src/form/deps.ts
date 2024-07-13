@@ -1,4 +1,5 @@
-import { onScopeDispose } from 'vue-demi'
+import type { MaybeRefOrGetter } from 'vue-demi'
+import { onScopeDispose, toValue } from 'vue-demi'
 import { isArray, isString } from 'lodash-es'
 import type { BaseForm, FormOptions } from './types'
 import { normalizePathMatch, stringifyPath } from './utils/path'
@@ -7,6 +8,7 @@ import type { BaseField, Dependencie } from './field'
 type DepMatch = (path: string, paths: string[]) => boolean
 interface DepMatchFn extends DepMatch {
   field: BaseField
+  triggerGuard: MaybeRefOrGetter<boolean>
 }
 export class Deps {
   private options!: FormOptions
@@ -36,6 +38,7 @@ export class Deps {
     deps.forEach((dep) => {
       const normalizedDep = this.normalizeDep(dep) as any
       normalizedDep.field = field
+      normalizedDep.triggerGuard = (dep as any).triggerGuard ?? true
       this.depSet.add(normalizedDep as DepMatchFn)
     })
   }
@@ -47,8 +50,10 @@ export class Deps {
     const sp = stringifyPath(path)
     const paths = form.pathField.keys()
     this.depSet.forEach((match) => {
-      if (match(sp, paths))
-        onDependenciesValueChange({ ...params, depPath: match.field.path.value })
+      if (match(sp, paths) && toValue(match.triggerGuard)) {
+        const depPath = match.field.path.value
+        onDependenciesValueChange({ ...params, depPath })
+      }
     })
   }
 }
