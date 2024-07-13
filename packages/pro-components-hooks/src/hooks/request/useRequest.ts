@@ -1,7 +1,7 @@
 import type { EventHookOn } from '@vueuse/core'
 import { createEventHook, useTimeoutFn } from '@vueuse/core'
 import { isFunction, isString, isUndefined } from 'lodash-es'
-import type { ComputedRef, Ref, WatchSource } from 'vue-demi'
+import type { MaybeRefOrGetter, Ref, WatchSource } from 'vue-demi'
 import { onMounted, ref, toValue, watch } from 'vue-demi'
 import { useInjectRequestTipConfigContext } from './context'
 
@@ -63,7 +63,7 @@ TransformFn extends AnyFn | undefined,
   /**
    * 依赖项，当依赖发生变化时，触发 apiGrard，通过拦截器后，会重新调用 api
    */
-  dependencies?: { watch: MaybeArray<WatchSource>, apiGuard?: ComputedRef<boolean> | (() => boolean) }
+  dependencies?: { watch: MaybeArray<WatchSource>, apiGuard?: MaybeRefOrGetter<boolean> }
   /**
    * 请求成功后调用的回调
    * @param response 成功后的结果，可能会被 transform 转换
