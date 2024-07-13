@@ -1,4 +1,4 @@
-import { onMounted } from 'vue-demi'
+import { nextTick, onMounted } from 'vue-demi'
 import { createEventHook } from '@vueuse/core'
 import { uid } from '../utils/id'
 import { provideCompileScopeContext } from '../hooks'
@@ -114,7 +114,9 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   function onDependenciesChange(opt: { field: BaseField, value: any }) {
     const { field, value } = opt
     const path = field.path.value
-    deps.notify(form, path, { path, value })
+    nextTick(() => {
+      deps.notify(form, path, { path, value })
+    })
   }
 
   provideFormContext(form)
