@@ -13,9 +13,9 @@ export interface FormOptions<Values = any> {
    */
   initialValues?: Values
   /**
-   * 表达式可以读取到的上下文
+   * 表达式可以读取到的作用域属性
    */
-  expressionContext?: ExpressionScope
+  expressionScope?: ExpressionScope
   /**
    * 字段值发生变化后的回调
    */

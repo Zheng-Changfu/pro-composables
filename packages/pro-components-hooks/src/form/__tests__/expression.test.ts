@@ -5,7 +5,7 @@ import type { ArrayField, BaseField } from '../field'
 import type { BaseForm } from '../types'
 import { Form, FormItem, FormList } from './components'
 
-describe('builtIn expression context', () => {
+describe('builtIn expression scope', () => {
   it('$row & $record', async () => {
     const $rows: any[] = []
     const $records: any[] = []

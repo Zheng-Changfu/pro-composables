@@ -7,7 +7,7 @@ import { providePathContext, providePathIndexContext } from '../path'
 export const Form = defineComponent({
   props: [
     'initialValues',
-    'expressionContext',
+    'expressionScope',
     'onFieldValueChange',
     'onDependenciesValueChange',
     'onFormMounted',
@@ -15,7 +15,7 @@ export const Form = defineComponent({
   setup(props, { slots }) {
     const form = createForm({
       initialValues: props.initialValues ?? {},
-      expressionContext: props.expressionContext,
+      expressionScope: props.expressionScope,
       onFieldValueChange: props.onFieldValueChange,
       onDependenciesValueChange: props.onDependenciesValueChange,
     })

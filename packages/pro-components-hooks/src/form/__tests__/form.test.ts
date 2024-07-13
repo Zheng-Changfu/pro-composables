@@ -46,7 +46,7 @@ describe('form props', () => {
     vm.unmount()
   })
 
-  it('expressionContext', async () => {
+  it('expressionScope', async () => {
     let val: any
     const T = defineComponent({
       setup() {
@@ -60,7 +60,7 @@ describe('form props', () => {
       setup() {
         return () => {
           return h(Form, {
-            expressionContext: {
+            expressionScope: {
               $t: 1,
             },
           }, h(T))

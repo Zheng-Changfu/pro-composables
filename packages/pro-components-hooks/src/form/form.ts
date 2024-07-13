@@ -50,7 +50,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     /**
      * 用户传递的
      */
-    ...(options.expressionContext ?? {}),
+    ...(options.expressionScope ?? {}),
   }
 
   const form: BaseForm = {
