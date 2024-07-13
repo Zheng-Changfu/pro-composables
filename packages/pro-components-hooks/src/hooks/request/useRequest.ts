@@ -63,7 +63,7 @@ TransformFn extends AnyFn | undefined,
   /**
    * 依赖项，当依赖发生变化时，会重新调用 api
    */
-  dependencies?: { watch: MaybeArray<WatchSource>, runable?: ComputedRef<boolean> | (() => boolean) }
+  dependencies?: { watch: MaybeArray<WatchSource>, guard?: ComputedRef<boolean> | (() => boolean) }
   /**
    * 请求成功后调用的回调
    * @param response 成功后的结果，可能会被 transform 转换
@@ -207,13 +207,13 @@ export function useRequest<
 
   if (dependencies) {
     const {
-      runable = true,
+      guard = true,
       watch: watchSource,
     } = dependencies
 
     watch(
       watchSource,
-      () => toValue(runable) && run(),
+      () => toValue(guard) && run(),
     )
   }
 
