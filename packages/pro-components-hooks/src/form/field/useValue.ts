@@ -60,8 +60,12 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
   )
 
   const updating = parent?.updating
-  if (!updating && !form.values.has(path.value)) {
+  if (!form.values.has(path.value)) {
     // priority：value > initialValue > initialValues > defaultValue
+    /**
+     * initialValues 只有在数组字段没有更新时才会取值，否则会有歧义，
+     *  比如：3行数组的 initialValues，删除第2行，在插入一个空对象到第2行，期望第二行是空对象，但是实际上第二行会去 initialValues 取值
+     */
     let val
     const p = path.value
     if (p.length > 0 && postState && !form.pathField.has(p)) {
@@ -75,7 +79,7 @@ export function useValue<T = any>(value: Ref<T> | undefined, options: UseValueOp
     if (defaultValue !== undefined)
       val = defaultValue
 
-    if (p.length > 0 && has(form.initialValues, p))
+    if (p.length > 0 && !updating && has(form.initialValues, p))
       val = get(form.initialValues, path.value)
 
     if (initialValue !== undefined)
