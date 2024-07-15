@@ -162,11 +162,8 @@ function createBaseField<T = any>(
   watch(
     path,
     (newPath, oldPath) => {
-      !oldPath
-        ? controller.mount(baseField)
-        : controller.update(baseField, newPath, oldPath)
+      controller.update(baseField, newPath, oldPath)
     },
-    { immediate: true },
   )
 
   watch(

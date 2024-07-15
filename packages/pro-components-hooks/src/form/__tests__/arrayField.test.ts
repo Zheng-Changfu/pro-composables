@@ -55,6 +55,56 @@ describe('arrayField api', () => {
     vm.unmount()
   })
 
+  it('visible', async () => {
+    const vals: any[] = []
+    const Comp = defineComponent({
+      setup() {
+        let _form: BaseForm
+        let _field: ArrayField
+
+        function onFormMounted(form: BaseForm) {
+          _form = form
+        }
+
+        function onArrayFieldMounted(field: ArrayField) {
+          _field = field
+        }
+
+        onMounted(async () => {
+          _field.push({})
+          await nextTick()
+          vals.push(
+            _form.getFieldsValue(),
+            _form.getFieldsValue(true),
+          )
+        })
+
+        return () => {
+          return h(Form, {
+            onFormMounted,
+          }, [
+            h(FormList, {
+              path: 'list',
+              onArrayFieldMounted,
+            }, [
+              h(FormItem, {
+                path: 'u1',
+                visible: '{{false}}',
+                defaultValue: null,
+              }),
+            ]),
+          ])
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    await nextTick()
+    expect(vals[0]).toStrictEqual({ list: [{}] })
+    expect(vals[1]).toMatchObject({ list: [{}] })
+    vm.unmount()
+  })
+
   it('push', async () => {
     const vals: any[] = []
     const Comp = defineComponent({
