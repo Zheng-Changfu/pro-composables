@@ -1,42 +1,37 @@
-import { nextTick, onMounted } from 'vue-demi'
-import { createEventHook } from '@vueuse/core'
+import { nextTick } from 'vue-demi'
+import { createEventHook, useMounted } from '@vueuse/core'
 import { uid } from '../utils/id'
-import { provideCompileScopeContext } from '../hooks'
 import type { BaseForm, FormOptions } from './types'
-import { useFormValues } from './useFormValues'
 import { provideFormContext } from './context'
 import type { BaseField } from './field'
-import { PathField } from './pathField'
-import type { InternalPath } from './path'
-import { Deps } from './deps'
+import { createFieldStore } from './store/fieldStore'
+import { createValueStore } from './store/valueStore'
+import { createDependStore } from './store/dependStore'
 
 export function createForm<Values = Record<string, any>>(options: FormOptions<Values>) {
-  const deps = new Deps(options)
-  const pathField = new PathField()
+  const mounted = useMounted()
+  const fieldStore = createFieldStore()
+  const dependStore = createDependStore(fieldStore)
+  const valueStore = createValueStore(fieldStore, options)
+
+  const {
+    values,
+    matchPath,
+    getFieldValue,
+    setFieldValue,
+    getFieldsValue,
+    setFieldsValue,
+    resetFieldValue,
+    setInitialValue,
+    resetFieldsValue,
+    setInitialValues,
+    getFieldsTransformedValue,
+  } = valueStore
 
   const {
     on: onFieldValueChange,
     trigger: triggerFieldValueChange,
   } = createEventHook<{ field: BaseField, value: any }>()
-
-  const {
-    values,
-    initialValues,
-    getFieldValue,
-    getFieldsValue,
-    setFieldValue,
-    setFieldsValue,
-    resetFieldValue,
-    resetFieldsValue,
-    setInitialValue,
-    setInitialValues,
-    getFieldsTransformedValue,
-  } = useFormValues(options, {
-    pathField,
-    onChange,
-    postState,
-    skipTraversal,
-  })
 
   const scope = {
     /**
@@ -54,13 +49,13 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   }
 
   const form: BaseForm = {
-    deps,
     scope,
-    values,
+    mounted,
     id: uid(),
-    pathField,
-    initialValues,
-    mounted: false,
+    valueStore,
+    fieldStore,
+    dependStore,
+    matchPath,
     getFieldValue,
     getFieldsValue,
     setFieldValue,
@@ -69,61 +64,29 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     resetFieldsValue,
     setInitialValue,
     setInitialValues,
+    triggerFieldValueChange,
     getFieldsTransformedValue,
-    matchPath: pathField.matchPath,
-  }
-
-  function onChange(path: InternalPath | null, val: any) {
-    let field: BaseField
-    if (
-      !path
-      || !form.mounted
-      // eslint-disable-next-line no-cond-assign
-      || !(field = pathField.get(path) as any)
-    )
-      return
-    triggerFieldValueChange({ field, value: val })
-    field.onChange && field.onChange(val)
-  }
-
-  function postState(path: InternalPath | null, val: any) {
-    let field: BaseField
-    if (
-      !path
-      // eslint-disable-next-line no-cond-assign
-      || !(field = pathField.get(path) as any)
-      || !field.postState
-    )
-      return val
-    return field.postState(val)
-  }
-
-  function skipTraversal(path: InternalPath | null) {
-    let field: BaseField
-    if (
-      !path
-      // eslint-disable-next-line no-cond-assign
-      || !(field = pathField.get(path) as any)
-      || !field.isListPath
-    )
-      return false
-    // 如果为列表中的字段，在整体赋值时(setFieldsValue)可以跳过，因为数组中存在该值，不需要处理2次
-    return true
   }
 
   function onDependenciesChange(opt: { field: BaseField, value: any }) {
     const { field, value } = opt
     const path = field.path.value
+    // should wait value updated
     nextTick(() => {
-      deps.notify(form, path, { path, value })
+      dependStore.matchDepend(
+        field.stringPath.value,
+        (dependPath) => {
+          options.onDependenciesValueChange!({ path, dependPath, value })
+        },
+      )
     })
   }
 
   provideFormContext(form)
-  provideCompileScopeContext(scope)
+  if (options.onFieldValueChange)
+    onFieldValueChange(options.onFieldValueChange)
 
-  onMounted(() => form.mounted = true)
-  onFieldValueChange(onDependenciesChange)
-  options.onFieldValueChange && onFieldValueChange(options.onFieldValueChange)
+  if (options.onDependenciesValueChange)
+    onFieldValueChange(onDependenciesChange)
   return form
 }

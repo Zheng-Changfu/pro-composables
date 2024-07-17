@@ -627,3 +627,11 @@ describe('update value to trigger postState and onChange', () => {
     vm.unmount()
   })
 })
+
+/**
+ * mount
+ *   form.values.set(p,v)
+ *   form.fields.add(field)
+ *
+ *
+ */

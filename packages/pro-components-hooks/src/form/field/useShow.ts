@@ -1,7 +1,8 @@
 import { computed } from 'vue-demi'
 import { isBoolean } from 'lodash-es'
 import { useCompile } from '../../hooks'
-import type { ExpressionScope, FieldOptions } from './types'
+import type { FieldOptions } from './types'
+import type { ExpressionScope } from './scope'
 
 interface UseShowOptions {
   scope: ExpressionScope

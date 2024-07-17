@@ -11,7 +11,6 @@ function unwrapScope(scope: Record<string, any>) {
   if (scopeToUnwrapScopeWeakMap.has(scope))
     return scopeToUnwrapScopeWeakMap.get(scope)!
 
-  // 这里用 defineProperty，不用 proxy，因为 2.7 版本某些情况下可能会不兼容
   for (const key in scope) {
     const value = scope[key]
     if (isRef(value)) {

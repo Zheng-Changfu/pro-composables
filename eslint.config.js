@@ -5,5 +5,6 @@ export default antfu({
   gitignore: false,
   rules: {
     'no-console': 'off',
+    'no-cond-assign': 'off',
   },
 })

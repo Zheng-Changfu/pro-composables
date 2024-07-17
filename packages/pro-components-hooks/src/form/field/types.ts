@@ -1,8 +1,8 @@
-import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue-demi'
+import type { ComputedRef, Ref } from 'vue-demi'
 import type { Path } from '../path'
 import type { MaybeExpression } from '../../hooks'
-
-export type ExpressionScope = Record<string, any>
+import type { Dependencie } from '../store/dependStore'
+import type { ExpressionScope } from './scope'
 
 export interface FieldOptions<T = any> {
   /**
@@ -115,6 +115,10 @@ export interface BaseField<T = any> {
    */
   value: Ref<T>
   /**
+   * 解析后的用户传递的 value
+   */
+  parsedPropValue: ComputedRef<any>
+  /**
    * 是否显示
    * @default true
    */
@@ -160,6 +164,10 @@ export interface BaseField<T = any> {
    */
   onChange?: (val: T) => void
   /**
+   * 用户传递进来的元信息
+   */
+  meta: FieldOptions
+  /**
    * 用户自定义挂载进去的属性必须以 x- 开头
    */
   [key: `x-${string}`]: any
@@ -202,15 +210,4 @@ export interface ArrayField<T = any> extends BaseField<T[]> {
    * 下移数据
    */
   moveDown: (index: number) => void
-}
-
-export type Dependencie = string | InternalDependencie
-export type PathMatch = string | RegExp | ((path: string, paths: string[]) => boolean)
-
-export interface InternalDependencie {
-  match: PathMatch
-  /**
-   * 当依赖值发生变化后，触发拦截器，当拦截器通过后，onDependenciesChange 才会触发
-   */
-  triggerGuard?: MaybeRefOrGetter<boolean>
 }

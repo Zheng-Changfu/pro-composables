@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue-demi'
 import { compile } from '../../hooks'
-import type { ExpressionScope } from './types'
+import type { ExpressionScope } from './scope'
 
 interface UseFormItemProps {
   scope: ExpressionScope

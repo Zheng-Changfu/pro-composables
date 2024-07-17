@@ -8,5 +8,8 @@ export function provideFormContext(form: BaseForm) {
 }
 
 export function useInjectFormContext() {
-  return inject(formContextKey)!
+  const form = inject(formContextKey)
+  if (!form)
+    throw new Error('field must be used in form')
+  return form
 }

@@ -1,34 +1,30 @@
 import type { ComputedRef } from 'vue-demi'
 import { computed } from 'vue-demi'
 import { useInjectFormContext } from '../context'
-import { useInjectCompileScopeContext } from '../../hooks'
-import type { BaseField, ExpressionScope } from './types'
+import type { BaseField } from './types'
 import { useInjectParentFieldContext } from './context'
 
-interface GetFieldExpressionScopeOptions {
-  scope?: ExpressionScope
-}
-export function getFieldExpressionScope(
+export type ExpressionScope = Record<string, any>
+export function createScope(
+  id: string,
   path: ComputedRef<string[]>,
-  options: GetFieldExpressionScopeOptions = {},
+  scope: ExpressionScope = {},
 ) {
   const form = useInjectFormContext()
   const parent = useInjectParentFieldContext()
-  const injectableExpressionScope = useInjectCompileScopeContext(options.scope ?? {})
 
   function getRowValues(field: BaseField) {
     const { index } = field
-    const { path } = parent!
-    const p = path.value
+    const { stringPath } = parent!
+    const p = stringPath.value
     const i = index.value
-    const rowPath = `${p}[${i}]`
-    const values = form.values.get(rowPath)
-    // 是否需要剔除掉行信息中不是表单字段的数据？
+    const rowPath = `${p}.${i}`
+    const values = form.valueStore.getFieldValue(rowPath)
     return values
   }
 
   const row = computed(() => {
-    const field = form.pathField.get(path.value)
+    const field = form.fieldStore.getField(id)
     if (
       !field
       || !field.isListPath
@@ -38,14 +34,14 @@ export function getFieldExpressionScope(
     return getRowValues(field)
   })
 
-  const len = computed(() => {
+  const total = computed(() => {
     return parent
       ? parent.value.value.length
       : 0
   })
 
   const rowIndex = computed(() => {
-    const field = form.pathField.get(path.value)
+    const field = form.fieldStore.getField(id)
     if (
       !field
       || !field.isListPath
@@ -56,10 +52,10 @@ export function getFieldExpressionScope(
   })
 
   const selfValue = computed(() => {
-    return form.values.get(path.value)
+    return form.valueStore.getFieldValue(path.value)
   })
 
-  const scope = {
+  const builtInScope = {
     /**
      * 如果在列表中则为当前行数据，否则是空对象
      */
@@ -67,7 +63,7 @@ export function getFieldExpressionScope(
     /**
      * 当前字段如果在列表中则为这个列表的长度，否则为0
      */
-    $length: len,
+    $total: total,
     /**
      * 当前字段的值
      */
@@ -81,17 +77,14 @@ export function getFieldExpressionScope(
      */
     $record: row,
     /**
-     * @alias $length
-     */
-    $len: len,
-    /**
      * @alias $index
      */
     $rowIndex: rowIndex,
-    ...injectableExpressionScope,
   }
 
   return {
-    scope,
+    ...builtInScope,
+    ...form.scope,
+    ...scope,
   }
 }

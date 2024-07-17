@@ -1,11 +1,11 @@
-import type { createControlRef } from '../hooks/createControlRef'
-import type { Deps } from './deps'
-import type { ArrayField, BaseField, ExpressionScope, PathMatch } from './field'
-import type { Path } from './path'
-import type { PathField } from './pathField'
-
-export type Value = any
-export type Store = Record<string, Value>
+import type { Ref } from 'vue-demi'
+import type { EventHookTrigger } from '@vueuse/core'
+import type { ArrayField, BaseField } from './field'
+import type { ExpressionScope } from './field/scope'
+import type { Path, PathPattern } from './path'
+import type { DependStore } from './store/dependStore'
+import type { FieldStore } from './store/fieldStore'
+import type { ValueStore } from './store/valueStore'
 
 export interface FormOptions<Values = any> {
   /**
@@ -23,10 +23,10 @@ export interface FormOptions<Values = any> {
   /**
    * 依赖项的值发生变化后的回调
    * @param path 被依赖项的路径
-   * @param depPath 依赖项的路径
+   * @param dependPath 依赖项的路径
    * @param val 依赖项的值
    */
-  onDependenciesValueChange?: (opt: { path: string[], depPath: string[], value: any }) => void
+  onDependenciesValueChange?: (opt: { path: string[], dependPath: string[], value: any }) => void
 }
 
 export interface BaseForm {
@@ -35,29 +35,25 @@ export interface BaseForm {
    */
   id: string
   /**
-   * 所有的表单项依赖
-   */
-  deps: Deps
-  /**
    * 表达式可以读取到的上下文
    */
   scope: ExpressionScope
   /**
    * 表单是否挂载完成
    */
-  mounted: boolean
+  mounted: Ref<boolean>
   /**
-   * 所有的表单项路径
+   * 表单项依赖仓库
    */
-  pathField: PathField
+  dependStore: DependStore
   /**
-   * 表单初始值
+   * 表单项字段仓库
    */
-  initialValues: Record<string, any>
+  fieldStore: FieldStore
   /**
-   * 表单的值
+   * 表单值仓库
    */
-  values: ReturnType<typeof createControlRef>
+  valueStore: ValueStore
   /**
    * 获取指定路径字段的值
    */
@@ -71,7 +67,7 @@ export interface BaseForm {
    * getFieldsValue(['name','age','list[0].a',['list','0','a']]) // 获取指定路径字段的值
    * ```
    */
-  getFieldsValue: (paths?: Array<Path> | true) => Store
+  getFieldsValue: (paths?: Array<Path> | true) => Record<string, any>
   /**
    * 设置指定路径字段的值
    */
@@ -79,7 +75,7 @@ export interface BaseForm {
   /**
    * 设置一组值
    */
-  setFieldsValue: (values: Store) => void
+  setFieldsValue: (values: Record<string, any>) => void
   /**
    * 重置指定路径字段的值
    */
@@ -95,14 +91,21 @@ export interface BaseForm {
   /**
    * 设置一组初始值
    */
-  setInitialValues: (values: Store) => void
+  setInitialValues: (values: Record<string, any>) => void
   /**
    * 获取全部表单值，不包含被隐藏的和设置过的（被 transform 处理过的）
    */
-  getFieldsTransformedValue: () => Store
+  getFieldsTransformedValue: () => Record<string, any>
   /**
    * 匹配路径
    * @returns 返回匹配到的路径数组
    */
-  matchPath: (pathMatch: PathMatch) => string[]
+  matchPath: (pattern: PathPattern) => string[]
+  /**
+   * 通知字段值发生变化，内部使用
+   */
+  triggerFieldValueChange: EventHookTrigger<{
+    field: BaseField
+    value: any
+  }>
 }

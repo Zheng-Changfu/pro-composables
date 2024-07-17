@@ -1,15 +1,17 @@
-import { onBeforeUpdate, onMounted, onUnmounted, onUpdated, watch } from 'vue-demi'
+import { onUnmounted, watch } from 'vue-demi'
+import { cloneDeep, get, has } from 'lodash-es'
+import { uid } from '../../utils/id'
 import { usePath } from '../path/usePath'
 import { useInjectFormContext } from '../context'
-import { uid } from '../../utils/id'
-import { provideFieldContext, useInjectParentFieldContext } from './context'
-import type { BaseField, FieldOptions } from './types'
+import { useCompile, useUpdate } from '../../hooks'
+import type { BaseForm } from '../types'
 import { useFieldProps } from './useFieldProps'
+import type { ArrayField, BaseField, FieldOptions } from './types'
+import { provideFieldContext, useInjectParentFieldContext } from './context'
 import { useFormItemProps } from './useFormItemProps'
 import { useShow } from './useShow'
 import { useValue } from './useValue'
-import { getController } from './controllers'
-import { getFieldExpressionScope } from './getFieldExpressionScope'
+import { createScope } from './scope'
 
 interface CreateFieldOptions {
   /**
@@ -68,22 +70,19 @@ function createBaseField<T = any>(
     postState,
     transform,
     preserve,
+    defaultValue,
+    initialValue,
     dependencies,
     path: propPath,
     value: propValue,
     scope: propScope,
     hidden: propHidden,
     visible: propVisible,
-    defaultValue: propDefaultValue,
-    initialValue: propInitialValue,
     ...customValues
   } = fieldOptions
 
-  const {
-    isList,
-  } = options
-
-  const controller = getController()
+  const id = uid()
+  const { isList } = options
   const form = useInjectFormContext()
   const parent = useInjectParentFieldContext()
   const isListPath = !!parent
@@ -94,14 +93,20 @@ function createBaseField<T = any>(
     stringPath,
   } = usePath(propPath)
 
-  const { scope } = getFieldExpressionScope(
+  const scope = createScope(
+    id,
     path,
-    { scope: propScope },
+    propScope,
   )
 
   const { show } = useShow(
     propHidden,
     propVisible,
+    { scope },
+  )
+
+  const parsedPropValue = useCompile(
+    propValue!,
     { scope },
   )
 
@@ -115,19 +120,13 @@ function createBaseField<T = any>(
     doUpdateFormItemProps,
   } = useFormItemProps({ scope })
 
-  const { value, doUpdateValue } = useValue(
-    propValue,
-    {
-      path,
-      scope,
-      postState,
-      defaultValue: propDefaultValue,
-      initialValue: propInitialValue,
-    },
-  )
+  const {
+    value,
+    doUpdateValue,
+  } = useValue(id, path, { postState, onChange })
 
-  const baseField: BaseField = {
-    id: uid(),
+  const field: BaseField = {
+    id,
     show,
     path,
     value,
@@ -141,7 +140,9 @@ function createBaseField<T = any>(
     stringPath,
     dependencies,
     formItemProps,
+    parsedPropValue,
     updating: false,
+    meta: fieldOptions,
     onChange,
     postState,
     transform,
@@ -151,18 +152,14 @@ function createBaseField<T = any>(
     ...customValues,
   }
 
-  onBeforeUpdate(() => {
-    baseField.updating = true
-  })
-
-  onUpdated(() => {
-    baseField.updating = false
+  useUpdate((updating) => {
+    field.updating = updating
   })
 
   watch(
     path,
     (newPath, oldPath) => {
-      controller.update(baseField, newPath, oldPath)
+      moveValue(form, parent, newPath, oldPath)
     },
   )
 
@@ -170,14 +167,88 @@ function createBaseField<T = any>(
     show,
     (visible) => {
       visible
-        ? controller.mount(baseField)
-        : controller.unmount(baseField)
+        ? mountFieldValue(form, field)
+        : unmountFieldValue(form, field, parent)
     },
-    { immediate: true },
   )
 
-  onMounted(() => form.deps.add(baseField))
-  onUnmounted(() => controller.unmount(baseField))
-  provideFieldContext(baseField)
-  return baseField
+  watch(
+    parsedPropValue,
+    (val) => {
+      if (show.value && path.value.length > 0)
+        form.valueStore.setFieldValue(path.value, val)
+    },
+  )
+
+  provideFieldContext(field)
+  form.dependStore.add(field)
+  mountFieldValue(form, field)
+  onUnmounted(() => unmountFieldValue(form, field, parent))
+  return field
+}
+
+function mountFieldValue(
+  form: BaseForm,
+  field: BaseField,
+) {
+  const {
+    show,
+    meta,
+    path,
+    parsedPropValue,
+  } = field
+
+  if (!show.value || path.value.length <= 0)
+    return
+
+  form.fieldStore.mountField(field)
+
+  const p = path.value
+  const { defaultValue, initialValue } = meta
+  let val: any
+  /**
+   * priority：form.valueStore > value > initialValue > initialValues > defaultValue
+   * defaultValue 是给部分组件库使用的，有的组件库默认值为 undefined 时表单会出问题
+   */
+  if (form.valueStore.has(p))
+    val = form.valueStore.getFieldValue(p)
+
+  else if (parsedPropValue.value !== undefined)
+    val = parsedPropValue.value
+
+  else if (initialValue !== undefined)
+    val = initialValue
+
+  else if (has(form.valueStore.initialValues, p))
+    val = get(form.valueStore.initialValues, p)
+
+  if (val === undefined && defaultValue !== undefined)
+    val = defaultValue
+
+  form.valueStore.setFieldValue(p, val)
+  if (!form.mounted.value)
+    form.valueStore.setInitialValue(p, cloneDeep(val))
+}
+
+function unmountFieldValue(
+  form: BaseForm,
+  field: BaseField,
+  parent: ArrayField | null,
+) {
+  form.fieldStore.unmountField(field)
+  if (!parent?.updating && !field.preserve)
+    form.valueStore.delete(field.path.value)
+}
+
+function moveValue(
+  form: BaseForm,
+  parent: ArrayField | null,
+  newPath: string[],
+  oldPath: string[],
+) {
+  if (!parent?.updating) {
+    const oldValue = form.valueStore.getFieldValue(oldPath)
+    form.valueStore.delete(oldPath)
+    form.valueStore.setFieldValue(newPath, oldValue)
+  }
 }
