@@ -219,7 +219,7 @@ function mountFieldValue(
   else if (initialValue !== undefined)
     val = initialValue
 
-  else if (has(form.valueStore.initialValues, p))
+  else if (!form.mounted.value && has(form.valueStore.initialValues, p))
     val = get(form.valueStore.initialValues, p)
 
   if (val === undefined && defaultValue !== undefined)
