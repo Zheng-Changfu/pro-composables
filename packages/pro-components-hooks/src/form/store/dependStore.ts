@@ -13,14 +13,14 @@ export interface InternalDependencie {
   /**
    * 当依赖值发生变化后，触发拦截器，当拦截器通过后，onDependenciesChange 才会触发
    */
-  triggerGuard?: MaybeRefOrGetter<boolean>
+  guard?: MaybeRefOrGetter<boolean>
 }
 
 type Match = (path: string, paths: string[]) => boolean
 
 interface MatchFn extends Match {
   field: BaseField
-  triggerGuard: MaybeRefOrGetter<boolean>
+  guard: MaybeRefOrGetter<boolean>
 }
 
 export class DependStore {
@@ -45,7 +45,7 @@ export class DependStore {
       const pattern = isString(dep) ? dep : dep.pattern
       const matchFn = convertPatternToMatchFn(pattern) as MatchFn
       matchFn.field = field
-      matchFn.triggerGuard = (dep as any).triggerGuard ?? true
+      matchFn.guard = (dep as any).guard ?? true
       this.deps.add(matchFn)
     })
   }
@@ -55,7 +55,7 @@ export class DependStore {
     this.deps.forEach((match) => {
       if (
         match(path, paths)
-        && toValue(match.triggerGuard)
+        && toValue(match.guard)
       )
         matchedFn(match.field.path.value)
     })
