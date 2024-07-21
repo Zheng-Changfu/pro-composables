@@ -1,70 +1,55 @@
 export function push<T = any>(arr: T[], ...items: T[]) {
-  const list = [...arr]
-  list.push(...items)
-  return list
+  arr.push(...items)
 }
 
 export function pop<T = any>(arr: T[]) {
-  const list = [...arr]
-  list.pop()
-  return list
+  arr.pop()
 }
 
 export function insert<T = any>(arr: T[], index: number, ...items: T[]) {
-  const list = [...arr]
-  list.splice(index, 0, ...items)
-  return list
+  arr.splice(index, 0, ...items)
 }
 
 export function remove<T = any>(arr: T[], index: number) {
-  const list = [...arr]
-  list.splice(index, 1)
-  return list
+  arr.splice(index, 1)
 }
 
 export function shift<T = any>(arr: T[]) {
-  const list = [...arr]
-  list.shift()
-  return list
+  arr.shift()
 }
 
 export function unshift<T = any>(arr: T[], ...items: T[]) {
-  const list = [...arr]
-  list.unshift(...items)
-  return list
+  arr.unshift(...items)
 }
 
 export function move<T = any>(arr: T[], fromIndex: number, toIndex: number) {
-  const list = [...arr]
   if (fromIndex === toIndex)
-    return list
+    return
 
   if (fromIndex < 0 || toIndex < 0)
-    return list
+    return
 
-  if (fromIndex > list.length - 1 || toIndex > list.length - 1)
-    return list
+  if (fromIndex > arr.length - 1 || toIndex > arr.length - 1)
+    return
 
   if (fromIndex < toIndex) {
-    const fromItem = list[fromIndex]
+    const fromItem = arr[fromIndex]
     for (let i = fromIndex; i < toIndex; i++)
-      list[i] = list[i + 1]
-    list[toIndex] = fromItem
+      arr[i] = arr[i + 1]
+    arr[toIndex] = fromItem
   }
   else {
-    const fromItem = list[fromIndex]
+    const fromItem = arr[fromIndex]
     for (let i = fromIndex; i > toIndex; i--)
-      list[i] = list[i - 1]
-    list[toIndex] = fromItem
+      arr[i] = arr[i - 1]
+    arr[toIndex] = fromItem
   }
-
-  return list
 }
 
 export function moveUp<T = any>(arr: T[], index: number) {
-  return move(arr, index, (index - 1 < 0) ? arr.length - 1 : index - 1)
+  move(arr, index, (index - 1 < 0) ? arr.length - 1 : index - 1)
 }
 
 export function moveDown<T = any>(arr: T[], index: number) {
-  return move(arr, index, (index + 1 >= arr.length) ? 0 : index + 1)
+  move(arr, index, (index + 1 >= arr.length) ? 0 : index + 1)
 }
