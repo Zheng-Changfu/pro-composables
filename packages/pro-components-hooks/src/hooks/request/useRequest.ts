@@ -175,7 +175,6 @@ export function useRequest<
     let successTipText: string | false
     if (
       !localTipApi
-      // eslint-disable-next-line no-cond-assign
       || (successTipText = getTipText(res, localSuccessTip)) === false
     )
       return
@@ -186,7 +185,6 @@ export function useRequest<
     let failureTipText: string | false
     if (
       !localTipApi
-      // eslint-disable-next-line no-cond-assign
       || (failureTipText = getTipText(err, localFailureTip)) === false
     )
       return
