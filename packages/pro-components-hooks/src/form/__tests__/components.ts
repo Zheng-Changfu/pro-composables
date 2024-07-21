@@ -65,7 +65,7 @@ export const FormItem = defineComponent({
       if (listField?.show.value)
         return slots.default?.()
 
-      return null
+      return field.value.value
     }
   },
 })
