@@ -1,6 +1,6 @@
-import { cloneDeep, get, has, merge, unset } from 'lodash-es'
+import { cloneDeep, get, has, merge, set, unset } from 'lodash-es'
 import type { Ref } from 'vue-demi'
-import { ref, set, toRaw } from 'vue-demi'
+import { ref, toRaw } from 'vue-demi'
 import type { Path, PathPattern } from '../path'
 import type { FormOptions } from '../types'
 import type { FieldStore } from './fieldStore'
@@ -23,7 +23,7 @@ export class ValueStore {
   }
 
   getFieldValue = (path: Path) => {
-    return this.values.value.get(path)
+    return get(this.values.value, path)
   }
 
   getFieldsValue = (paths?: Array<Path> | true) => {
@@ -39,7 +39,7 @@ export class ValueStore {
 
     return paths.reduce<Record<string, any>>(
       (p, path) => {
-        const value = this.values.value.get(path)
+        const value = this.getFieldValue(path)
         set(p, path, value)
         return p
       },
