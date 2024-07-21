@@ -76,7 +76,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
       dependStore.matchDepend(
         field.stringPath.value,
         (dependPath) => {
-          options.onDependenciesValueChange!({ path, dependPath, value })
+          options.onDependenciesValueChange!({ field, path, dependPath, value })
         },
       )
     })

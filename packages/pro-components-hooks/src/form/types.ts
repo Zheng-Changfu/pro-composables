@@ -22,11 +22,12 @@ export interface FormOptions<Values = any> {
   onFieldValueChange?: (opt: { field: BaseField | ArrayField, value: any }) => void
   /**
    * 依赖项的值发生变化后的回调
+   * @param field 字段控制器
    * @param path 被依赖项的路径
    * @param dependPath 依赖项的路径
    * @param val 依赖项的值
    */
-  onDependenciesValueChange?: (opt: { path: string[], dependPath: string[], value: any }) => void
+  onDependenciesValueChange?: (opt: { field: BaseField, path: string[], dependPath: string[], value: any }) => void
 }
 
 export interface BaseForm {
