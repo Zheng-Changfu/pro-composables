@@ -46,6 +46,16 @@ export class FieldStore {
     })
   }
 
+  get fieldsPathMap() {
+    return computed(() => {
+      const pathMap = new Map<string, BaseField>()
+      this.idToFieldMap.forEach((field) => {
+        pathMap.set(field.stringPath.value, field)
+      })
+      return pathMap
+    })
+  }
+
   getField = (id: string) => {
     return this.idToFieldMap.get(id)
   }
