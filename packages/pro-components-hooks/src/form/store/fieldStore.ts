@@ -1,5 +1,5 @@
-import { computed, reactive, set, toRaw } from 'vue-demi'
-import { get, isPlainObject, merge } from 'lodash-es'
+import { computed, shallowReactive, toRaw } from 'vue-demi'
+import { get, isPlainObject, merge, set } from 'lodash-es'
 import type { ArrayField, BaseField } from '../field'
 import { convertPatternToMatchFn } from '../utils/path'
 import type { PathPattern } from '../path'
@@ -11,7 +11,7 @@ export class FieldStore {
   public idToFieldMap: Map<string, BaseField>
 
   constructor() {
-    this.idToFieldMap = reactive(new Map())
+    this.idToFieldMap = shallowReactive(new Map())
   }
 
   get fieldsValue() {

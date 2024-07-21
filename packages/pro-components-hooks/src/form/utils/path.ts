@@ -2,7 +2,7 @@ import { isRegExp, isString, toPath } from 'lodash-es'
 import type { Path, PathPattern } from '../path'
 
 export function stringifyPath(path: Path) {
-  return path ? toPath(path).join('') : ''
+  return path ? toPath(path).join('.') : ''
 }
 
 export function convertPatternToMatchFn(pattern: PathPattern) {
