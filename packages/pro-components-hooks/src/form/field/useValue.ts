@@ -1,5 +1,5 @@
 import type { ComputedRef } from 'vue-demi'
-import { computed } from 'vue-demi'
+import { computed, toRaw } from 'vue-demi'
 import { useInjectFormContext } from '../context'
 
 interface UseValueOptions {
@@ -27,7 +27,7 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
     let storeValue = form.valueStore.getFieldValue(p)
 
     if (postState) {
-      if (Object.is(storeValue, cachedValue))
+      if (Object.is(toRaw(storeValue), cachedValue))
         return cachedValue
       // vModel Store
       const postValue = cachedValue = storeValue = postState(storeValue)
