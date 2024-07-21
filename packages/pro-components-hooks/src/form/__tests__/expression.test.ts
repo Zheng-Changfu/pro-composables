@@ -85,9 +85,8 @@ describe('builtIn expression scope', () => {
     vm.unmount()
   })
 
-  it('$length & $len', async () => {
-    const $lens: any[] = []
-    const $lengths: any[] = []
+  it('$total', async () => {
+    const $total: any[] = []
     const Comp = defineComponent({
       setup() {
         let _field: ArrayField
@@ -103,24 +102,19 @@ describe('builtIn expression scope', () => {
 
         onMounted(async () => {
           await nextTick()
-          $lens.push(_baseField.scope.$len.value)
-          $lengths.push(_baseField.scope.$length.value)
+          $total.push(_baseField.scope.$total.value)
           _field.remove(1)
           await nextTick()
-          $lens.push(_baseField.scope.$len.value)
-          $lengths.push(_baseField.scope.$length.value)
+          $total.push(_baseField.scope.$total.value)
           _field.insert(1, { a: 33 })
           await nextTick()
-          $lens.push(_baseField.scope.$len.value)
-          $lengths.push(_baseField.scope.$length.value)
+          $total.push(_baseField.scope.$total.value)
           _field.remove(0)
           await nextTick()
-          $lens.push(_baseField.scope.$len.value)
-          $lengths.push(_baseField.scope.$length.value)
+          $total.push(_baseField.scope.$total.value)
           _field.insert(2, { a: 44 })
           await nextTick()
-          $lens.push(_baseField.scope.$len.value)
-          $lengths.push(_baseField.scope.$length.value)
+          $total.push(_baseField.scope.$total.value)
         })
 
         return () => {
@@ -147,20 +141,15 @@ describe('builtIn expression scope', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect($lens[0]).toBe(3)
-    expect($lengths[0]).toBe(3)
+    expect($total[0]).toBe(3)
     await nextTick()
-    expect($lens[1]).toBe(2)
-    expect($lengths[1]).toBe(2)
+    expect($total[1]).toBe(2)
     await nextTick()
-    expect($lens[2]).toBe(3)
-    expect($lengths[2]).toBe(3)
+    expect($total[2]).toBe(3)
     await nextTick()
-    expect($lens[3]).toBe(2)
-    expect($lengths[3]).toBe(2)
+    expect($total[3]).toBe(2)
     await nextTick()
-    expect($lens[4]).toBe(3)
-    expect($lengths[4]).toBe(3)
+    expect($total[4]).toBe(3)
     vm.unmount()
   })
 

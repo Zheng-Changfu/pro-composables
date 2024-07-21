@@ -1198,82 +1198,82 @@ describe('arrayField api', () => {
     expect(vals[4]).toStrictEqual({
       list: [
         { a: 1, b: 1 },
-        { },
+        { a: undefined, b: undefined },
         { a: 3, b: 3 },
       ],
     })
     expect(vals[5]).toMatchObject({
       list: [
         { a: 1, b: 1, c: 1 },
-        { },
+        { a: undefined, b: undefined },
         { a: 3, b: 3, c: 3 },
       ],
     })
     await nextTick()
     expect(vals[6]).toStrictEqual({
       list: [
-        { },
+        { a: undefined, b: undefined },
         { a: 3, b: 3 },
       ],
     })
     expect(vals[7]).toMatchObject({
       list: [
-        { },
+        { a: undefined, b: undefined },
         { a: 3, b: 3, c: 3 },
       ],
     })
     await nextTick()
     expect(vals[8]).toStrictEqual({
       list: [
-        { },
+        { a: undefined, b: undefined },
         { a: 3, b: 3 },
-        { a: 1 },
+        { a: 1, b: undefined },
       ],
     })
     expect(vals[9]).toMatchObject({
       list: [
-        { },
+        { a: undefined, b: undefined },
         { a: 3, b: 3, c: 3 },
-        { a: 1 },
+        { a: 1, b: undefined },
       ],
     })
     await nextTick()
     expect(vals[10]).toStrictEqual({
       list: [
         { a: 3, b: 3 },
-        { a: 1 },
-        { },
+        { a: 1, b: undefined },
+        { a: undefined, b: undefined },
       ],
     })
     expect(vals[11]).toMatchObject({
       list: [
         { a: 3, b: 3, c: 3 },
-        { a: 1 },
-        { },
+        { a: 1, b: undefined },
+        { a: undefined, b: undefined },
       ],
     })
     await nextTick()
     expect(vals[12]).toStrictEqual({
       list: [
         { a: 3, b: 3 },
-        { },
+        { a: undefined, b: undefined },
       ],
     })
     expect(vals[13]).toMatchObject({
       list: [
         { a: 3, b: 3, c: 3 },
-        { },
+        { a: undefined, b: undefined },
       ],
     })
     await nextTick()
     expect(vals[14]).toStrictEqual({
       list: [
-        { },
+        { a: undefined, b: undefined },
       ],
     })
     expect(vals[15]).toMatchObject({
       list: [
-        { },
+        { a: undefined, b: undefined },
       ],
     })
     await nextTick()

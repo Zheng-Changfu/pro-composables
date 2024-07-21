@@ -3,7 +3,7 @@ import { defineComponent, h, nextTick, onMounted, ref } from 'vue-demi'
 import { mount } from '../../__tests__/mount'
 import type { BaseForm } from '../types'
 import type { ArrayField } from '../field'
-import { useInjectCompileScopeContext } from '../../hooks'
+import { useInjectFormContext } from '../context'
 import { Form, FormItem, FormList } from './components'
 
 describe('form props', () => {
@@ -16,7 +16,7 @@ describe('form props', () => {
           _form = form
         }
         onMounted(() => {
-          val = _form.initialValues
+          val = _form.valueStore.initialValues
         })
         return () => {
           return h(Form, {
@@ -50,8 +50,8 @@ describe('form props', () => {
     let val: any
     const T = defineComponent({
       setup() {
-        const expression = useInjectCompileScopeContext()
-        val = expression
+        const form = useInjectFormContext()
+        val = form.scope
         return () => ''
       },
     })
@@ -95,6 +95,7 @@ describe('form props', () => {
     })
 
     const vm = mount(Comp)
+    await nextTick()
     expect(onFieldValueChange).toBeCalledTimes(1)
     vm.unmount()
   })
@@ -106,9 +107,9 @@ describe('form props', () => {
       matchFnArguments.push(path, paths)
       return path === 'b'
     })
-    const onDependenciesValueChange = vi.fn(({ path, depPath }) => {
+    const onDependenciesValueChange = vi.fn(({ path, dependPath }) => {
       if (depsAuguments.length <= 0)
-        depsAuguments.push(path, depPath)
+        depsAuguments.push(path, dependPath)
     })
     const Comp = defineComponent({
       setup() {
@@ -127,9 +128,9 @@ describe('form props', () => {
             h(FormItem, { path: 'a', dependencies: ['b'] }),
             h(FormItem, { path: 'b' }),
             h(FormItem, { path: 'c', dependencies: 'b' }),
-            h(FormItem, { path: 'd', dependencies: { match: 'b' } }),
-            h(FormItem, { path: 'e', dependencies: { match: /b/ } }),
-            h(FormItem, { path: 'f', dependencies: { match } }),
+            h(FormItem, { path: 'd', dependencies: { pattern: 'b' } }),
+            h(FormItem, { path: 'e', dependencies: { pattern: /b/ } }),
+            h(FormItem, { path: 'f', dependencies: { pattern: match } }),
             h(FormItem, { path: 'g', dependencies: ['a', 'b'] }),
           ])
         }
@@ -137,6 +138,7 @@ describe('form props', () => {
     })
 
     const vm = mount(Comp)
+    await nextTick()
     await nextTick()
     expect(onDependenciesValueChange).toBeCalledTimes(6)
     expect(depsAuguments).toStrictEqual([['b'], ['a']])
@@ -182,6 +184,7 @@ describe('form props', () => {
 
     const vm = mount(Comp)
     await nextTick()
+    await nextTick()
     expect(onDependenciesValueChangeMock).toHaveBeenCalled()
     expect(aVal).toBe(2)
     vm.unmount()
@@ -205,7 +208,7 @@ describe('form props', () => {
             onFormMounted,
             onDependenciesValueChange,
           }, [
-            h(FormItem, { path: 'a', dependencies: { match: 'b', triggerGuard: trigger } }),
+            h(FormItem, { path: 'a', dependencies: { pattern: 'b', guard: trigger } }),
             h(FormItem, { path: 'b' }),
           ])
         }
@@ -213,6 +216,7 @@ describe('form props', () => {
     })
 
     const vm = mount(Comp)
+    await nextTick()
     await nextTick()
     expect(onDependenciesValueChange).toHaveBeenCalledTimes(0)
     vm.unmount()
@@ -379,8 +383,8 @@ describe('form api', () => {
     expect(paths).toStrictEqual([
       'a',
       'b',
-      'list[0].a',
-      'list[0].b',
+      'list.0.a',
+      'list.0.b',
       'list',
     ])
     vm.unmount()

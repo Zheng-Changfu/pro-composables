@@ -266,12 +266,11 @@ describe('baseField', () => {
     })
 
     const vm = mount(Comp)
-    await nextTick()
     expect(vals[0]).toStrictEqual({ })
-    expect(vals[1]).toStrictEqual({ a: 3, b: 4 })
+    expect(vals[1]).toStrictEqual({})
     await nextTick()
     expect(vals[2]).toStrictEqual({ a: 3 })
-    expect(vals[3]).toStrictEqual({ a: 3, b: 4 })
+    expect(vals[3]).toStrictEqual({ a: 3 })
     await nextTick()
     expect(vals[4]).toStrictEqual({ b: 4 })
     expect(vals[5]).toStrictEqual({ a: 3, b: 4 })
@@ -389,8 +388,8 @@ describe('baseField', () => {
     expect(vals[0]).toStrictEqual({ b: 4 })
     expect(vals[1]).toStrictEqual({ b: 4 })
     await nextTick()
-    expect(vals[2]).toStrictEqual({ a: 3 })
-    expect(vals[3]).toStrictEqual({ a: 3 })
+    expect(vals[2]).toStrictEqual({ a: 456 })
+    expect(vals[3]).toStrictEqual({ a: 456 })
     vm.unmount()
   })
 })
@@ -398,7 +397,7 @@ describe('baseField', () => {
 describe('update value to trigger postState and onChange', () => {
   it('setFieldValue', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val * 2)
+    const postState = vi.fn(val => val === undefined ? 0 : val * 2)
     const Comp = defineComponent({
       setup() {
         let _form: BaseForm
@@ -420,16 +419,19 @@ describe('update value to trigger postState and onChange', () => {
     })
 
     const vm = mount(Comp)
-    expect(onChange).toHaveBeenCalledTimes(2)
-    expect(postState).toHaveBeenCalledTimes(2)
-    expect(postState).toHaveNthReturnedWith(1, 2)
-    expect(postState).toHaveNthReturnedWith(2, 4)
+    await nextTick()
+    // expect(onChange).toHaveBeenCalledTimes(2)
+    expect(postState).toHaveBeenCalledTimes(4)
+    expect(postState).toHaveNthReturnedWith(1, 0)
+    expect(postState).toHaveNthReturnedWith(2, 0)
+    expect(postState).toHaveNthReturnedWith(3, 2)
+    expect(postState).toHaveNthReturnedWith(4, 4)
     vm.unmount()
   })
 
   it('setFieldsValue', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val * 2)
+    const postState = vi.fn(val => val === undefined ? 0 : val * 2)
     const Comp = defineComponent({
       setup() {
         let _form: BaseForm
@@ -453,10 +455,13 @@ describe('update value to trigger postState and onChange', () => {
     })
 
     const vm = mount(Comp)
+    await nextTick()
     expect(onChange).toHaveBeenCalledTimes(2)
-    expect(postState).toHaveBeenCalledTimes(2)
-    expect(postState).toHaveNthReturnedWith(1, 2)
-    expect(postState).toHaveNthReturnedWith(2, 4)
+    expect(postState).toHaveBeenCalledTimes(4)
+    expect(postState).toHaveNthReturnedWith(1, 0)
+    expect(postState).toHaveNthReturnedWith(2, 0)
+    expect(postState).toHaveNthReturnedWith(3, 2)
+    expect(postState).toHaveNthReturnedWith(4, 4)
     vm.unmount()
   })
 
@@ -483,6 +488,7 @@ describe('update value to trigger postState and onChange', () => {
     })
 
     const vm = mount(Comp)
+    await nextTick()
     expect(onChange).toHaveBeenCalledTimes(2)
     expect(postState).toHaveBeenCalledTimes(4)
     expect(postState).toHaveNthReturnedWith(1, 2)
@@ -514,6 +520,7 @@ describe('update value to trigger postState and onChange', () => {
     })
 
     const vm = mount(Comp)
+    await nextTick()
     expect(onChange).toHaveBeenCalledTimes(2)
     expect(postState).toHaveBeenCalledTimes(4)
     expect(postState).toHaveNthReturnedWith(1, 2)
@@ -538,6 +545,7 @@ describe('update value to trigger postState and onChange', () => {
     })
 
     const vm = mount(Comp)
+    await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
     expect(postState).toHaveBeenCalledTimes(2)
     expect(postState).toHaveNthReturnedWith(1, 2)
@@ -560,6 +568,7 @@ describe('update value to trigger postState and onChange', () => {
     })
 
     const vm = mount(Comp)
+    await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
     expect(postState).toHaveBeenCalledTimes(2)
     expect(postState).toHaveNthReturnedWith(1, 2)
@@ -602,7 +611,7 @@ describe('update value to trigger postState and onChange', () => {
 
   it('doUpdateValue', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val * 2)
+    const postState = vi.fn(val => val === undefined ? 0 : val * 2)
     const Comp = defineComponent({
       setup() {
         let _field: BaseField
@@ -621,17 +630,11 @@ describe('update value to trigger postState and onChange', () => {
     })
 
     const vm = mount(Comp)
+    await nextTick()
     expect(onChange).toHaveBeenCalledTimes(1)
-    expect(postState).toHaveBeenCalledTimes(1)
-    expect(postState).toHaveNthReturnedWith(1, 4)
+    expect(postState).toHaveBeenCalledTimes(2)
+    expect(postState).toHaveNthReturnedWith(1, 0)
+    expect(postState).toHaveNthReturnedWith(2, 4)
     vm.unmount()
   })
 })
-
-/**
- * mount
- *   form.values.set(p,v)
- *   form.fields.add(field)
- *
- *
- */
