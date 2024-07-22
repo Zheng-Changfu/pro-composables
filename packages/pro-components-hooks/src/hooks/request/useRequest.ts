@@ -191,6 +191,16 @@ export function useRequest<
     localTipApi('failure', failureTipText, err)
   }
 
+  const exposed = {
+    run,
+    data,
+    error,
+    loading,
+    runBool,
+    onSuccess,
+    onFailure,
+  }
+
   onFailure(onFailureTip)
   onSuccess(onSuccessTip as any)
   onPropFailure && onFailure(onPropFailure)
@@ -200,7 +210,7 @@ export function useRequest<
     /**
      * 确保运行 run 时外界可以拿到组件实例
      */
-    immediate && useTimeoutFn(run, 16)
+    immediate && useTimeoutFn(() => exposed.run(), 16)
   })
 
   if (dependencies) {
@@ -211,17 +221,9 @@ export function useRequest<
 
     watch(
       watchSource,
-      () => toValue(guard) && run(),
+      () => toValue(guard) && exposed.run(),
     )
   }
 
-  return {
-    run,
-    data,
-    error,
-    loading,
-    runBool,
-    onSuccess,
-    onFailure,
-  }
+  return exposed
 }
