@@ -70,16 +70,13 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
 
   function onDependenciesChange(opt: { field: BaseField, value: any }) {
     const { field, value } = opt
-    // should wait value updated
-    nextTick(() => {
-      const path = field.path.value
-      dependStore.matchDepend(
-        field.stringPath.value,
-        (dependPath) => {
-          options.onDependenciesValueChange!({ field, path, dependPath, value })
-        },
-      )
-    })
+    const path = field.path.value
+    dependStore.matchDepend(
+      field.stringPath.value,
+      (dependPath) => {
+        options.onDependenciesValueChange!({ field, path, dependPath, value })
+      },
+    )
   }
 
   provideFormContext(form)
