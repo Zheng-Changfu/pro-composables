@@ -1,5 +1,5 @@
 import type { MaybeRefOrGetter } from 'vue-demi'
-import { onScopeDispose, toValue } from 'vue-demi'
+import { nextTick, onScopeDispose, toValue } from 'vue-demi'
 import { isArray, isString } from 'lodash-es'
 import type { BaseField } from '../field'
 import type { PathPattern } from '../path'
@@ -57,7 +57,9 @@ export class DependStore {
   }
 
   resumeDependenciesTrigger = () => {
-    this.shouldTrigger = true
+    nextTick(() => {
+      this.shouldTrigger = true
+    })
   }
 
   matchDepend = (path: string, matchedFn: (dependPath: string[]) => void) => {
