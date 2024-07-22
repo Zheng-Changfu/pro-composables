@@ -1,7 +1,7 @@
 {
   "name": "pro-components-hooks",
   "type": "module",
-  "version": "0.0.75",
+  "version": "0.0.76",
   "description": "方便搭建业务组件库的一些 hooks，代码都不难，懒得写文档，估计也没人看",
   "author": "zhengchangfu",
   "license": "MIT",

@@ -1,4 +1,5 @@
 import { createEventHook, useMounted } from '@vueuse/core'
+import { nextTick } from 'vue-demi'
 import { uid } from '../utils/id'
 import type { BaseForm, FormOptions } from './types'
 import { provideFormContext } from './context'
@@ -78,12 +79,15 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   function onDependenciesChange(opt: { field: BaseField, value: any }) {
     const { field, value } = opt
     const path = field.path.value
-    matchDepend(
-      field.stringPath.value,
-      (dependPath) => {
-        options.onDependenciesValueChange!({ field, path, dependPath, value })
-      },
-    )
+    // wait value updated
+    nextTick(() => {
+      matchDepend(
+        field.stringPath.value,
+        (dependPath) => {
+          options.onDependenciesValueChange!({ field, path, dependPath, value })
+        },
+      )
+    })
   }
 
   provideFormContext(form)
