@@ -25,10 +25,12 @@ interface MatchFn extends Match {
 
 export class DependStore {
   public deps: Set<MatchFn>
+  public shouldTrigger: boolean
   public fieldStore: FieldStore
 
   constructor(fieldStore: FieldStore) {
     this.deps = new Set()
+    this.shouldTrigger = true
     this.fieldStore = fieldStore
 
     onScopeDispose(() => {
@@ -50,7 +52,17 @@ export class DependStore {
     })
   }
 
+  pauseDependenciesTrigger = () => {
+    this.shouldTrigger = false
+  }
+
+  resumeDependenciesTrigger = () => {
+    this.shouldTrigger = true
+  }
+
   matchDepend = (path: string, matchedFn: (dependPath: string[]) => void) => {
+    if (!this.shouldTrigger)
+      return
     const paths = this.fieldStore.fieldsPath.value
     this.deps.forEach((match) => {
       if (

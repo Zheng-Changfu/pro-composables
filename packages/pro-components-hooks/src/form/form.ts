@@ -14,6 +14,12 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   const valueStore = createValueStore(fieldStore, options)
 
   const {
+    matchDepend,
+    pauseDependenciesTrigger,
+    resumeDependenciesTrigger,
+  } = dependStore
+
+  const {
     values,
     matchPath,
     getFieldValue,
@@ -64,13 +70,15 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     setInitialValue,
     setInitialValues,
     triggerFieldValueChange,
+    pauseDependenciesTrigger,
+    resumeDependenciesTrigger,
     getFieldsTransformedValue,
   }
 
   function onDependenciesChange(opt: { field: BaseField, value: any }) {
     const { field, value } = opt
     const path = field.path.value
-    dependStore.matchDepend(
+    matchDepend(
       field.stringPath.value,
       (dependPath) => {
         options.onDependenciesValueChange!({ field, path, dependPath, value })

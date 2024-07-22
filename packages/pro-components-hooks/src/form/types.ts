@@ -103,6 +103,14 @@ export interface BaseForm {
    */
   matchPath: (pattern: PathPattern) => string[]
   /**
+   * 暂停 onDependenciesValueChange 的触发
+   */
+  pauseDependenciesTrigger: () => void
+  /**
+   * 恢复 onDependenciesValueChange 的触发
+   */
+  resumeDependenciesTrigger: () => void
+  /**
    * 通知字段值发生变化，内部使用
    */
   triggerFieldValueChange: EventHookTrigger<{
