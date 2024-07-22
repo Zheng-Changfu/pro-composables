@@ -19,39 +19,39 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
   })
 
   function push(...items: T[]) {
-    _push(field.value.value ?? [], ...items)
+    field.value.value = _push(field.value.value ?? [], ...items)
   }
 
   function pop() {
-    _pop(field.value.value ?? [])
+    field.value.value = _pop(field.value.value ?? [])
   }
 
   function insert(index: number, ...items: T[]) {
-    _insert(field.value.value ?? [], index, ...items)
+    field.value.value = _insert(field.value.value ?? [], index, ...items)
   }
 
   function remove(index: number) {
-    _remove(field.value.value ?? [], index)
+    field.value.value = _remove(field.value.value ?? [], index)
   }
 
   function shift() {
-    _shift(field.value.value ?? [])
+    field.value.value = _shift(field.value.value ?? [])
   }
 
   function unshift(...items: T[]) {
-    _unshift(field.value.value ?? [], ...items)
+    field.value.value = _unshift(field.value.value ?? [], ...items)
   }
 
   function move(from: number, to: number) {
-    _move(field.value.value ?? [], from, to)
+    field.value.value = _move(field.value.value ?? [], from, to)
   }
 
   function moveUp(index: number) {
-    _moveUp(field.value.value ?? [], index)
+    field.value.value = _moveUp(field.value.value ?? [], index)
   }
 
   function moveDown(index: number) {
-    _moveDown(field.value.value ?? [], index)
+    field.value.value = _moveDown(field.value.value ?? [], index)
   }
 
   const arrayField: ArrayField = Object.assign(field, {
