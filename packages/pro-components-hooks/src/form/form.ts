@@ -1,4 +1,3 @@
-import { nextTick } from 'vue-demi'
 import { createEventHook, useMounted } from '@vueuse/core'
 import { uid } from '../utils/id'
 import type { BaseForm, FormOptions } from './types'
