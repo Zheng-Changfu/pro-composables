@@ -1,6 +1,6 @@
 import { cloneDeep, get, has, merge, set, unset } from 'lodash-es'
 import type { Ref } from 'vue-demi'
-import { ref, toRaw } from 'vue-demi'
+import { ref } from 'vue-demi'
 import type { Path, PathPattern } from '../path'
 import type { FormOptions } from '../types'
 import type { FieldStore } from './fieldStore'
@@ -29,7 +29,7 @@ export class ValueStore {
   getFieldsValue = (paths?: Array<Path> | true) => {
     if (paths === true) {
       // 所有的值，包含用户设置的和可能被隐藏的字段
-      return toRaw(this.values.value)
+      return this.values.value
     }
 
     if (!paths) {

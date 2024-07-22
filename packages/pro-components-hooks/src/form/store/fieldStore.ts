@@ -1,4 +1,4 @@
-import { computed, shallowReactive, toRaw } from 'vue-demi'
+import { computed, shallowReactive } from 'vue-demi'
 import { get, isPlainObject, merge, set } from 'lodash-es'
 import type { ArrayField, BaseField } from '../field'
 import { convertPatternToMatchFn } from '../utils/path'
@@ -30,7 +30,7 @@ export class FieldStore {
         const { isList, path, value } = field
         const val = value.value
         if (!isList)
-          set(res, path.value, toRaw(val))
+          set(res, path.value, val)
       })
       return res
     })
@@ -100,8 +100,7 @@ export class FieldStore {
      *  返回值是对象，和当前字段所在层级的对象进行合并
      */
     const val = isList ? get(values, stringPath.value) : value.value
-    const rawVal = toRaw(val)
-    const transformedValue = transform!(rawVal, stringPath.value)
+    const transformedValue = transform!(val, stringPath.value)
     if (!isPlainObject(transformedValue)) {
       set(values, stringPath.value, transformedValue)
       return
@@ -135,9 +134,8 @@ export class FieldStore {
       const val = value.value
       if (isList)
         return
-      const rawVal = toRaw(val)
       if (!transform) {
-        set(res, path.value, rawVal)
+        set(res, path.value, val)
         return
       }
       this.transform(field, res)
