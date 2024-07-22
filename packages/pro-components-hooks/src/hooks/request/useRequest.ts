@@ -212,6 +212,7 @@ export function useRequest<
     watch(
       watchSource,
       () => toValue(guard) && run(),
+      { flush: 'post' },
     )
   }
 
