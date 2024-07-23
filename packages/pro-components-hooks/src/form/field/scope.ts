@@ -1,37 +1,26 @@
 import type { ComputedRef } from 'vue-demi'
 import { computed } from 'vue-demi'
 import { useInjectFormContext } from '../context'
-import type { BaseField } from './types'
 import { useInjectParentFieldContext } from './context'
 
 export type ExpressionScope = Record<string, any>
 export function createScope(
-  id: string,
   path: ComputedRef<string[]>,
+  index: ComputedRef<number>,
   scope: ExpressionScope = {},
 ) {
   const form = useInjectFormContext()
   const parent = useInjectParentFieldContext()
 
-  function getRowValues(field: BaseField) {
-    const { index } = field
+  const row = computed(() => {
+    if (!parent || index.value === -1)
+      return {}
+
     const { stringPath } = parent!
     const p = stringPath.value
     const i = index.value
     const rowPath = `${p}.${i}`
-    const values = form.valueStore.getFieldValue(rowPath)
-    return values
-  }
-
-  const row = computed(() => {
-    const field = form.fieldStore.getField(id)
-    if (
-      !field
-      || !field.isListPath
-      || !parent
-    )
-      return {}
-    return getRowValues(field)
+    return form.valueStore.getFieldValue(rowPath)
   })
 
   const total = computed(() => {
@@ -41,14 +30,7 @@ export function createScope(
   })
 
   const rowIndex = computed(() => {
-    const field = form.fieldStore.getField(id)
-    if (
-      !field
-      || !field.isListPath
-      || !parent
-    )
-      return -1
-    return field.index.value
+    return index.value ?? -1
   })
 
   const selfValue = computed(() => {

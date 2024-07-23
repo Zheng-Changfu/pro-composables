@@ -94,8 +94,8 @@ function createBaseField<T = any>(
   } = usePath(propPath)
 
   const scope = createScope(
-    id,
     path,
+    index,
     propScope,
   )
 
