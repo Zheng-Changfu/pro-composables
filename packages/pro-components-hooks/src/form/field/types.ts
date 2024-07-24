@@ -1,4 +1,5 @@
 import type { ComputedRef, Ref } from 'vue-demi'
+import type { EventHookOn } from '@vueuse/core'
 import type { Path } from '../path'
 import type { MaybeExpression } from '../../hooks'
 import type { Dependencie } from '../store/dependStore'
@@ -210,4 +211,21 @@ export interface ArrayField<T = any> extends BaseField<T[]> {
    * 下移数据
    */
   moveDown: (index: number) => void
+  /**
+   * 列表发生了动作后触发的回调
+   */
+  onActionChange: EventHookOn<ArrayFieldAction>
 }
+
+export type ArrayFieldAction = Extract<
+  | 'push'
+  | 'pop'
+  | 'insert'
+  | 'remove'
+  | 'shift'
+  | 'unshift'
+  | 'move'
+  | 'moveUp'
+  | 'moveDown',
+  keyof ArrayField
+>
