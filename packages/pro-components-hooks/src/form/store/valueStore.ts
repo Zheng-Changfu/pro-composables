@@ -1,8 +1,9 @@
-import { cloneDeep, get, has, merge, set, unset } from 'lodash-es'
+import { cloneDeep, get, has, set, unset } from 'lodash-es'
 import type { Ref } from 'vue-demi'
 import { ref } from 'vue-demi'
 import type { Path, PathPattern } from '../path'
 import type { FormOptions } from '../types'
+import { type ValueMergeStrategy, mergeByStrategy } from '../utils/value'
 import type { FieldStore } from './fieldStore'
 
 /**
@@ -67,8 +68,12 @@ export class ValueStore {
     set(this.values.value, path, value)
   }
 
-  setFieldsValue = (vals: Record<string, any>) => {
-    merge(this.values.value, vals)
+  setFieldsValue = (vals: Record<string, any>, strategy?: ValueMergeStrategy) => {
+    this.values.value = mergeByStrategy(
+      this.values.value,
+      vals,
+      strategy,
+    )
   }
 
   resetFieldValue = (path: Path) => {
@@ -84,8 +89,12 @@ export class ValueStore {
     set(this.initialValues, path, cloneDeep(value))
   }
 
-  setInitialValues = (vals: Record<string, any>) => {
-    merge(this.initialValues, cloneDeep(vals))
+  setInitialValues = (vals: Record<string, any>, strategy?: ValueMergeStrategy) => {
+    this.initialValues = mergeByStrategy(
+      this.initialValues,
+      cloneDeep(vals),
+      strategy,
+    )
   }
 }
 

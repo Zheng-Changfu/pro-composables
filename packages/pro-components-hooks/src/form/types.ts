@@ -6,6 +6,7 @@ import type { Path, PathPattern } from './path'
 import type { DependStore } from './store/dependStore'
 import type { FieldStore } from './store/fieldStore'
 import type { ValueStore } from './store/valueStore'
+import type { ValueMergeStrategy } from './utils/value'
 
 export interface FormOptions<Values = any> {
   /**
@@ -76,7 +77,7 @@ export interface BaseForm {
   /**
    * 设置一组值
    */
-  setFieldsValue: (values: Record<string, any>) => void
+  setFieldsValue: (values: Record<string, any>, strategy?: ValueMergeStrategy) => void
   /**
    * 重置指定路径字段的值
    */
@@ -92,7 +93,7 @@ export interface BaseForm {
   /**
    * 设置一组初始值
    */
-  setInitialValues: (values: Record<string, any>) => void
+  setInitialValues: (values: Record<string, any>, strategy?: ValueMergeStrategy) => void
   /**
    * 获取全部表单值，不包含被隐藏的和设置过的（被 transform 处理过的）
    */
