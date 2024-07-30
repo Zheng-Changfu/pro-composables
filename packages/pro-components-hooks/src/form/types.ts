@@ -1,5 +1,5 @@
 import type { Ref } from 'vue-demi'
-import type { EventHookTrigger } from '@vueuse/core'
+import type { EventHookOn, EventHookTrigger } from '@vueuse/core'
 import type { ArrayField, BaseField } from './field'
 import type { ExpressionScope } from './field/scope'
 import type { Path, PathPattern } from './path'
@@ -111,6 +111,13 @@ export interface BaseForm {
    * 恢复 onDependenciesValueChange 的触发
    */
   resumeDependenciesTrigger: () => void
+  /**
+   * 监听字段值的变化
+   */
+  onFieldValueChange: EventHookOn<{
+    field: BaseField
+    value: any
+  }>
   /**
    * 通知字段值发生变化，内部使用
    */
