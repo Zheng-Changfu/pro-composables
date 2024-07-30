@@ -22,7 +22,7 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
     set,
   })
 
-  function get() {
+  function get(oldValue: any) {
     const p = path.value
     let storeValue = form.valueStore.getFieldValue(p)
 
@@ -39,7 +39,7 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
     }
 
     const field = form.fieldStore.getField(id)
-    const changed = !firstGetValue
+    const changed = !firstGetValue && !Object.is(oldValue, storeValue)
     firstGetValue = false
 
     if (field && changed) {
