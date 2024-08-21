@@ -1,32 +1,26 @@
 import { isArray, isPlainObject, isString } from 'lodash-es'
 import type { ComputedRef, Ref, UnwrapRef } from 'vue-demi'
-import { computed, isProxy, isRef, unref } from 'vue-demi'
+import { computed, isProxy, unref } from 'vue-demi'
 import type { ExcludeExpression } from './types'
 
 const expressionReg = /\{\{([\s\S]*)\}\}/
-const scopeToUnwrapScopeWeakMap = new WeakMap<Record<string, any>, Record<string, any>>()
+const scopeToProxyWeakMap = new WeakMap<Record<string, any>, Record<string, any>>()
 
 // scope 里面有的是 ref 数据，需要自动解包
 function unwrapScope(scope: Record<string, any>) {
-  if (scopeToUnwrapScopeWeakMap.has(scope))
-    return scopeToUnwrapScopeWeakMap.get(scope)!
+  if (scopeToProxyWeakMap.has(scope))
+    return scopeToProxyWeakMap.get(scope)!
 
-  for (const key in scope) {
-    const value = scope[key]
-    if (isRef(value)) {
-      Object.defineProperty(scope, key, {
-        get() {
-          return value.value
-        },
-        set(val) {
-          value.value = val
-        },
-        enumerable: false,
-      })
-    }
-  }
-  scopeToUnwrapScopeWeakMap.set(scope, scope)
-  return scope
+  const proxy = new Proxy(scope, {
+    get(target, key, receiver) {
+      return unref(Reflect.get(target, key, receiver))
+    },
+    set() {
+      throw new Error('not set!')
+    },
+  })
+  scopeToProxyWeakMap.set(scope, proxy)
+  return proxy
 }
 
 export function baseCompile(source: any, scope: Record<string, any>) {

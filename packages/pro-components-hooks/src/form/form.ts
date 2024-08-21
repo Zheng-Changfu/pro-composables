@@ -70,6 +70,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     resetFieldsValue,
     setInitialValue,
     setInitialValues,
+    onFieldValueChange,
     triggerFieldValueChange,
     pauseDependenciesTrigger,
     resumeDependenciesTrigger,

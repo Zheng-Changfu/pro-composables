@@ -15,7 +15,7 @@ export function mapTree<T, R, F extends keyof T>(
 ): MapTreeData<R, F> {
   childrenField = childrenField ?? 'children'
   return data.map((item, index, array) => {
-    const children = get(item, childrenField, [])
+    const children = get(item, childrenField)
     const returnedItem = callback(item, index, info, array)
     if (isArray(children)) {
       const mappedChildren = mapTree(

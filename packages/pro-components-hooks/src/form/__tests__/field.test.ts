@@ -489,7 +489,7 @@ describe('update value to trigger postState and onChange', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(onChange).toHaveBeenCalledTimes(2)
+    expect(onChange).toHaveBeenCalledTimes(0)
     expect(postState).toHaveBeenCalledTimes(4)
     expect(postState).toHaveNthReturnedWith(1, 2)
     expect(postState).toHaveNthReturnedWith(2, 4)
@@ -521,7 +521,7 @@ describe('update value to trigger postState and onChange', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(onChange).toHaveBeenCalledTimes(2)
+    expect(onChange).toHaveBeenCalledTimes(0)
     expect(postState).toHaveBeenCalledTimes(4)
     expect(postState).toHaveNthReturnedWith(1, 2)
     expect(postState).toHaveNthReturnedWith(2, 4)

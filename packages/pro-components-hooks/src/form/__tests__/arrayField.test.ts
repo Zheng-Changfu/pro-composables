@@ -134,12 +134,13 @@ describe('arrayField api', () => {
             { ..._form.getFieldsValue() },
             { ..._form.getFieldsValue(true) },
           )
-          // await nextTick()
-          // _form.setFieldValue('list.0.a1', null)
-          // vals.push(
-          //   { ..._form.getFieldsValue() },
-          //   { ..._form.getFieldsValue(true) },
-          // )
+          await nextTick()
+          _form.setFieldValue('list.0.a1', null)
+          await nextTick()
+          vals.push(
+            { ..._form.getFieldsValue() },
+            { ..._form.getFieldsValue(true) },
+          )
         })
 
         return () => {
@@ -173,9 +174,10 @@ describe('arrayField api', () => {
     await nextTick()
     expect(vals[2]).toStrictEqual({ list: [{ a1: 1, a2: null }] })
     expect(vals[3]).toMatchObject({ list: [{ a1: 1, a2: null }] })
-    // await nextTick()
-    // expect(vals[4]).toStrictEqual({ list: [{ a1: null }] })
-    // expect(vals[5]).toMatchObject({ list: [{ a1: null, a2: null }] })
+    await nextTick()
+    await nextTick()
+    expect(vals[4]).toStrictEqual({ list: [{ a1: null }] })
+    expect(vals[5]).toMatchObject({ list: [{ a1: null, a2: null }] })
     vm.unmount()
   })
 
