@@ -6,9 +6,9 @@ type PathImpl<K extends string | number, V> = V extends
   | Primitive
   | BrowerNaitveObject
   ? `${K}`
-  : `${K}` | `${K}.${ExtractObjectPaths<V>}`
+  : `${K}` | `${K}.${ExtractObjectPath<V>}`
 
-export type ExtractObjectPaths<O> = O extends Array<infer V>
+export type ExtractObjectPath<O> = O extends Array<infer V>
   ? IsTuple<O> extends true
     ? PathImpl<Extract<keyof O, `${number}`>, V>
     : PathImpl<number, V>
