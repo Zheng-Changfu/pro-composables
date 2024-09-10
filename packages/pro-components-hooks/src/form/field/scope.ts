@@ -65,8 +65,8 @@ export function createScope(
   }
 
   return {
-    ...builtInScope,
-    ...form.scope,
     ...scope,
+    ...form.scope,
+    ...builtInScope,
   }
 }

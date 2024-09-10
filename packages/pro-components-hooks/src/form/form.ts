@@ -41,6 +41,10 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
 
   const scope = {
     /**
+     * 用户传递的
+     */
+    ...(options.expressionScope ?? {}),
+    /**
      * 整个表单的值，等同于 getFieldsValue(true)
      */
     $values: values.value,
@@ -48,10 +52,6 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
      * @alias $values
      */
     $vals: values.value,
-    /**
-     * 用户传递的
-     */
-    ...(options.expressionScope ?? {}),
   }
 
   const form: BaseForm = {
