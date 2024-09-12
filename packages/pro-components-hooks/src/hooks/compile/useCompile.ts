@@ -1,6 +1,7 @@
 import { isArray, isPlainObject, isString } from 'lodash-es'
 import type { ComputedRef, Ref, UnwrapRef } from 'vue-demi'
 import { computed, isProxy, unref } from 'vue-demi'
+import type { ExpressionScope } from '../../form'
 import type { ExcludeExpression } from './types'
 
 const expressionReg = /\{\{([\s\S]*)\}\}/
@@ -64,16 +65,16 @@ export interface UseCompileOptions {
   /**
    * 表达式可以读取到的内容
    */
-  scope?: Record<string, any>
+  scope?: ExpressionScope
 }
 
 export function useCompile<T extends (string | Record<string, any> | Ref<any> | ComputedRef<Record<string, any>>)>(
   value: T,
   options: UseCompileOptions = {},
 ): ComputedRef<ExcludeExpression<UnwrapRef<T>>> {
-  const { scope = {} } = options
+  const { scope } = options
   return computed(() => {
     const source = unref(value)
-    return compile(source, scope)
+    return compile(source, (scope?.value ?? {}))
   })
 }

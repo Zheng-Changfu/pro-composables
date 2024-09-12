@@ -1,13 +1,13 @@
-import type { ComputedRef } from 'vue-demi'
+import type { ComputedRef, Ref } from 'vue-demi'
 import { computed } from 'vue-demi'
 import { useInjectFormContext } from '../context'
 import { useInjectParentFieldContext } from './context'
 
-export type ExpressionScope = Record<string, any>
+export type ExpressionScope = Ref<Record<string, any>>
 export function createScope(
   path: ComputedRef<string[]>,
   index: ComputedRef<number>,
-  scope: ExpressionScope = {},
+  scope?: ExpressionScope,
 ) {
   const form = useInjectFormContext()
   const parent = useInjectParentFieldContext()
@@ -64,9 +64,11 @@ export function createScope(
     $rowIndex: rowIndex,
   }
 
-  return {
-    ...scope,
-    ...form.scope,
-    ...builtInScope,
-  }
+  return computed(() => {
+    return {
+      ...(scope?.value ?? {}),
+      ...form.scope.value,
+      ...builtInScope,
+    }
+  })
 }

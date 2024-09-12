@@ -15,8 +15,8 @@ export const Form = defineComponent({
   setup(props, { slots }) {
     const form = createForm({
       initialValues: props.initialValues ?? {},
-      expressionScope: props.expressionScope,
       onFieldValueChange: props.onFieldValueChange,
+      expressionScope: toRef(props, 'expressionScope'),
       onDependenciesValueChange: props.onDependenciesValueChange,
     })
 

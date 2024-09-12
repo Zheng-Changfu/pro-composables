@@ -1,5 +1,5 @@
 import { createEventHook, useMounted } from '@vueuse/core'
-import { nextTick } from 'vue-demi'
+import { computed, nextTick } from 'vue-demi'
 import { uid } from '../utils/id'
 import type { BaseForm, FormOptions } from './types'
 import { provideFormContext } from './context'
@@ -39,20 +39,22 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     trigger: triggerFieldValueChange,
   } = createEventHook<{ field: BaseField, value: any }>()
 
-  const scope = {
-    /**
-     * 用户传递的
-     */
-    ...(options.expressionScope ?? {}),
-    /**
-     * 整个表单的值，等同于 getFieldsValue(true)
-     */
-    $values: values.value,
-    /**
-     * @alias $values
-     */
-    $vals: values.value,
-  }
+  const scope = computed(() => {
+    return {
+      /**
+       * 用户传递的
+       */
+      ...(options.expressionScope?.value ?? {}),
+      /**
+       * 整个表单的值，等同于 getFieldsValue(true)
+       */
+      $values: values.value,
+      /**
+       * @alias $values
+       */
+      $vals: values.value,
+    }
+  })
 
   const form: BaseForm = {
     scope,

@@ -10,7 +10,7 @@ export function useFormItemProps(options: UseFormItemProps) {
   const formItemProps = ref<Record<string, any>>({})
 
   function doUpdateFormItemProps(props: Record<string, any>) {
-    formItemProps.value = compile(props, scope)
+    formItemProps.value = compile(props, scope.value)
   }
 
   return {

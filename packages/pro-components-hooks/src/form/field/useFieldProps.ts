@@ -10,7 +10,7 @@ export function useFieldProps(options: UseFieldProps) {
   const fieldProps = ref<Record<string, any>>({})
 
   function doUpdateFieldProps(props: Record<string, any>) {
-    fieldProps.value = compile(props, scope)
+    fieldProps.value = compile(props, scope.value)
   }
 
   return {
