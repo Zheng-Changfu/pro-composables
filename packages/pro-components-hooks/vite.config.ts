@@ -7,6 +7,7 @@ export default defineConfig({
     exclude: ['vue-demi'],
   },
   build: {
+    minify: false,
     lib: {
       entry: resolve(__dirname, './index.ts'),
       fileName: 'index',
