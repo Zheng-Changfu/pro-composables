@@ -64,25 +64,52 @@ export class ValueStore {
     return this.fieldStore.matchFieldPath(pattern)
   }
 
+  resolveValueWithPostState = (path: Path, value: any) => {
+    const field = this.fieldStore.getFieldByPath(path)
+    const postValue = field && field.postState ? field.postState(value) : value
+    return postValue
+  }
+
+  resolveValuesWithPostState = (vals: any) => {
+    const clonedVals = cloneDeep(vals)
+    const postStateFieldsPathMap = this.fieldStore.getHasPostStateFieldsPathMap.value
+    postStateFieldsPathMap.forEach(((field) => {
+      const { stringPath } = field
+      const rawStringPath = stringPath.value
+
+      if (has(clonedVals, rawStringPath)) {
+        const value = get(clonedVals, rawStringPath)
+        const postedValue = field.postState(value)
+        if (!Object.is(value, postedValue))
+          set(clonedVals, rawStringPath, postedValue)
+      }
+    }))
+    return clonedVals
+  }
+
   setFieldValue = (path: Path, value: any) => {
-    set(this.values.value, path, value)
+    const resolvedValue = this.resolveValueWithPostState(path, value)
+    set(this.values.value, path, resolvedValue)
   }
 
   setFieldsValue = (vals: Record<string, any>, strategy?: ValueMergeStrategy) => {
+    const resolvedValues = this.resolveValuesWithPostState(vals)
     this.values.value = mergeByStrategy(
       this.values.value,
-      vals,
+      resolvedValues,
       strategy,
     )
   }
 
   resetFieldValue = (path: Path) => {
-    const initialValue = get(this.initialValues, path)
-    set(this.values.value, path, cloneDeep(initialValue))
+    const initialValue = cloneDeep(get(this.initialValues, path))
+    const resolvedValue = this.resolveValueWithPostState(path, initialValue)
+    set(this.values.value, path, resolvedValue)
   }
 
   resetFieldsValue = () => {
-    this.values.value = cloneDeep(this.initialValues)
+    const resolvedValues = this.resolveValuesWithPostState(this.initialValues)
+    this.values.value = resolvedValues
   }
 
   setInitialValue = (path: Path, value: any) => {

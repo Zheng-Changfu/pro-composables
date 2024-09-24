@@ -26,11 +26,11 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
     value,
     hidden,
     visible,
-    scope = {},
     defaultValue,
     initialValue,
     preserve = true,
     dependencies = [],
+    scope = { value: undefined } as any,
     onChange,
     postState,
     transform,
@@ -123,7 +123,7 @@ function createBaseField<T = any>(
   const {
     value,
     doUpdateValue,
-  } = useValue(id, path, { postState, onChange })
+  } = useValue(id, path, { onChange })
 
   const field: BaseField = {
     id,
@@ -227,7 +227,7 @@ function mountFieldValue(
 
   form.valueStore.setFieldValue(p, val)
   if (!form.mounted.value)
-    form.valueStore.setInitialValue(p, cloneDeep(val))
+    form.valueStore.setInitialValue(p, val)
 }
 
 function unmountFieldValue(

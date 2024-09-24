@@ -4,18 +4,12 @@ import { useInjectFormContext } from '../context'
 
 interface UseValueOptions {
   onChange?: (val: any) => void
-  postState?: (val: any) => any
 }
 
 export function useValue<T = any>(id: string, path: ComputedRef<string[]>, options: UseValueOptions) {
   let firstGetValue = true
-  let cachedValue: any = Symbol('')
+  const { onChange } = options
   const form = useInjectFormContext()
-
-  const {
-    onChange,
-    postState,
-  } = options
 
   const proxy = computed({
     get,
@@ -24,19 +18,7 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
 
   function get(oldValue: any) {
     const p = path.value
-    let storeValue = form.valueStore.getFieldValue(p)
-
-    if (postState) {
-      if (
-        Object.is(storeValue, cachedValue)
-        || Object.is(toRaw(storeValue), cachedValue)
-      )
-        return storeValue
-
-      // vModel Store
-      const postValue = cachedValue = storeValue = postState(storeValue)
-      form.valueStore.setFieldValue(p, postValue)
-    }
+    const storeValue = form.valueStore.getFieldValue(p)
 
     const field = form.fieldStore.getField(id)
     const changed = !firstGetValue && !Object.is(oldValue, storeValue)

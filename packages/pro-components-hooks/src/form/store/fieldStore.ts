@@ -1,8 +1,8 @@
 import { computed, shallowReactive, toRaw } from 'vue-demi'
 import { get, isPlainObject, merge, set } from 'lodash-es'
 import type { ArrayField, BaseField } from '../field'
-import { convertPatternToMatchFn } from '../utils/path'
-import type { PathPattern } from '../path'
+import { convertPatternToMatchFn, stringifyPath } from '../utils/path'
+import type { Path, PathPattern } from '../path'
 
 /**
  * 管理所有的字段
@@ -56,6 +56,17 @@ export class FieldStore {
     })
   }
 
+  get getHasPostStateFieldsPathMap() {
+    return computed(() => {
+      const pathMap = new Map<string, BaseField & { postState: Exclude<BaseField['postState'], undefined> }>()
+      this.idToFieldMap.forEach((field) => {
+        if (field.postState)
+          pathMap.set(field.stringPath.value, field as any)
+      })
+      return pathMap
+    })
+  }
+
   getField = (id: string) => {
     return this.idToFieldMap.get(id)
   }
@@ -83,6 +94,10 @@ export class FieldStore {
 
   getFieldsValue = () => {
     return this.fieldsValue
+  }
+
+  getFieldByPath = (path: Path) => {
+    return this.fieldsPathMap.value.get(stringifyPath(path))
   }
 
   private transform = (field: BaseField, values: Record<string, any>) => {
