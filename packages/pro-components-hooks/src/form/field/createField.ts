@@ -1,5 +1,5 @@
 import { onUnmounted, watch } from 'vue-demi'
-import { cloneDeep, get, has } from 'lodash-es'
+import { get, has } from 'lodash-es'
 import { uid } from '../../utils/id'
 import { usePath } from '../path/usePath'
 import { useInjectFormContext } from '../context'

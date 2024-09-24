@@ -1,5 +1,5 @@
 import type { ComputedRef } from 'vue-demi'
-import { computed, toRaw } from 'vue-demi'
+import { computed } from 'vue-demi'
 import { useInjectFormContext } from '../context'
 
 interface UseValueOptions {
