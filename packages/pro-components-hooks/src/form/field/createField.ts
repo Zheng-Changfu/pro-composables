@@ -32,7 +32,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
     dependencies = [],
     scope = { value: null },
     onChange,
-    postState,
+    postValue,
     transform,
     ...customValues
   } = fieldOptions
@@ -53,7 +53,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
       dependencies,
       scope: scope as any,
       onChange,
-      postState,
+      postValue,
       transform,
       ...customValues,
     },
@@ -67,7 +67,7 @@ function createBaseField<T = any>(
 ) {
   const {
     onChange,
-    postState,
+    postValue,
     transform,
     preserve,
     defaultValue,
@@ -144,7 +144,7 @@ function createBaseField<T = any>(
     updating: false,
     meta: fieldOptions,
     onChange,
-    postState,
+    postValue,
     transform,
     doUpdateValue,
     doUpdateFieldProps,

@@ -62,7 +62,7 @@ export interface FieldOptions<T = any> {
   /**
    * 后置状态钩子，可以二次修改值
    */
-  postState?: (val: T) => T
+  postValue?: (val: T) => T
   /**
    * 值变化后的回调
    */
@@ -159,7 +159,7 @@ export interface BaseField<T = any> {
   /**
    * 后置状态钩子，可以二次修改值
    */
-  postState?: (val: T) => T
+  postValue?: (val: T) => T
   /**
    * 值变化后的回调
    */

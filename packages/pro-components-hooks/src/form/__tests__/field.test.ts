@@ -394,10 +394,10 @@ describe('baseField', () => {
   })
 })
 
-describe('update value to trigger postState and onChange', () => {
+describe('update value to trigger postValue and onChange', () => {
   it('setFieldValue', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val === undefined ? 0 : val * 2)
+    const postValue = vi.fn(val => val === undefined ? 0 : val * 2)
     const Comp = defineComponent({
       setup() {
         let _form: BaseForm
@@ -411,8 +411,8 @@ describe('update value to trigger postState and onChange', () => {
         })
         return () => {
           return h(Form, { onFormMounted }, [
-            h(FormItem, { path: 'a', onChange, postState }),
-            h(FormItem, { path: 'b', onChange, postState }),
+            h(FormItem, { path: 'a', onChange, postValue }),
+            h(FormItem, { path: 'b', onChange, postValue }),
           ])
         }
       },
@@ -421,17 +421,17 @@ describe('update value to trigger postState and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     // expect(onChange).toHaveBeenCalledTimes(2)
-    expect(postState).toHaveBeenCalledTimes(4)
-    expect(postState).toHaveNthReturnedWith(1, 0)
-    expect(postState).toHaveNthReturnedWith(2, 0)
-    expect(postState).toHaveNthReturnedWith(3, 2)
-    expect(postState).toHaveNthReturnedWith(4, 4)
+    expect(postValue).toHaveBeenCalledTimes(4)
+    expect(postValue).toHaveNthReturnedWith(1, 0)
+    expect(postValue).toHaveNthReturnedWith(2, 0)
+    expect(postValue).toHaveNthReturnedWith(3, 2)
+    expect(postValue).toHaveNthReturnedWith(4, 4)
     vm.unmount()
   })
 
   it('setFieldsValue', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val === undefined ? 0 : val * 2)
+    const postValue = vi.fn(val => val === undefined ? 0 : val * 2)
     const Comp = defineComponent({
       setup() {
         let _form: BaseForm
@@ -447,8 +447,8 @@ describe('update value to trigger postState and onChange', () => {
         })
         return () => {
           return h(Form, { onFormMounted }, [
-            h(FormItem, { path: 'a', onChange, postState }),
-            h(FormItem, { path: 'b', onChange, postState }),
+            h(FormItem, { path: 'a', onChange, postValue }),
+            h(FormItem, { path: 'b', onChange, postValue }),
           ])
         }
       },
@@ -457,17 +457,17 @@ describe('update value to trigger postState and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(2)
-    expect(postState).toHaveBeenCalledTimes(4)
-    expect(postState).toHaveNthReturnedWith(1, 0)
-    expect(postState).toHaveNthReturnedWith(2, 0)
-    expect(postState).toHaveNthReturnedWith(3, 2)
-    expect(postState).toHaveNthReturnedWith(4, 4)
+    expect(postValue).toHaveBeenCalledTimes(4)
+    expect(postValue).toHaveNthReturnedWith(1, 0)
+    expect(postValue).toHaveNthReturnedWith(2, 0)
+    expect(postValue).toHaveNthReturnedWith(3, 2)
+    expect(postValue).toHaveNthReturnedWith(4, 4)
     vm.unmount()
   })
 
   it('resetFieldValue', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val * 2)
+    const postValue = vi.fn(val => val * 2)
     const Comp = defineComponent({
       setup() {
         let _form: BaseForm
@@ -480,8 +480,8 @@ describe('update value to trigger postState and onChange', () => {
         })
         return () => {
           return h(Form, { onFormMounted }, [
-            h(FormItem, { path: 'a', initialValue: 1, onChange, postState }),
-            h(FormItem, { path: 'b', initialValue: 2, onChange, postState }),
+            h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
+            h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
           ])
         }
       },
@@ -490,17 +490,17 @@ describe('update value to trigger postState and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
-    expect(postState).toHaveBeenCalledTimes(4)
-    expect(postState).toHaveNthReturnedWith(1, 2)
-    expect(postState).toHaveNthReturnedWith(2, 4)
-    expect(postState).toHaveNthReturnedWith(3, 2)
-    expect(postState).toHaveNthReturnedWith(4, 4)
+    expect(postValue).toHaveBeenCalledTimes(4)
+    expect(postValue).toHaveNthReturnedWith(1, 2)
+    expect(postValue).toHaveNthReturnedWith(2, 4)
+    expect(postValue).toHaveNthReturnedWith(3, 2)
+    expect(postValue).toHaveNthReturnedWith(4, 4)
     vm.unmount()
   })
 
   it('resetFieldsValue', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val * 2)
+    const postValue = vi.fn(val => val * 2)
     const Comp = defineComponent({
       setup() {
         let _form: BaseForm
@@ -512,8 +512,8 @@ describe('update value to trigger postState and onChange', () => {
         })
         return () => {
           return h(Form, { onFormMounted }, [
-            h(FormItem, { path: 'a', initialValue: 1, onChange, postState }),
-            h(FormItem, { path: 'b', initialValue: 2, onChange, postState }),
+            h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
+            h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
           ])
         }
       },
@@ -522,23 +522,23 @@ describe('update value to trigger postState and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
-    expect(postState).toHaveBeenCalledTimes(4)
-    expect(postState).toHaveNthReturnedWith(1, 2)
-    expect(postState).toHaveNthReturnedWith(2, 4)
-    expect(postState).toHaveNthReturnedWith(3, 2)
-    expect(postState).toHaveNthReturnedWith(4, 4)
+    expect(postValue).toHaveBeenCalledTimes(4)
+    expect(postValue).toHaveNthReturnedWith(1, 2)
+    expect(postValue).toHaveNthReturnedWith(2, 4)
+    expect(postValue).toHaveNthReturnedWith(3, 2)
+    expect(postValue).toHaveNthReturnedWith(4, 4)
     vm.unmount()
   })
 
   it('initialValues', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val * 2)
+    const postValue = vi.fn(val => val * 2)
     const Comp = defineComponent({
       setup() {
         return () => {
           return h(Form, { initialValues: { a: 1, b: 2 } }, [
-            h(FormItem, { path: 'a', onChange, postState }),
-            h(FormItem, { path: 'b', onChange, postState }),
+            h(FormItem, { path: 'a', onChange, postValue }),
+            h(FormItem, { path: 'b', onChange, postValue }),
           ])
         }
       },
@@ -547,21 +547,21 @@ describe('update value to trigger postState and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
-    expect(postState).toHaveBeenCalledTimes(2)
-    expect(postState).toHaveNthReturnedWith(1, 2)
-    expect(postState).toHaveNthReturnedWith(2, 4)
+    expect(postValue).toHaveBeenCalledTimes(2)
+    expect(postValue).toHaveNthReturnedWith(1, 2)
+    expect(postValue).toHaveNthReturnedWith(2, 4)
     vm.unmount()
   })
 
   it('initialValue', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val * 2)
+    const postValue = vi.fn(val => val * 2)
     const Comp = defineComponent({
       setup() {
         return () => {
           return h(Form, { }, [
-            h(FormItem, { path: 'a', initialValue: 1, onChange, postState }),
-            h(FormItem, { path: 'b', initialValue: 2, onChange, postState }),
+            h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
+            h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
           ])
         }
       },
@@ -570,15 +570,15 @@ describe('update value to trigger postState and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
-    expect(postState).toHaveBeenCalledTimes(2)
-    expect(postState).toHaveNthReturnedWith(1, 2)
-    expect(postState).toHaveNthReturnedWith(2, 4)
+    expect(postValue).toHaveBeenCalledTimes(2)
+    expect(postValue).toHaveNthReturnedWith(1, 2)
+    expect(postValue).toHaveNthReturnedWith(2, 4)
     vm.unmount()
   })
 
   it('value', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val * 4)
+    const postValue = vi.fn(val => val * 4)
     const Comp = defineComponent({
       setup() {
         const aRef = ref(1)
@@ -591,8 +591,8 @@ describe('update value to trigger postState and onChange', () => {
 
         return () => {
           return h(Form, { }, [
-            h(FormItem, { path: 'a', value: aRef.value, onChange, postState }),
-            h(FormItem, { path: 'b', value: bRef.value, onChange, postState }),
+            h(FormItem, { path: 'a', value: aRef.value, onChange, postValue }),
+            h(FormItem, { path: 'b', value: bRef.value, onChange, postValue }),
           ])
         }
       },
@@ -601,17 +601,17 @@ describe('update value to trigger postState and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(2)
-    expect(postState).toHaveBeenCalledTimes(4)
-    expect(postState).toHaveNthReturnedWith(1, 4)
-    expect(postState).toHaveNthReturnedWith(2, 8)
-    expect(postState).toHaveNthReturnedWith(3, 8)
-    expect(postState).toHaveNthReturnedWith(4, 12)
+    expect(postValue).toHaveBeenCalledTimes(4)
+    expect(postValue).toHaveNthReturnedWith(1, 4)
+    expect(postValue).toHaveNthReturnedWith(2, 8)
+    expect(postValue).toHaveNthReturnedWith(3, 8)
+    expect(postValue).toHaveNthReturnedWith(4, 12)
     vm.unmount()
   })
 
   it('doUpdateValue', async () => {
     const onChange = vi.fn()
-    const postState = vi.fn(val => val === undefined ? 0 : val * 2)
+    const postValue = vi.fn(val => val === undefined ? 0 : val * 2)
     const Comp = defineComponent({
       setup() {
         let _field: BaseField
@@ -623,7 +623,7 @@ describe('update value to trigger postState and onChange', () => {
         })
         return () => {
           return h(Form, { }, [
-            h(FormItem, { path: 'a', onFieldMounted, onChange, postState }),
+            h(FormItem, { path: 'a', onFieldMounted, onChange, postValue }),
           ])
         }
       },
@@ -632,9 +632,9 @@ describe('update value to trigger postState and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(1)
-    expect(postState).toHaveBeenCalledTimes(2)
-    expect(postState).toHaveNthReturnedWith(1, 0)
-    expect(postState).toHaveNthReturnedWith(2, 4)
+    expect(postValue).toHaveBeenCalledTimes(2)
+    expect(postValue).toHaveNthReturnedWith(1, 0)
+    expect(postValue).toHaveNthReturnedWith(2, 4)
     vm.unmount()
   })
 })

@@ -56,11 +56,11 @@ export class FieldStore {
     })
   }
 
-  get getHasPostStateFieldsPathMap() {
+  get getHasPostValueFieldsPathMap() {
     return computed(() => {
-      const pathMap = new Map<string, BaseField & { postState: Exclude<BaseField['postState'], undefined> }>()
+      const pathMap = new Map<string, BaseField & { postValue: Exclude<BaseField['postValue'], undefined> }>()
       this.idToFieldMap.forEach((field) => {
-        if (field.postState)
+        if (field.postValue)
           pathMap.set(field.stringPath.value, field as any)
       })
       return pathMap

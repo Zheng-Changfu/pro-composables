@@ -36,7 +36,7 @@ export const FormItem = defineComponent({
     'initialValue',
     'dependencies',
     'onFieldMounted',
-    'postState',
+    'postValue',
     'onChange',
     'visible',
     'hidden',
@@ -50,7 +50,7 @@ export const FormItem = defineComponent({
       dependencies: props.dependencies,
       initialValue: props.initialValue,
       defaultValue: props.defaultValue,
-      postState: props.postState,
+      postValue: props.postValue,
       onChange: props.onChange,
       hidden: toRef(props, 'hidden'),
       visible: toRef(props, 'visible'),
@@ -99,7 +99,7 @@ export const FormList = defineComponent({
     'initialValue',
     'dependencies',
     'onFieldMounted',
-    'postState',
+    'postValue',
     'onChange',
     'visible',
     'hidden',
@@ -118,7 +118,7 @@ export const FormList = defineComponent({
       visible: toRef(props, 'visible'),
       preserve: props.preserve,
       transform: props.transform,
-      postState: (val) => {
+      postValue: (val) => {
         if (!val)
           return []
         return val.map((item: any) => {

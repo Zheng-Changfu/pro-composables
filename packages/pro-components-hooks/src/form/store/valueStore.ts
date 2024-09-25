@@ -64,22 +64,22 @@ export class ValueStore {
     return this.fieldStore.matchFieldPath(pattern)
   }
 
-  resolveValueWithPostState = (path: Path, value: any) => {
+  resolveValueWithPostValue = (path: Path, value: any) => {
     const field = this.fieldStore.getFieldByPath(path)
-    const postValue = field && field.postState ? field.postState(value) : value
+    const postValue = field && field.postValue ? field.postValue(value) : value
     return postValue
   }
 
-  resolveValuesWithPostState = (vals: any) => {
+  resolveValuesWithPostValue = (vals: any) => {
     const clonedVals = cloneDeep(vals)
-    const postStateFieldsPathMap = this.fieldStore.getHasPostStateFieldsPathMap.value
-    postStateFieldsPathMap.forEach(((field) => {
+    const postValueFieldsPathMap = this.fieldStore.getHasPostValueFieldsPathMap.value
+    postValueFieldsPathMap.forEach(((field) => {
       const { stringPath } = field
       const rawStringPath = stringPath.value
 
       if (has(clonedVals, rawStringPath)) {
         const value = get(clonedVals, rawStringPath)
-        const postedValue = field.postState(value)
+        const postedValue = field.postValue(value)
         if (!Object.is(value, postedValue))
           set(clonedVals, rawStringPath, postedValue)
       }
@@ -88,12 +88,12 @@ export class ValueStore {
   }
 
   setFieldValue = (path: Path, value: any) => {
-    const resolvedValue = this.resolveValueWithPostState(path, value)
+    const resolvedValue = this.resolveValueWithPostValue(path, value)
     set(this.values.value, path, resolvedValue)
   }
 
   setFieldsValue = (vals: Record<string, any>, strategy?: ValueMergeStrategy) => {
-    const resolvedValues = this.resolveValuesWithPostState(vals)
+    const resolvedValues = this.resolveValuesWithPostValue(vals)
     this.values.value = mergeByStrategy(
       this.values.value,
       resolvedValues,
@@ -103,12 +103,12 @@ export class ValueStore {
 
   resetFieldValue = (path: Path) => {
     const initialValue = cloneDeep(get(this.initialValues, path))
-    const resolvedValue = this.resolveValueWithPostState(path, initialValue)
+    const resolvedValue = this.resolveValueWithPostValue(path, initialValue)
     set(this.values.value, path, resolvedValue)
   }
 
   resetFieldsValue = () => {
-    const resolvedValues = this.resolveValuesWithPostState(this.initialValues)
+    const resolvedValues = this.resolveValuesWithPostValue(this.initialValues)
     this.values.value = resolvedValues
   }
 
