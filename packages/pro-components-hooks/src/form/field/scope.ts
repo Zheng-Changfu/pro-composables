@@ -1,7 +1,7 @@
 import type { ComputedRef, Ref } from 'vue-demi'
 import { computed } from 'vue-demi'
 import { useInjectFormContext } from '../context'
-import { useInjectParentFieldContext } from './context'
+import { useInjectListFieldContext } from './context'
 
 export type ExpressionScope = Ref<Record<string, any>>
 export function createScope(
@@ -10,7 +10,7 @@ export function createScope(
   scope?: ExpressionScope,
 ) {
   const form = useInjectFormContext()
-  const parent = useInjectParentFieldContext()
+  const parent = useInjectListFieldContext()
 
   const row = computed(() => {
     if (!parent || index.value === -1)

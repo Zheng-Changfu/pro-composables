@@ -7,7 +7,7 @@ import { useCompile, useUpdate } from '../../hooks'
 import type { BaseForm } from '../types'
 import { useFieldProps } from './useFieldProps'
 import type { ArrayField, BaseField, FieldOptions } from './types'
-import { provideFieldContext, useInjectParentFieldContext } from './context'
+import { provideFieldContext, useInjectListFieldContext } from './context'
 import { useFormItemProps } from './useFormItemProps'
 import { useShow } from './useShow'
 import { useValue } from './useValue'
@@ -84,7 +84,7 @@ function createBaseField<T = any>(
   const id = uid()
   const { isList } = options
   const form = useInjectFormContext()
-  const parent = useInjectParentFieldContext()
+  const parent = useInjectListFieldContext()
   const isListPath = !!parent
 
   const {
