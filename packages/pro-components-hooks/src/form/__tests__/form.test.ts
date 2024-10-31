@@ -50,7 +50,7 @@ describe('form props', () => {
     let val: any
     const T = defineComponent({
       setup() {
-        const form = useInjectFormContext()
+        const form = useInjectFormContext()!
         val = form.scope.value
         return () => ''
       },

@@ -9,7 +9,7 @@ interface UseValueOptions {
 export function useValue<T = any>(id: string, path: ComputedRef<string[]>, options: UseValueOptions) {
   let firstGetValue = true
   const { onChange } = options
-  const form = useInjectFormContext()
+  const form = useInjectFormContext()!
 
   const proxy = computed({
     get,

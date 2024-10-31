@@ -9,7 +9,7 @@ export function createScope(
   index: ComputedRef<number>,
   scope?: ExpressionScope,
 ) {
-  const form = useInjectFormContext()
+  const form = useInjectFormContext()!
   const parent = useInjectListFieldContext()
 
   const row = computed(() => {

@@ -83,7 +83,7 @@ function createBaseField<T = any>(
 
   const id = uid()
   const { isList } = options
-  const form = useInjectFormContext()
+  const form = useInjectFormContext()!
   const parent = useInjectListFieldContext()
   const isListPath = !!parent
 
