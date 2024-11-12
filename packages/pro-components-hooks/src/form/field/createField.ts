@@ -56,6 +56,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
       onChange,
       postValue,
       transform,
+      onInputValue,
       ...customValues,
     },
     { isList },
@@ -70,6 +71,7 @@ function createBaseField<T = any>(
     onChange,
     postValue,
     transform,
+    onInputValue,
     preserve,
     defaultValue,
     initialValue,
@@ -124,7 +126,7 @@ function createBaseField<T = any>(
   const {
     value,
     doUpdateValue,
-  } = useValue(id, path, { onChange })
+  } = useValue(id, path, { onChange, onInputValue })
 
   const field: BaseField = {
     id,

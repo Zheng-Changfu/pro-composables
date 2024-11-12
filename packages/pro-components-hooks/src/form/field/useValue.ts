@@ -1,15 +1,16 @@
-import type { ComputedRef } from 'vue-demi'
+import type { ComputedRef, Ref } from 'vue-demi'
 import { computed } from 'vue-demi'
 import { useInjectFormContext } from '../context'
 
 interface UseValueOptions {
   onChange?: (val: any) => void
+  onInputValue?: (fieldValue: Ref<any>, inputValue: any, ...args: any[]) => void
 }
 
 export function useValue<T = any>(id: string, path: ComputedRef<string[]>, options: UseValueOptions) {
   let firstGetValue = true
-  const { onChange } = options
   const form = useInjectFormContext()!
+  const { onChange, onInputValue } = options
 
   const proxy = computed({
     get,
@@ -42,11 +43,15 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
   }
 
   function doUpdateValue(value: any, ...args: any[]) {
-    
+    if (onInputValue) {
+      onInputValue(proxy, value, ...args)
+      return
+    }
+    proxy.value = value
   }
 
   return {
     value: proxy as ComputedRef<T>,
-    doUpdateValue: (val: T) => proxy.value = val,
+    doUpdateValue,
   }
 }
