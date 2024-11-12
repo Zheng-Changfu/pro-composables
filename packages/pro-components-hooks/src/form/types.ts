@@ -1,6 +1,5 @@
 import type { Ref } from 'vue-demi'
 import type { Get, PartialDeep, Paths, Simplify } from 'type-fest'
-import type { EventHookOn, EventHookTrigger } from '@vueuse/core'
 import type { ArrayField, BaseField } from './field'
 import type { ExpressionScope } from './field/scope'
 import type { InternalPath, PathPattern } from './path'
@@ -23,7 +22,7 @@ export interface FormOptions<Values = any> {
    */
   onFieldValueChange?: (opt: { field: BaseField | ArrayField, value: any }) => void
   /**
-   * 依赖项的值发生变化后的回调
+   * 依赖项的值发生变化后的回调(手动交互才会触发)
    * @param field 字段控制器
    * @param path 被依赖项的路径
    * @param dependPath 依赖项的路径
@@ -123,11 +122,4 @@ export interface BaseForm<Values = any> {
    * 恢复 onDependenciesValueChange 的触发
    */
   resumeDependenciesTrigger: () => void
-  /**
-   * 监听字段值的变化
-   */
-  onFieldValueChange: EventHookOn<{
-    field: BaseField
-    value: any
-  }>
 }

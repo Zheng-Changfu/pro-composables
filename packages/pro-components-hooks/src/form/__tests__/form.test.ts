@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, onMounted, ref } from 'vue-demi'
 import { mount } from '../../__tests__/mount'
 import type { BaseForm } from '../types'
-import type { ArrayField } from '../field'
+import type { ArrayField, BaseField } from '../field'
 import { useInjectFormContext } from '../context'
 import { Form, FormItem, FormList } from './components'
 
@@ -113,20 +113,22 @@ describe('form props', () => {
     })
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        function onFormMounted(form: BaseForm) {
-          _form = form
+        let _field: BaseField
+
+        function onFieldMounted(field: BaseField) {
+          _field = field
         }
+
         onMounted(() => {
-          _form.setFieldValue('b', 1)
+          _field.doUpdateValue(1)
         })
+
         return () => {
           return h(Form, {
-            onFormMounted,
             onDependenciesValueChange,
           }, [
             h(FormItem, { path: 'a', dependencies: ['b'] }),
-            h(FormItem, { path: 'b' }),
+            h(FormItem, { path: 'b', onFieldMounted }),
             h(FormItem, { path: 'c', dependencies: 'b' }),
             h(FormItem, { path: 'd', dependencies: { pattern: 'b' } }),
             h(FormItem, { path: 'e', dependencies: { pattern: /b/ } }),
@@ -150,7 +152,7 @@ describe('form props', () => {
     vm.unmount()
   })
 
-  it('onDependenciesValueChange called should with nextTick', async () => {
+  it('onDependenciesValueChange called should with before nextTick', async () => {
     let aVal: any
     const onDependenciesValueChangeMock = vi.fn((form: BaseForm) => {
       aVal = form.getFieldValue('a')
@@ -158,12 +160,20 @@ describe('form props', () => {
     const Comp = defineComponent({
       setup() {
         let _form: BaseForm
+        let _field: BaseField
+
         function onFormMounted(form: BaseForm) {
           _form = form
         }
+
+        function onFieldMounted(field: BaseField) {
+          _field = field
+        }
+
         onMounted(() => {
-          _form.setFieldValue('b', 1)
+          _field.doUpdateValue(1)
         })
+
         return () => {
           return h(Form, {
             onFormMounted,
@@ -176,7 +186,7 @@ describe('form props', () => {
               dependencies: ['b'],
               value: '{{ $vals.b === 1 ? 2 : null }}',
             }),
-            h(FormItem, { path: 'b' }),
+            h(FormItem, { path: 'b', onFieldMounted }),
           ])
         }
       },
@@ -186,7 +196,7 @@ describe('form props', () => {
     await nextTick()
     await nextTick()
     expect(onDependenciesValueChangeMock).toHaveBeenCalled()
-    expect(aVal).toBe(2)
+    expect(aVal).toBe(null)
     vm.unmount()
   })
 

@@ -1,45 +1,33 @@
 import { cloneDeep, get, has, set, unset } from 'lodash-es'
 import type { Ref } from 'vue-demi'
 import { ref } from 'vue-demi'
-import type { EventHookOn, EventHookTrigger } from '@vueuse/core'
-import { createEventHook } from '@vueuse/core'
 import type { InternalPath, PathPattern } from '../path'
-import type { FormOptions } from '../types'
-import { type ValueMergeStrategy, mergeByStrategy } from '../utils/value'
+import type { ValueMergeStrategy } from '../utils/value'
+import { mergeByStrategy } from '../utils/value'
 import type { BaseField } from '../field'
 import type { FieldStore } from './fieldStore'
 
+interface ValueStoreOptions {
+  initialValues: any
+  onFieldValueUpdated: (field: BaseField, value: any) => void
+}
 /**
  * 管理值
  */
 export class ValueStore {
-  public options: FormOptions
   public fieldStore: FieldStore
+  public options: ValueStoreOptions
   public values: Ref<Record<string, any>>
   public initialValues: Record<string, any>
 
-  public onFieldValueChange: EventHookOn<{
-    field: BaseField
-    value: any
-  }>
-
-  private triggerFieldValueChange: EventHookTrigger<{
-    field: BaseField
-    value: any
-  }>
-
   constructor(
     fieldStore: FieldStore,
-    options: FormOptions,
+    options: ValueStoreOptions,
   ) {
     this.values = ref({})
     this.options = options
     this.fieldStore = fieldStore
     this.initialValues = cloneDeep(options.initialValues ?? {})
-    const event = createEventHook()
-    this.onFieldValueChange = event.on
-    this.triggerFieldValueChange = event.trigger
-    options.onFieldValueChange && this.onFieldValueChange(options.onFieldValueChange)
   }
 
   getFieldValue = (path: InternalPath) => {
@@ -114,14 +102,8 @@ export class ValueStore {
     const resolvedValue = this.resolveValueWithPostValue(field, value)
     set(this.values.value, path, resolvedValue)
 
-    if (field && !Object.is(oldValue, resolvedValue)) {
-      this.triggerFieldValueChange({
-        field,
-        value: resolvedValue,
-      })
-      if (field.touching && field.onChange)
-        field.onChange(resolvedValue)
-    }
+    if (field && !Object.is(oldValue, resolvedValue))
+      this.options.onFieldValueUpdated(field, resolvedValue)
   }
 
   setFieldsValue = (vals: Record<string, any>, strategy?: ValueMergeStrategy) => {
@@ -129,7 +111,7 @@ export class ValueStore {
     const resolvedValues = this.resolveValuesWithPostValue(
       vals,
       (field, value) => {
-        effects.push(() => this.triggerFieldValueChange({ field, value }))
+        effects.push(() => this.options.onFieldValueUpdated(field, value))
       },
     )
     this.values.value = mergeByStrategy(
@@ -142,17 +124,14 @@ export class ValueStore {
   }
 
   resetFieldValue = (path: InternalPath) => {
+    const oldValue = this.getFieldValue(path)
     const field = this.fieldStore.getFieldByPath(path)
     const initialValue = cloneDeep(get(this.initialValues, path))
     const resolvedValue = this.resolveValueWithPostValue(field, initialValue)
     set(this.values.value, path, resolvedValue)
 
-    if (field) {
-      this.triggerFieldValueChange({
-        field,
-        value: resolvedValue,
-      })
-    }
+    if (field && !Object.is(oldValue, resolvedValue))
+      this.options.onFieldValueUpdated(field, resolvedValue)
   }
 
   resetFieldsValue = () => {
@@ -160,7 +139,7 @@ export class ValueStore {
     const resolvedValues = this.resolveValuesWithPostValue(
       this.initialValues,
       (field, value) => {
-        effects.push(() => this.triggerFieldValueChange({ field, value }))
+        effects.push(() => this.options.onFieldValueUpdated(field, value))
       },
     )
     this.values.value = resolvedValues
@@ -181,6 +160,6 @@ export class ValueStore {
   }
 }
 
-export function createValueStore(fieldStore: FieldStore, options: FormOptions) {
+export function createValueStore(fieldStore: FieldStore, options: ValueStoreOptions) {
   return new ValueStore(fieldStore, options)
 }

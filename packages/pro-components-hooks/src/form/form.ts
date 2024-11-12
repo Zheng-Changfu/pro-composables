@@ -1,5 +1,5 @@
-import { createEventHook, useMounted } from '@vueuse/core'
-import { computed, nextTick } from 'vue-demi'
+import { useMounted } from '@vueuse/core'
+import { computed } from 'vue-demi'
 import { uid } from '../utils/id'
 import type { BaseForm, FormOptions } from './types'
 import { provideFormContext } from './context'
@@ -12,7 +12,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   const mounted = useMounted()
   const fieldStore = createFieldStore()
   const dependStore = createDependStore(fieldStore)
-  const valueStore = createValueStore(fieldStore, options)
+  const valueStore = createValueStore(fieldStore, { onFieldValueUpdated, initialValues: options.initialValues })
 
   const {
     matchDepend,
@@ -31,7 +31,6 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     setInitialValue,
     resetFieldsValue,
     setInitialValues,
-    onFieldValueChange,
     getFieldsTransformedValue,
   } = valueStore
 
@@ -68,29 +67,35 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     resetFieldsValue,
     setInitialValue,
     setInitialValues,
-    onFieldValueChange,
     pauseDependenciesTrigger,
     resumeDependenciesTrigger,
     getFieldsTransformedValue,
   }
 
-  function onDependenciesChange(opt: { field: BaseField, value: any }) {
-    const { field, value } = opt
-    const path = field.path.value
-    // wait value updated
-    nextTick(() => {
-      matchDepend(
-        field.stringPath.value,
-        (dependPath) => {
-          options.onDependenciesValueChange!({ field, path, dependPath, value })
-        },
-      )
-    })
+  function onFieldValueUpdated(field: BaseField, value: any) {
+    const {
+      onFieldValueChange,
+      onDependenciesValueChange,
+    } = options
+
+    if (field.touching) {
+      if (field.onChange)
+        field.onChange(value)
+
+      if (onDependenciesValueChange) {
+        const path = field.path.value
+        matchDepend(
+          field.stringPath.value,
+          (dependPath) => {
+            onDependenciesValueChange!({ field, path, dependPath, value })
+          },
+        )
+      }
+    }
+
+    onFieldValueChange && onFieldValueChange({ field, value })
   }
 
   provideFormContext(form)
-
-  if (options.onDependenciesValueChange)
-    onFieldValueChange(onDependenciesChange)
   return form
 }
