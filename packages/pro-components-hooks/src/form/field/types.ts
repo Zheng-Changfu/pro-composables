@@ -214,10 +214,10 @@ export interface ArrayField<T = any> extends BaseField<T[]> {
   /**
    * 列表发生了动作后触发的回调
    */
-  onActionChange: EventHookOn<ArrayFieldAction>
+  onActionChange: EventHookOn<ArrayFieldActionName>
 }
 
-export type ArrayFieldAction = Extract<
+export type ArrayFieldActionName = Extract<
   | 'push'
   | 'pop'
   | 'insert'
@@ -228,4 +228,17 @@ export type ArrayFieldAction = Extract<
   | 'moveUp'
   | 'moveDown',
   keyof ArrayField
+>
+
+export type ArrayFieldAction<T = any> = Pick<
+  ArrayField<T>,
+  | 'push'
+  | 'pop'
+  | 'insert'
+  | 'remove'
+  | 'shift'
+  | 'unshift'
+  | 'move'
+  | 'moveUp'
+  | 'moveDown'
 >

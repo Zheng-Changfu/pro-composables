@@ -12,13 +12,13 @@ import {
 } from '../utils/array'
 import { provideParentFieldContext } from './context'
 import { createField } from './createField'
-import type { ArrayField, ArrayFieldAction, FieldOptions } from './types'
+import type { ArrayField, ArrayFieldActionName, FieldOptions } from './types'
 
 export function createArrayField<T = any>(options: FieldOptions<T>) {
   const {
     on: onActionChange,
     trigger: triggerActionChange,
-  } = createEventHook<ArrayFieldAction>()
+  } = createEventHook<ArrayFieldActionName>()
 
   const field = createField(options, {
     isList: true,
