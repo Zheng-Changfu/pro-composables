@@ -456,7 +456,7 @@ describe('update value to trigger postValue and onChange', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(onChange).toHaveBeenCalledTimes(2)
+    expect(onChange).toHaveBeenCalledTimes(0)
     expect(postValue).toHaveBeenCalledTimes(4)
     expect(postValue).toHaveNthReturnedWith(1, 0)
     expect(postValue).toHaveNthReturnedWith(2, 0)
@@ -600,7 +600,7 @@ describe('update value to trigger postValue and onChange', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(onChange).toHaveBeenCalledTimes(2)
+    expect(onChange).toHaveBeenCalledTimes(0)
     expect(postValue).toHaveBeenCalledTimes(4)
     expect(postValue).toHaveNthReturnedWith(1, 4)
     expect(postValue).toHaveNthReturnedWith(2, 8)

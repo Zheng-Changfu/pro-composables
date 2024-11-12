@@ -4,12 +4,14 @@ import { ref } from 'vue-demi'
 import type { InternalPath, PathPattern } from '../path'
 import type { FormOptions } from '../types'
 import { type ValueMergeStrategy, mergeByStrategy } from '../utils/value'
+import type { BaseField } from '../field'
 import type { FieldStore } from './fieldStore'
 
 /**
  * 管理值
  */
 export class ValueStore {
+  public options: FormOptions
   public fieldStore: FieldStore
   public values: Ref<Record<string, any>>
   public initialValues: Record<string, any>
@@ -19,6 +21,7 @@ export class ValueStore {
     options: FormOptions,
   ) {
     this.values = ref({})
+    this.options = options
     this.fieldStore = fieldStore
     this.initialValues = cloneDeep(options.initialValues ?? {})
   }
@@ -64,10 +67,10 @@ export class ValueStore {
     return this.fieldStore.matchFieldPath(pattern)
   }
 
-  resolveValueWithPostValue = (path: InternalPath, value: any) => {
-    const field = this.fieldStore.getFieldByPath(path)
-    const postValue = field && field.postValue ? field.postValue(value) : value
-    return postValue
+  resolveValueWithPostValue = (field: BaseField | undefined, value: any) => {
+    return field && field.postValue
+      ? field.postValue(value)
+      : value
   }
 
   resolveValuesWithPostValue = (vals: any) => {
@@ -88,8 +91,19 @@ export class ValueStore {
   }
 
   setFieldValue = (path: InternalPath, value: any) => {
-    const resolvedValue = this.resolveValueWithPostValue(path, value)
+    const field = this.fieldStore.getFieldByPath(path)
+    const resolvedValue = this.resolveValueWithPostValue(field, value)
+    const oldValue = this.getFieldValue(path)
     set(this.values.value, path, resolvedValue)
+
+    if (
+      field
+      && field.touching
+      && field.onChange
+    ) {
+      if (!Object.is(oldValue, resolvedValue))
+        field.onChange(resolvedValue)
+    }
   }
 
   setFieldsValue = (vals: Record<string, any>, strategy?: ValueMergeStrategy) => {
@@ -102,8 +116,9 @@ export class ValueStore {
   }
 
   resetFieldValue = (path: InternalPath) => {
+    const field = this.fieldStore.getFieldByPath(path)
     const initialValue = cloneDeep(get(this.initialValues, path))
-    const resolvedValue = this.resolveValueWithPostValue(path, initialValue)
+    const resolvedValue = this.resolveValueWithPostValue(field, initialValue)
     set(this.values.value, path, resolvedValue)
   }
 

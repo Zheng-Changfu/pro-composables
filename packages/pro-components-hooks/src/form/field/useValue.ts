@@ -3,14 +3,13 @@ import { computed } from 'vue-demi'
 import { useInjectFormContext } from '../context'
 
 interface UseValueOptions {
-  onChange?: (val: any) => void
   onInputValue?: (fieldValue: Ref<any>, inputValue: any, ...args: any[]) => void
 }
 
 export function useValue<T = any>(id: string, path: ComputedRef<string[]>, options: UseValueOptions) {
   let firstGetValue = true
+  const { onInputValue } = options
   const form = useInjectFormContext()!
-  const { onChange, onInputValue } = options
 
   const proxy = computed({
     get,
@@ -30,9 +29,6 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
         field,
         value: storeValue,
       })
-
-      if (onChange)
-        onChange(storeValue)
     }
 
     return storeValue
@@ -40,9 +36,15 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
 
   function set(val: any) {
     form.valueStore.setFieldValue(path.value, val)
+    const field = form.fieldStore.getField(id)
+    if (field)
+      field.touching = false
   }
 
   function doUpdateValue(value: any, ...args: any[]) {
+    const field = form.fieldStore.getField(id)
+    if (field)
+      field.touching = true
     if (onInputValue) {
       onInputValue(proxy, value, ...args)
       return

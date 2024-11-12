@@ -70,7 +70,7 @@ export interface FieldOptions<T = any> {
    */
   onInputValue?: (fieldValue: Ref<any>, inputValue: any, ...args: any[]) => void
   /**
-   * 值变化后的回调
+   * 值变化后的回调(手动交互导致值的改变)
    */
   onChange?: (val: T) => void
   /**
@@ -167,9 +167,14 @@ export interface BaseField<T = any> {
    */
   postValue?: (val: T) => T
   /**
-   * 值变化后的回调
+   * 值变化后的回调(手动交互导致值的改变)
    */
   onChange?: (val: T) => void
+  /**
+   * 是否正在手动交互状态中
+   * @default false
+   */
+  touching: boolean
   /**
    * 用户传递进来的元信息
    */

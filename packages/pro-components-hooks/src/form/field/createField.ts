@@ -126,7 +126,7 @@ function createBaseField<T = any>(
   const {
     value,
     doUpdateValue,
-  } = useValue(id, path, { onChange, onInputValue })
+  } = useValue(id, path, { onInputValue })
 
   const field: BaseField = {
     id,
@@ -144,6 +144,7 @@ function createBaseField<T = any>(
     dependencies,
     formItemProps,
     parsedPropValue,
+    touching: false,
     updating: false,
     meta: fieldOptions,
     onChange,
