@@ -34,6 +34,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
     onChange,
     postValue,
     transform,
+    onInputValue,
     ...customValues
   } = fieldOptions
 

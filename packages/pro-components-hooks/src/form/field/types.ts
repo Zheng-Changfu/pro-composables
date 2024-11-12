@@ -64,6 +64,12 @@ export interface FieldOptions<T = any> {
    */
   postValue?: (val: T) => T
   /**
+   * 手动更新值
+   * @param fieldValue 表单值
+   * @param inputValue 输入值
+   */
+  onInputValue?: (fieldValue: Ref<any>, inputValue: any, ...args: any[]) => void
+  /**
    * 值变化后的回调
    */
   onChange?: (val: T) => void
@@ -141,9 +147,9 @@ export interface BaseField<T = any> {
    */
   dependencies: Dependencie | Dependencie[]
   /**
-   * 更新值
+   * 更新值，内部不会使用，交给上层使用(为了区分是否为手动交互导致值的改变，而不是通过调用 api)
    */
-  doUpdateValue: (val: T) => void
+  doUpdateValue: (val: T, ...args: any[]) => void
   /**
    * 设置表单控件的属性
    */

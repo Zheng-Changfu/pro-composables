@@ -41,6 +41,10 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
     form.valueStore.setFieldValue(path.value, val)
   }
 
+  function doUpdateValue(value: any, ...args: any[]) {
+    
+  }
+
   return {
     value: proxy as ComputedRef<T>,
     doUpdateValue: (val: T) => proxy.value = val,
