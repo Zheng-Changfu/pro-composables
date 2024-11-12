@@ -1,8 +1,9 @@
 import type { Ref } from 'vue-demi'
+import type { Get, PartialDeep, Paths, Simplify } from 'type-fest'
 import type { EventHookOn, EventHookTrigger } from '@vueuse/core'
 import type { ArrayField, BaseField } from './field'
 import type { ExpressionScope } from './field/scope'
-import type { Path, PathPattern } from './path'
+import type { InternalPath, PathPattern } from './path'
 import type { DependStore } from './store/dependStore'
 import type { FieldStore } from './store/fieldStore'
 import type { ValueStore } from './store/valueStore'
@@ -31,7 +32,14 @@ export interface FormOptions<Values = any> {
   onDependenciesValueChange?: (opt: { field: BaseField, path: string[], dependPath: string[], value: any }) => void
 }
 
-export interface BaseForm {
+type StringKeyof<Values = any> = Exclude<Paths<Values>, symbol | number>
+type PathToObject<T extends string[], Values = any> = Simplify<{
+  [K in T[number] as K extends `${infer X}.${string}` ? X : K]: K extends `${infer X}.${infer Y}`
+    ? PathToObject<[Y], Get<Values, X>>
+    : Get<Values, K>
+}>
+
+export interface BaseForm<Values = any> {
   /**
    * 唯一标识
    */
@@ -59,29 +67,33 @@ export interface BaseForm {
   /**
    * 获取指定路径字段的值
    */
-  getFieldValue: (path: Path) => any
+  getFieldValue: <T extends InternalPath = StringKeyof<Values>>(path: T) => Get<Values, T>
   /**
    * 获取全部或者部分路径字段的值
    * @example
    * ```js
    * getFieldsValue() // 获取表单值
    * getFieldsValue(true) // 获取完整的值，包含被隐藏的和 setFieldsValue 设置进去的值
-   * getFieldsValue(['name','age','list[0].a',['list','0','a']]) // 获取指定路径字段的值
+   * getFieldsValue(['name','age','list.0.a']) // 获取指定路径字段的值
    * ```
    */
-  getFieldsValue: (paths?: Array<Path> | true) => Record<string, any>
+  getFieldsValue:
+  & (() => Values)
+  & ((val: true) => Values)
+  & (<T extends string = StringKeyof<Values>>(paths: T[]) => PathToObject<T[], Values>
+  )
   /**
    * 设置指定路径字段的值
    */
-  setFieldValue: (path: Path, value: any) => void
+  setFieldValue: <T extends InternalPath = StringKeyof<Values>>(path: T, value: Get<Values, T>) => void
   /**
    * 设置一组值
    */
-  setFieldsValue: (values: Record<string, any>, strategy?: ValueMergeStrategy) => void
+  setFieldsValue: (values: PartialDeep<Values>, strategy?: ValueMergeStrategy) => void
   /**
    * 重置指定路径字段的值
    */
-  resetFieldValue: (path: Path) => void
+  resetFieldValue: <T extends InternalPath = StringKeyof<Values>>(path: T) => void
   /**
    * 重置所有字段的值
    */
@@ -89,15 +101,15 @@ export interface BaseForm {
   /**
    * 设置指定路径字段的初始值
    */
-  setInitialValue: (path: Path, value: any) => void
+  setInitialValue: <T extends InternalPath = StringKeyof<Values>>(path: T, value: Get<Values, T>) => void
   /**
    * 设置一组初始值
    */
-  setInitialValues: (values: Record<string, any>, strategy?: ValueMergeStrategy) => void
+  setInitialValues: (values: PartialDeep<Values>, strategy?: ValueMergeStrategy) => void
   /**
    * 获取全部表单值，不包含被隐藏的和设置过的（被 transform 处理过的）
    */
-  getFieldsTransformedValue: () => Record<string, any>
+  getFieldsTransformedValue: () => Values
   /**
    * 匹配路径
    * @returns 返回匹配到的路径数组

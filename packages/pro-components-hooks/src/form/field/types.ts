@@ -1,6 +1,6 @@
 import type { ComputedRef, Ref } from 'vue-demi'
 import type { EventHookOn } from '@vueuse/core'
-import type { Path } from '../path'
+import type { InternalPath } from '../path'
 import type { MaybeExpression } from '../../hooks'
 import type { Dependencie } from '../store/dependStore'
 import type { ExpressionScope } from './scope'
@@ -22,7 +22,7 @@ export interface FieldOptions<T = any> {
   /**
    * 字段路径
    */
-  path?: Ref<Path | undefined>
+  path?: Ref<InternalPath | undefined>
   /**
    * 字段值，支持表达式
    */

@@ -2,7 +2,7 @@ import { computed, shallowReactive, toRaw } from 'vue-demi'
 import { get, isPlainObject, merge, set } from 'lodash-es'
 import type { ArrayField, BaseField } from '../field'
 import { convertPatternToMatchFn, stringifyPath } from '../utils/path'
-import type { Path, PathPattern } from '../path'
+import type { InternalPath, PathPattern } from '../path'
 
 /**
  * 管理所有的字段
@@ -96,7 +96,7 @@ export class FieldStore {
     return this.fieldsValue
   }
 
-  getFieldByPath = (path: Path) => {
+  getFieldByPath = (path: InternalPath) => {
     return this.fieldsPathMap.value.get(stringifyPath(path))
   }
 

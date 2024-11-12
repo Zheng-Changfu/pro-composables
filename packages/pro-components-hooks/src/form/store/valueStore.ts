@@ -1,7 +1,7 @@
 import { cloneDeep, get, has, set, unset } from 'lodash-es'
 import type { Ref } from 'vue-demi'
 import { ref } from 'vue-demi'
-import type { Path, PathPattern } from '../path'
+import type { InternalPath, PathPattern } from '../path'
 import type { FormOptions } from '../types'
 import { type ValueMergeStrategy, mergeByStrategy } from '../utils/value'
 import type { FieldStore } from './fieldStore'
@@ -23,11 +23,11 @@ export class ValueStore {
     this.initialValues = cloneDeep(options.initialValues ?? {})
   }
 
-  getFieldValue = (path: Path) => {
+  getFieldValue = (path: InternalPath) => {
     return get(this.values.value, path)
   }
 
-  getFieldsValue = (paths?: Array<Path> | true) => {
+  getFieldsValue = (paths?: Array<InternalPath> | true) => {
     if (paths === true) {
       // 所有的值，包含用户设置的和可能被隐藏的字段
       return this.values.value
@@ -48,11 +48,11 @@ export class ValueStore {
     )
   }
 
-  has(path: Path) {
+  has(path: InternalPath) {
     return has(this.values.value, path)
   }
 
-  delete(path: Path) {
+  delete(path: InternalPath) {
     return unset(this.values.value, path)
   }
 
@@ -64,7 +64,7 @@ export class ValueStore {
     return this.fieldStore.matchFieldPath(pattern)
   }
 
-  resolveValueWithPostValue = (path: Path, value: any) => {
+  resolveValueWithPostValue = (path: InternalPath, value: any) => {
     const field = this.fieldStore.getFieldByPath(path)
     const postValue = field && field.postValue ? field.postValue(value) : value
     return postValue
@@ -87,7 +87,7 @@ export class ValueStore {
     return clonedVals
   }
 
-  setFieldValue = (path: Path, value: any) => {
+  setFieldValue = (path: InternalPath, value: any) => {
     const resolvedValue = this.resolveValueWithPostValue(path, value)
     set(this.values.value, path, resolvedValue)
   }
@@ -101,7 +101,7 @@ export class ValueStore {
     )
   }
 
-  resetFieldValue = (path: Path) => {
+  resetFieldValue = (path: InternalPath) => {
     const initialValue = cloneDeep(get(this.initialValues, path))
     const resolvedValue = this.resolveValueWithPostValue(path, initialValue)
     set(this.values.value, path, resolvedValue)
@@ -112,7 +112,7 @@ export class ValueStore {
     this.values.value = resolvedValues
   }
 
-  setInitialValue = (path: Path, value: any) => {
+  setInitialValue = (path: InternalPath, value: any) => {
     set(this.initialValues, path, cloneDeep(value))
   }
 

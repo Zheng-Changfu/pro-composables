@@ -1,10 +1,10 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue-demi'
 import { inject, provide } from 'vue-demi'
-import type { Path } from './types'
+import type { InternalPath } from './types'
 
-export const pathContextKey = Symbol('path') as InjectionKey<ComputedRef<Path> | Path>
+export const pathContextKey = Symbol('path') as InjectionKey<ComputedRef<InternalPath> | InternalPath>
 export const pathIndexContextKey = Symbol('pathIndex') as InjectionKey<Ref<number> | number>
-export function providePathContext(path: ComputedRef<Path>) {
+export function providePathContext(path: ComputedRef<InternalPath>) {
   provide(pathContextKey, path)
 }
 
