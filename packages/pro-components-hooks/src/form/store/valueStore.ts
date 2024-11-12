@@ -1,6 +1,8 @@
 import { cloneDeep, get, has, set, unset } from 'lodash-es'
 import type { Ref } from 'vue-demi'
 import { ref } from 'vue-demi'
+import type { EventHookOn, EventHookTrigger } from '@vueuse/core'
+import { createEventHook } from '@vueuse/core'
 import type { InternalPath, PathPattern } from '../path'
 import type { FormOptions } from '../types'
 import { type ValueMergeStrategy, mergeByStrategy } from '../utils/value'
@@ -16,6 +18,16 @@ export class ValueStore {
   public values: Ref<Record<string, any>>
   public initialValues: Record<string, any>
 
+  public onFieldValueChange: EventHookOn<{
+    field: BaseField
+    value: any
+  }>
+
+  private triggerFieldValueChange: EventHookTrigger<{
+    field: BaseField
+    value: any
+  }>
+
   constructor(
     fieldStore: FieldStore,
     options: FormOptions,
@@ -24,6 +36,10 @@ export class ValueStore {
     this.options = options
     this.fieldStore = fieldStore
     this.initialValues = cloneDeep(options.initialValues ?? {})
+    const event = createEventHook()
+    this.onFieldValueChange = event.on
+    this.triggerFieldValueChange = event.trigger
+    options.onFieldValueChange && this.onFieldValueChange(options.onFieldValueChange)
   }
 
   getFieldValue = (path: InternalPath) => {
@@ -73,7 +89,7 @@ export class ValueStore {
       : value
   }
 
-  resolveValuesWithPostValue = (vals: any) => {
+  resolveValuesWithPostValue = (vals: any, effect?: (field: BaseField, value: any) => void) => {
     const clonedVals = cloneDeep(vals)
     const postValueFieldsPathMap = this.fieldStore.getHasPostValueFieldsPathMap.value
     postValueFieldsPathMap.forEach(((field) => {
@@ -83,36 +99,46 @@ export class ValueStore {
       if (has(clonedVals, rawStringPath)) {
         const value = get(clonedVals, rawStringPath)
         const postedValue = field.postValue(value)
-        if (!Object.is(value, postedValue))
+        if (!Object.is(value, postedValue)) {
           set(clonedVals, rawStringPath, postedValue)
+          effect && effect(field, postedValue)
+        }
       }
     }))
     return clonedVals
   }
 
   setFieldValue = (path: InternalPath, value: any) => {
+    const oldValue = this.getFieldValue(path)
     const field = this.fieldStore.getFieldByPath(path)
     const resolvedValue = this.resolveValueWithPostValue(field, value)
-    const oldValue = this.getFieldValue(path)
     set(this.values.value, path, resolvedValue)
 
-    if (
-      field
-      && field.touching
-      && field.onChange
-    ) {
-      if (!Object.is(oldValue, resolvedValue))
+    if (field && !Object.is(oldValue, resolvedValue)) {
+      this.triggerFieldValueChange({
+        field,
+        value: resolvedValue,
+      })
+      if (field.touching && field.onChange)
         field.onChange(resolvedValue)
     }
   }
 
   setFieldsValue = (vals: Record<string, any>, strategy?: ValueMergeStrategy) => {
-    const resolvedValues = this.resolveValuesWithPostValue(vals)
+    const effects: Array<() => void> = []
+    const resolvedValues = this.resolveValuesWithPostValue(
+      vals,
+      (field, value) => {
+        effects.push(() => this.triggerFieldValueChange({ field, value }))
+      },
+    )
     this.values.value = mergeByStrategy(
       this.values.value,
       resolvedValues,
       strategy,
     )
+    while (effects.length > 0)
+      effects.shift()?.()
   }
 
   resetFieldValue = (path: InternalPath) => {
@@ -120,11 +146,26 @@ export class ValueStore {
     const initialValue = cloneDeep(get(this.initialValues, path))
     const resolvedValue = this.resolveValueWithPostValue(field, initialValue)
     set(this.values.value, path, resolvedValue)
+
+    if (field) {
+      this.triggerFieldValueChange({
+        field,
+        value: resolvedValue,
+      })
+    }
   }
 
   resetFieldsValue = () => {
-    const resolvedValues = this.resolveValuesWithPostValue(this.initialValues)
+    const effects: Array<() => void> = []
+    const resolvedValues = this.resolveValuesWithPostValue(
+      this.initialValues,
+      (field, value) => {
+        effects.push(() => this.triggerFieldValueChange({ field, value }))
+      },
+    )
     this.values.value = resolvedValues
+    while (effects.length > 0)
+      effects.shift()?.()
   }
 
   setInitialValue = (path: InternalPath, value: any) => {

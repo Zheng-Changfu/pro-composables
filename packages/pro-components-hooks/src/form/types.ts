@@ -130,11 +130,4 @@ export interface BaseForm<Values = any> {
     field: BaseField
     value: any
   }>
-  /**
-   * 通知字段值发生变化，内部使用
-   */
-  triggerFieldValueChange: EventHookTrigger<{
-    field: BaseField
-    value: any
-  }>
 }

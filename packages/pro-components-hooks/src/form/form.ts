@@ -31,13 +31,9 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     setInitialValue,
     resetFieldsValue,
     setInitialValues,
+    onFieldValueChange,
     getFieldsTransformedValue,
   } = valueStore
-
-  const {
-    on: onFieldValueChange,
-    trigger: triggerFieldValueChange,
-  } = createEventHook<{ field: BaseField, value: any }>()
 
   const scope = computed(() => {
     return {
@@ -73,7 +69,6 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     setInitialValue,
     setInitialValues,
     onFieldValueChange,
-    triggerFieldValueChange,
     pauseDependenciesTrigger,
     resumeDependenciesTrigger,
     getFieldsTransformedValue,
@@ -94,8 +89,6 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   }
 
   provideFormContext(form)
-  if (options.onFieldValueChange)
-    onFieldValueChange(options.onFieldValueChange)
 
   if (options.onDependenciesValueChange)
     onFieldValueChange(onDependenciesChange)

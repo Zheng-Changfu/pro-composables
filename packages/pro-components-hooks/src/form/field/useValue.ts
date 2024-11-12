@@ -7,7 +7,6 @@ interface UseValueOptions {
 }
 
 export function useValue<T = any>(id: string, path: ComputedRef<string[]>, options: UseValueOptions) {
-  let firstGetValue = true
   const { onInputValue } = options
   const form = useInjectFormContext()!
 
@@ -16,21 +15,9 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
     set,
   })
 
-  function get(oldValue: any) {
+  function get() {
     const p = path.value
     const storeValue = form.valueStore.getFieldValue(p)
-
-    const field = form.fieldStore.getField(id)
-    const changed = !firstGetValue && !Object.is(oldValue, storeValue)
-    firstGetValue = false
-
-    if (field && changed) {
-      form.triggerFieldValueChange({
-        field,
-        value: storeValue,
-      })
-    }
-
     return storeValue
   }
 
