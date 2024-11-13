@@ -114,7 +114,7 @@ export interface BaseField<T = any> {
    */
   isListPath: boolean
   /**
-   * 是否在更新中
+   * 列表是否在更新中(只针对 ArrayField)
    */
   updating: boolean
   /**

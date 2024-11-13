@@ -3,7 +3,7 @@ import { get, has } from 'lodash-es'
 import { uid } from '../../utils/id'
 import { usePath } from '../path/usePath'
 import { useInjectFormContext } from '../context'
-import { useCompile, useUpdate } from '../../hooks'
+import { useCompile, useListUpdate } from '../../hooks'
 import type { BaseForm } from '../types'
 import { useFieldProps } from './useFieldProps'
 import type { ArrayField, BaseField, FieldOptions } from './types'
@@ -156,7 +156,7 @@ function createBaseField<T = any>(
     ...customValues,
   }
 
-  useUpdate((updating) => {
+  useListUpdate(field, (updating) => {
     field.updating = updating
   })
 
