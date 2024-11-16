@@ -95,10 +95,9 @@ describe('form props', () => {
             h(FormItem, { path: 'a', dependencies: ['b'] }),
             h(FormItem, { path: 'b', onFieldMounted }),
             h(FormItem, { path: 'c', dependencies: 'b' }),
-            h(FormItem, { path: 'd', dependencies: { pattern: 'b' } }),
-            h(FormItem, { path: 'e', dependencies: { pattern: /b/ } }),
-            h(FormItem, { path: 'f', dependencies: { pattern: match } }),
-            h(FormItem, { path: 'g', dependencies: ['a', 'b'] }),
+            h(FormItem, { path: 'd', dependencies: /b/ }),
+            h(FormItem, { path: 'e', dependencies: match }),
+            h(FormItem, { path: 'f', dependencies: ['a', 'b'] }),
           ]
         }
       },
@@ -107,12 +106,12 @@ describe('form props', () => {
     const vm = mount(Comp)
     await nextTick()
     await nextTick()
-    expect(onDependenciesValueChange).toBeCalledTimes(6)
+    expect(onDependenciesValueChange).toBeCalledTimes(5)
     expect(depsAuguments).toStrictEqual([['b'], ['a']])
     expect(match).toHaveReturnedWith(true)
     expect(matchFnArguments).toStrictEqual([
       'b',
-      ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+      ['a', 'b', 'c', 'd', 'e', 'f'],
     ])
     vm.unmount()
   })
