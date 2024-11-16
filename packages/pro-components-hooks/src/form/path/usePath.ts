@@ -3,11 +3,11 @@ import { computed, unref } from 'vue-demi'
 import { toPath } from 'lodash-es'
 import { stringifyPath } from '../utils/path'
 import type { InternalPath } from './types'
-import { useInjectPathContext, useInjectPathIndexContext } from './context'
+import { useInjectPath, useInjectPathIndex } from './context'
 
 export function usePath(path?: Ref<InternalPath | undefined>) {
-  const index = useInjectPathIndexContext()
-  const parentPathRef = useInjectPathContext()
+  const index = useInjectPathIndex()
+  const parentPathRef = useInjectPath()
 
   const pathRef = computed(() => {
     const currentPath = unref(path?.value) ?? []

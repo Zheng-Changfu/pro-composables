@@ -1,7 +1,7 @@
 import { computed, defineComponent, h, onMounted, toRef } from 'vue-demi'
 import { createArrayField, createField, useInjectField, useInjectListField } from '../field'
 import { uid } from '../../utils/id'
-import { providePathContext, providePathIndexContext } from '../path'
+import { providePath, providePathIndex } from '../path'
 
 export const FormItem = defineComponent({
   props: [
@@ -58,8 +58,8 @@ export const FormListItem = defineComponent({
         index,
       ]
     })
-    providePathContext(path)
-    providePathIndexContext(toRef(props, 'index'))
+    providePath(path)
+    providePathIndex(toRef(props, 'index'))
 
     return () => {
       return slots.default?.(props.index)

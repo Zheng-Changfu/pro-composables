@@ -4,18 +4,18 @@ import type { InternalPath } from './types'
 
 export const pathContextKey = Symbol('path') as InjectionKey<ComputedRef<InternalPath> | InternalPath>
 export const pathIndexContextKey = Symbol('pathIndex') as InjectionKey<Ref<number> | number>
-export function providePathContext(path: ComputedRef<InternalPath>) {
+export function providePath(path: ComputedRef<InternalPath>) {
   provide(pathContextKey, path)
 }
 
-export function providePathIndexContext(index: Ref<number>) {
+export function providePathIndex(index: Ref<number>) {
   provide(pathIndexContextKey, index)
 }
 
-export function useInjectPathContext() {
+export function useInjectPath() {
   return inject(pathContextKey, [])
 }
 
-export function useInjectPathIndexContext() {
+export function useInjectPathIndex() {
   return inject(pathIndexContextKey, -1)
 }
