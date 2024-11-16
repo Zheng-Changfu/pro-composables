@@ -12,10 +12,10 @@ export function useInjectListField() {
 }
 
 export const fieldContextKey = Symbol('field') as InjectionKey<BaseField>
-export function provideFieldContext(field: BaseField) {
+export function provideField(field: BaseField) {
   provide(fieldContextKey, field)
 }
 
-export function useInjectFieldContext() {
+export function useInjectField() {
   return inject(fieldContextKey, null)
 }

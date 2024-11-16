@@ -5,7 +5,7 @@ import { usePath } from '../path/usePath'
 import { useInjectForm } from '../context'
 import type { BaseForm } from '../types'
 import type { ArrayField, BaseField, FieldOptions } from './types'
-import { provideFieldContext, useInjectListFieldContext } from './context'
+import { provideField, useInjectListField } from './context'
 import { useShow } from './useShow'
 import { useValue } from './useValue'
 import { useListUpdate } from './useListUpdate'
@@ -81,7 +81,7 @@ function createBaseField<T = any>(
   const id = uid()
   const { isList } = options
   const form = useInjectForm()!
-  const parent = useInjectListFieldContext()
+  const parent = useInjectListField()
   const isListPath = !!parent
 
   const {
@@ -151,7 +151,7 @@ function createBaseField<T = any>(
     },
   )
 
-  provideFieldContext(field)
+  provideField(field)
   form.dependStore.add(field)
   mountFieldValue(form, field)
   onUnmounted(() => unmountFieldValue(form, field, parent))

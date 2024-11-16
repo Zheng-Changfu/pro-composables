@@ -1,6 +1,5 @@
 import { computed, defineComponent, h, onMounted, toRef } from 'vue-demi'
-import { createForm } from '../form'
-import { createArrayField, createField, useInjectFieldContext, useInjectListFieldContext } from '../field'
+import { createArrayField, createField, useInjectField, useInjectListField } from '../field'
 import { uid } from '../../utils/id'
 import { providePathContext, providePathIndexContext } from '../path'
 
@@ -33,7 +32,7 @@ export const FormItem = defineComponent({
       preserve: props.preserve,
       transform: props.transform,
     })
-    const listField = useInjectFieldContext()
+    const listField = useInjectField()
     onMounted(() => {
       props.onFieldMounted?.(field)
     })
@@ -51,7 +50,7 @@ export const FormListItem = defineComponent({
     'index',
   ],
   setup(props, { slots }) {
-    const parent = useInjectListFieldContext()!
+    const parent = useInjectListField()!
     const path = computed(() => {
       const { index } = props
       return [
