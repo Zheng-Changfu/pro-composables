@@ -4,30 +4,6 @@ import { createArrayField, createField, useInjectFieldContext, useInjectListFiel
 import { uid } from '../../utils/id'
 import { providePathContext, providePathIndexContext } from '../path'
 
-export const Form = defineComponent({
-  props: [
-    'initialValues',
-    'expressionScope',
-    'onFieldValueChange',
-    'onDependenciesValueChange',
-    'onFormMounted',
-  ],
-  setup(props, { slots }) {
-    const form = createForm({
-      initialValues: props.initialValues ?? {},
-      onFieldValueChange: props.onFieldValueChange,
-      expressionScope: toRef(props, 'expressionScope'),
-      onDependenciesValueChange: props.onDependenciesValueChange,
-    })
-
-    onMounted(() => {
-      props.onFormMounted?.(form)
-    })
-
-    return () => slots.default?.()
-  },
-})
-
 export const FormItem = defineComponent({
   props: [
     'path',

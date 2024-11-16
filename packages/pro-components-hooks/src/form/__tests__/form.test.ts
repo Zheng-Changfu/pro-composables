@@ -1,35 +1,31 @@
 import { describe, expect, it, vi } from 'vitest'
-import { defineComponent, h, nextTick, onMounted, ref } from 'vue-demi'
+import { defineComponent, h, nextTick, onMounted } from 'vue-demi'
 import { mount } from '../../__tests__/mount'
 import type { BaseForm } from '../types'
-import type { ArrayField, BaseField } from '../field'
-import { useInjectFormContext } from '../context'
-import { Form, FormItem, FormList } from './components'
+import type { BaseField } from '../field'
+import { createForm } from '../form'
+import { FormItem, FormList } from './components'
 
 describe('form props', () => {
   it('initialValues', async () => {
     let val: any
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            a: 1,
+            b: 2,
+            c: 3,
+            d: {
+              e: 1,
+            },
+          },
+        })
         onMounted(() => {
-          val = _form.valueStore.initialValues
+          val = form.valueStore.initialValues
         })
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              a: 1,
-              b: 2,
-              c: 3,
-              d: {
-                e: 1,
-              },
-            },
-          })
+          return null
         }
       },
     })
@@ -46,50 +42,18 @@ describe('form props', () => {
     vm.unmount()
   })
 
-  it('expressionScope', async () => {
-    let val: any
-    const T = defineComponent({
-      setup() {
-        const form = useInjectFormContext()!
-        val = form.scope.value
-        return () => ''
-      },
-    })
-
-    const Comp = defineComponent({
-      setup() {
-        return () => {
-          return h(Form, {
-            expressionScope: {
-              $t: 1,
-            },
-          }, h(T))
-        }
-      },
-    })
-
-    const vm = mount(Comp)
-    expect(val).toStrictEqual({
-      $t: 1,
-      $vals: {},
-      $values: {},
-    })
-    vm.unmount()
-  })
-
   it('onFieldValueChange', async () => {
     const onFieldValueChange = vi.fn()
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          onFieldValueChange,
+        })
         onMounted(() => {
-          _form.setFieldValue('a.b.c', 1)
+          form.setFieldValue('a.b.c', 1)
         })
         return () => {
-          return h(Form, { onFormMounted, onFieldValueChange }, h(FormItem, { path: 'a.b.c' }))
+          return h(FormItem, { path: 'a.b.c' })
         }
       },
     })
@@ -114,6 +78,9 @@ describe('form props', () => {
     const Comp = defineComponent({
       setup() {
         let _field: BaseField
+        createForm({
+          onDependenciesValueChange,
+        })
 
         function onFieldMounted(field: BaseField) {
           _field = field
@@ -124,9 +91,7 @@ describe('form props', () => {
         })
 
         return () => {
-          return h(Form, {
-            onDependenciesValueChange,
-          }, [
+          return [
             h(FormItem, { path: 'a', dependencies: ['b'] }),
             h(FormItem, { path: 'b', onFieldMounted }),
             h(FormItem, { path: 'c', dependencies: 'b' }),
@@ -134,7 +99,7 @@ describe('form props', () => {
             h(FormItem, { path: 'e', dependencies: { pattern: /b/ } }),
             h(FormItem, { path: 'f', dependencies: { pattern: match } }),
             h(FormItem, { path: 'g', dependencies: ['a', 'b'] }),
-          ])
+          ]
         }
       },
     })
@@ -159,12 +124,13 @@ describe('form props', () => {
     })
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: BaseField
 
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          onDependenciesValueChange() {
+            onDependenciesValueChangeMock(form)
+          },
+        })
 
         function onFieldMounted(field: BaseField) {
           _field = field
@@ -175,19 +141,14 @@ describe('form props', () => {
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            onDependenciesValueChange() {
-              onDependenciesValueChangeMock(_form)
-            },
-          }, [
+          return [
             h(FormItem, {
               path: 'a',
               dependencies: ['b'],
-              value: '{{ $vals.b === 1 ? 2 : null }}',
+              value: form.valueStore.values.value.b === 1 ? 2 : null,
             }),
             h(FormItem, { path: 'b', onFieldMounted }),
-          ])
+          ]
         }
       },
     })
@@ -199,38 +160,6 @@ describe('form props', () => {
     expect(aVal).toBe(null)
     vm.unmount()
   })
-
-  it('onDependenciesValueChange guard', async () => {
-    const onDependenciesValueChange = vi.fn()
-    const Comp = defineComponent({
-      setup() {
-        let _form: BaseForm
-        const trigger = ref(false)
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
-        onMounted(() => {
-          _form.setFieldValue('b', 1)
-        })
-        return () => {
-          return h(Form, {
-            onFormMounted,
-            onDependenciesValueChange,
-          }, [
-            h(FormItem, { path: 'a', dependencies: { pattern: 'b', guard: trigger } }),
-            h(FormItem, { path: 'b' }),
-          ])
-        }
-      },
-    })
-
-    const vm = mount(Comp)
-    await nextTick()
-    await nextTick()
-    expect(onDependenciesValueChange).toHaveBeenCalledTimes(0)
-    vm.unmount()
-  })
 })
 
 describe('form api', () => {
@@ -238,24 +167,22 @@ describe('form api', () => {
     let val: any
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
-        onMounted(() => {
-          val = _form.getFieldValue('a.b.c')
-        })
-        return () => {
-          return h(Form, {
-            initialValues: {
-              a: {
-                b: {
-                  c: 1,
-                },
+        const form = createForm({
+          initialValues: {
+            a: {
+              b: {
+                c: 1,
               },
             },
-            onFormMounted,
-          }, h(FormItem, { path: 'a.b.c' }))
+          },
+        })
+
+        onMounted(() => {
+          val = form.getFieldValue('a.b.c')
+        })
+
+        return () => {
+          return h(FormItem, { path: 'a.b.c' })
         }
       },
     })
@@ -269,28 +196,25 @@ describe('form api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            a: 1,
+            b: 2,
+          },
+        })
+
         onMounted(() => {
           vals.push(
-            _form.getFieldsValue(),
-            _form.getFieldsValue(true),
-            _form.getFieldsValue(['a']),
+            form.getFieldsValue(),
+            form.getFieldsValue(true),
+            form.getFieldsValue(['a']),
           )
         })
         return () => {
-          return h(Form, {
-            initialValues: {
-              a: 1,
-              b: 2,
-            },
-            onFormMounted,
-          }, [
+          return [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ])
+          ]
         }
       },
     })
@@ -328,48 +252,37 @@ describe('form api', () => {
 
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
-
-        function onArrayFieldMounted(field: ArrayField) {
-          _field = field
-        }
+        const form = createForm({
+          initialValues: {
+            a: 1,
+            b: 2,
+            list: [
+              { a: 1, b: 1, d: 1, dd2: 3 },
+            ],
+          },
+        })
 
         onMounted(async () => {
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsTransformedValue() },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsTransformedValue() },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              a: 1,
-              b: 2,
-              list: [
-                { a: 1, b: 1, d: 1, dd2: 3 },
-              ],
-            },
-          }, [
+          return [
             h(FormItem, { path: 'a', transform: transformA }),
             h(FormItem, { path: 'b', transform: transformB }),
             h(FormList, {
               path: 'list',
-              onArrayFieldMounted,
               transform: transformList,
             }, [
               h(FormItem, { path: 'a', transform: transformListA }),
               h(FormItem, { path: 'b', transform: transformListB }),
               h(FormItem, { path: 'd' }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -404,25 +317,23 @@ describe('form api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
-        onMounted(() => {
-          _form.setFieldValue('a', 2)
-          vals.push(_form.getFieldValue('a'))
+        const form = createForm({
+          initialValues: {
+            a: 1,
+            b: 2,
+          },
         })
+
+        onMounted(() => {
+          form.setFieldValue('a', 2)
+          vals.push(form.getFieldValue('a'))
+        })
+
         return () => {
-          return h(Form, {
-            initialValues: {
-              a: 1,
-              b: 2,
-            },
-            onFormMounted,
-          }, [
+          return [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ])
+          ]
         }
       },
     })
@@ -436,30 +347,27 @@ describe('form api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            a: 1,
+            b: 2,
+          },
+        })
+
         onMounted(() => {
-          _form.setFieldsValue({ a: 2, id: 1 })
+          form.setFieldsValue({ a: 2, id: 1 })
           vals.push(
-            _form.getFieldsValue(),
-            _form.getFieldsValue(true),
-            _form.getFieldsValue(['a']),
-            _form.getFieldsValue(['id']),
+            form.getFieldsValue(),
+            form.getFieldsValue(true),
+            form.getFieldsValue(['a']),
+            form.getFieldsValue(['id']),
           )
         })
         return () => {
-          return h(Form, {
-            initialValues: {
-              a: 1,
-              b: 2,
-            },
-            onFormMounted,
-          }, [
+          return [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ])
+          ]
         }
       },
     })
@@ -476,29 +384,26 @@ describe('form api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            a: 1,
+            b: 2,
+          },
+        })
+
         onMounted(() => {
-          _form.setFieldsValue({ a: 2, b: 3, id: 1 })
-          _form.resetFieldValue('a')
+          form.setFieldsValue({ a: 2, b: 3, id: 1 })
+          form.resetFieldValue('a')
           vals.push(
-            _form.getFieldsValue(),
-            _form.getFieldsValue(true),
+            form.getFieldsValue(),
+            form.getFieldsValue(true),
           )
         })
         return () => {
-          return h(Form, {
-            initialValues: {
-              a: 1,
-              b: 2,
-            },
-            onFormMounted,
-          }, [
+          return [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ])
+          ]
         }
       },
     })
@@ -513,29 +418,27 @@ describe('form api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            a: 1,
+            b: 2,
+          },
+        })
+
         onMounted(() => {
-          _form.setFieldsValue({ a: 2, b: 3, id: 1 })
-          _form.resetFieldsValue()
+          form.setFieldsValue({ a: 2, b: 3, id: 1 })
+          form.resetFieldsValue()
           vals.push(
-            _form.getFieldsValue(),
-            _form.getFieldsValue(true),
+            form.getFieldsValue(),
+            form.getFieldsValue(true),
           )
         })
+
         return () => {
-          return h(Form, {
-            initialValues: {
-              a: 1,
-              b: 2,
-            },
-            onFormMounted,
-          }, [
+          return [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ])
+          ]
         }
       },
     })
@@ -550,29 +453,27 @@ describe('form api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            a: 1,
+            b: 2,
+          },
+        })
+
         onMounted(() => {
-          _form.setInitialValue('a', 2)
-          _form.resetFieldsValue()
+          form.setInitialValue('a', 2)
+          form.resetFieldsValue()
           vals.push(
-            _form.getFieldsValue(),
-            _form.getFieldsValue(true),
+            form.getFieldsValue(),
+            form.getFieldsValue(true),
           )
         })
+
         return () => {
-          return h(Form, {
-            initialValues: {
-              a: 1,
-              b: 2,
-            },
-            onFormMounted,
-          }, [
+          return [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ])
+          ]
         }
       },
     })
@@ -587,30 +488,28 @@ describe('form api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            a: 1,
+            b: 2,
+          },
+        })
+
         onMounted(() => {
-          _form.setFieldsValue({ a: 3, b: 4, id: 1 })
-          _form.setInitialValues({ a: 2, b: 3 })
-          _form.resetFieldsValue()
+          form.setFieldsValue({ a: 3, b: 4, id: 1 })
+          form.setInitialValues({ a: 2, b: 3 })
+          form.resetFieldsValue()
           vals.push(
-            _form.getFieldsValue(),
-            _form.getFieldsValue(true),
+            form.getFieldsValue(),
+            form.getFieldsValue(true),
           )
         })
+
         return () => {
-          return h(Form, {
-            initialValues: {
-              a: 1,
-              b: 2,
-            },
-            onFormMounted,
-          }, [
+          return [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ])
+          ]
         }
       },
     })

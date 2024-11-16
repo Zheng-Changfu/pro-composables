@@ -2,45 +2,39 @@ import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, onMounted } from 'vue-demi'
 import type { ArrayField } from '../field'
 import { mount } from '../../__tests__/mount'
-import type { BaseForm } from '../types'
-import { Form, FormItem, FormList } from './components'
+import { createForm } from '../form'
+import { FormItem, FormList } from './components'
 
 describe('arrayField api', () => {
   it('hidden', async () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm()
 
         onMounted(async () => {
-          _form.setFieldValue('list[0].u1', '234')
+          form.setFieldValue('list[0].u1', '234')
           await nextTick()
-          _form.setFieldValue('u1', '1')
+          form.setFieldValue('u1', '1')
           await nextTick()
-          _form.setFieldValue('u1', '2')
+          form.setFieldValue('u1', '2')
           await nextTick()
           vals.push(
-            _form.getFieldsValue(),
-            _form.getFieldsValue(true),
+            form.getFieldsValue(),
+            form.getFieldsValue(true),
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-          }, [
+          return [
             h(FormItem, { path: 'u1' }),
             h(FormList, {
               path: 'list',
-              hidden: '{{ $vals.u1 === \'1\' }}',
+              hidden: form.valueStore.values.value.u1 === '1',
             }, [
               h(FormItem, { defaultValue: '', path: 'u1' }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -59,12 +53,8 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm()
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -74,26 +64,24 @@ describe('arrayField api', () => {
           _field.push({})
           await nextTick()
           vals.push(
-            _form.getFieldsValue(),
-            _form.getFieldsValue(true),
+            form.getFieldsValue(),
+            form.getFieldsValue(true),
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
             }, [
               h(FormItem, {
                 path: 'u1',
-                visible: '{{false}}',
+                visible: false,
                 defaultValue: null,
               }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -109,12 +97,8 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm()
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -124,29 +108,27 @@ describe('arrayField api', () => {
           _field.push({ })
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           await nextTick()
-          _form.setFieldValue('list.0.a1', 1)
+          form.setFieldValue('list.0.a1', 1)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           await nextTick()
-          _form.setFieldValue('list.0.a1', null)
+          form.setFieldValue('list.0.a1', null)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -157,11 +139,11 @@ describe('arrayField api', () => {
               }),
               h(FormItem, {
                 path: 'a2',
-                visible: '{{ !!$row.a1 }}',
+                visible: !!form.valueStore.values.value.list?.[0]?.a1,
                 defaultValue: null,
               }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -185,12 +167,14 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+            ],
+          },
+        })
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -199,26 +183,19 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.push({ a: 2, b: 2, c: 2 })
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              list: [
-                { a: 1, b: 1, c: 1 },
-              ],
-            },
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -226,7 +203,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -255,12 +232,14 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+            ],
+          },
+        })
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -269,26 +248,19 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.pop()
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              list: [
-                { a: 1, b: 1, c: 1 },
-              ],
-            },
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -296,7 +268,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -315,12 +287,14 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+            ],
+          },
+        })
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -329,26 +303,19 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.insert(0, { a: 0, b: 0, c: 0 })
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              list: [
-                { a: 1, b: 1, c: 1 },
-              ],
-            },
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -356,7 +323,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -385,12 +352,16 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+              { a: 2, b: 2, c: 2 },
+              { a: 3, b: 3, c: 3 },
+            ],
+          },
+        })
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -399,40 +370,31 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.remove(1)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.remove(0)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.remove(0)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              list: [
-                { a: 1, b: 1, c: 1 },
-                { a: 2, b: 2, c: 2 },
-                { a: 3, b: 3, c: 3 },
-              ],
-            },
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -440,7 +402,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -495,12 +457,16 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+              { a: 2, b: 2, c: 2 },
+              { a: 3, b: 3, c: 3 },
+            ],
+          },
+        })
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -509,40 +475,31 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.shift()
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.shift()
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.shift()
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              list: [
-                { a: 1, b: 1, c: 1 },
-                { a: 2, b: 2, c: 2 },
-                { a: 3, b: 3, c: 3 },
-              ],
-            },
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -550,7 +507,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -605,12 +562,16 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+              { a: 2, b: 2, c: 2 },
+              { a: 3, b: 3, c: 3 },
+            ],
+          },
+        })
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -619,40 +580,31 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.unshift({ a: 0, b: 0, c: 0 })
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.unshift({ a: -1, b: -1, c: -1 })
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.unshift({ a: -2, b: -2, c: -2 })
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              list: [
-                { a: 1, b: 1, c: 1 },
-                { a: 2, b: 2, c: 2 },
-                { a: 3, b: 3, c: 3 },
-              ],
-            },
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -660,7 +612,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -741,12 +693,16 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+              { a: 2, b: 2, c: 2 },
+              { a: 3, b: 3, c: 3 },
+            ],
+          },
+        })
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -755,52 +711,43 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.move(2, 1)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.move(0, 2)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.move(1, 2)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.move(0, -1)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.move(1, 3)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              list: [
-                { a: 1, b: 1, c: 1 },
-                { a: 2, b: 2, c: 2 },
-                { a: 3, b: 3, c: 3 },
-              ],
-            },
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -808,7 +755,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -907,12 +854,16 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+              { a: 2, b: 2, c: 2 },
+              { a: 3, b: 3, c: 3 },
+            ],
+          },
+        })
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -921,40 +872,31 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.moveUp(1)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.moveUp(0)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.moveUp(2)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              list: [
-                { a: 1, b: 1, c: 1 },
-                { a: 2, b: 2, c: 2 },
-                { a: 3, b: 3, c: 3 },
-              ],
-            },
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -962,7 +904,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -1031,12 +973,16 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+              { a: 2, b: 2, c: 2 },
+              { a: 3, b: 3, c: 3 },
+            ],
+          },
+        })
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -1045,40 +991,31 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.moveDown(1)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.moveDown(2)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.moveDown(0)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              list: [
-                { a: 1, b: 1, c: 1 },
-                { a: 2, b: 2, c: 2 },
-                { a: 3, b: 3, c: 3 },
-              ],
-            },
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -1086,7 +1023,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ])
+          ]
         }
       },
     })
@@ -1155,12 +1092,16 @@ describe('arrayField api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        let _form: BaseForm
         let _field: ArrayField
-
-        function onFormMounted(form: BaseForm) {
-          _form = form
-        }
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+              { a: 2, b: 2, c: 2 },
+              { a: 3, b: 3, c: 3 },
+            ],
+          },
+        })
 
         function onArrayFieldMounted(field: ArrayField) {
           _field = field
@@ -1169,70 +1110,61 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.remove(1)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.insert(1, {})
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.remove(0)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.insert(2, { a: 1 })
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.move(0, 2)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.remove(1)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.remove(0)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
           _field.remove(0)
           await nextTick()
           vals.push(
-            { ..._form.getFieldsValue() },
-            { ..._form.getFieldsValue(true) },
+            { ...form.getFieldsValue() },
+            { ...form.getFieldsValue(true) },
           )
         })
 
         return () => {
-          return h(Form, {
-            onFormMounted,
-            initialValues: {
-              list: [
-                { a: 1, b: 1, c: 1 },
-                { a: 2, b: 2, c: 2 },
-                { a: 3, b: 3, c: 3 },
-              ],
-            },
-          }, [
+          return [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -1240,7 +1172,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ])
+          ]
         }
       },
     })
