@@ -3,11 +3,11 @@ import { inject, provide } from 'vue-demi'
 import type { ArrayField, BaseField } from './types'
 
 export const listFieldContextKey = Symbol('listField') as InjectionKey<ArrayField>
-export function provideParentFieldContext(field: ArrayField) {
+export function provideListField(field: ArrayField) {
   provide(listFieldContextKey, field)
 }
 
-export function useInjectListFieldContext() {
+export function useInjectListField() {
   return inject(listFieldContextKey, null)
 }
 

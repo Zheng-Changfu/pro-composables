@@ -10,7 +10,7 @@ import {
   shift as _shift,
   unshift as _unshift,
 } from '../utils/array'
-import { provideParentFieldContext } from './context'
+import { provideListField } from './context'
 import { createField } from './createField'
 import type { ArrayField, ArrayFieldActionName, FieldOptions } from './types'
 
@@ -81,6 +81,6 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     moveDown,
     onActionChange,
   })
-  provideParentFieldContext(arrayField)
+  provideListField(arrayField)
   return arrayField
 }
