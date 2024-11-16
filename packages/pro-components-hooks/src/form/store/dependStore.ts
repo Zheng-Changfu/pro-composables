@@ -1,5 +1,5 @@
-import { nextTick, onScopeDispose, toValue } from 'vue-demi'
-import { isArray, isString } from 'lodash-es'
+import { nextTick, onScopeDispose } from 'vue-demi'
+import { isArray } from 'lodash-es'
 import type { BaseField } from '../field'
 import type { PathPattern } from '../path'
 import { convertPatternToMatchFn } from '../utils/path'
