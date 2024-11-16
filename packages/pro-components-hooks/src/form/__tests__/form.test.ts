@@ -6,6 +6,25 @@ import type { BaseField } from '../field'
 import { createForm } from '../form'
 import { FormItem, FormList } from './components'
 
+describe('not use `createForm` api', () => {
+  it('not throw error', async () => {
+    const Comp = defineComponent({
+      setup() {
+        return () => {
+          return [
+            h(FormItem, { path: 'a.b.c1' }),
+            h(FormItem, { path: 'a.b.c2' }),
+            h(FormItem, { path: 'a.b.c3' }),
+          ]
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    vm.unmount()
+  })
+})
+
 describe('form props', () => {
   it('initialValues', async () => {
     let val: any

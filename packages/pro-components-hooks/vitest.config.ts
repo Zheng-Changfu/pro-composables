@@ -8,6 +8,9 @@ export default defineConfig({
       '@vue/runtime-core',
     ],
   },
+  define: {
+    __DEV__: true,
+  },
   test: {
     environment: 'jsdom',
     reporters: 'dot',
