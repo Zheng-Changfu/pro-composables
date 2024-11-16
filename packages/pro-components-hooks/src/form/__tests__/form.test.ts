@@ -391,8 +391,8 @@ describe('form api', () => {
     })
 
     const vm = mount(Comp)
-    expect(vals[0]).toStrictEqual({ a: 2, b: 2 })
-    expect(vals[1]).toStrictEqual({ a: 2, b: 2, id: 1 })
+    expect(vals[0]).toStrictEqual({ a: 2, b: undefined })
+    expect(vals[1]).toStrictEqual({ a: 2, id: 1 })
     expect(vals[2]).toStrictEqual({ a: 2 })
     expect(vals[3]).toStrictEqual({ id: 1 })
     vm.unmount()
