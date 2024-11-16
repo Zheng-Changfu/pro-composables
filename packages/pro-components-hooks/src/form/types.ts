@@ -1,5 +1,6 @@
 import type { Ref } from 'vue-demi'
-import type { Get, PartialDeep, Paths, Simplify } from 'type-fest'
+import type { Get, PartialDeep } from 'type-fest'
+import type { PathToObject, StringKeyof } from '../utils/types'
 import type { ArrayField, BaseField } from './field'
 import type { InternalPath, PathPattern } from './path'
 import type { DependStore } from './store/dependStore'
@@ -25,13 +26,6 @@ export interface FormOptions<Values = any> {
    */
   onDependenciesValueChange?: (opt: { field: BaseField, path: string[], dependPath: string[], value: any }) => void
 }
-
-type StringKeyof<Values = any> = Exclude<Paths<Values>, symbol | number>
-type PathToObject<T extends string[], Values = any> = Simplify<{
-  [K in T[number] as K extends `${infer X}.${string}` ? X : K]: K extends `${infer X}.${infer Y}`
-    ? PathToObject<[Y], Get<Values, X>>
-    : Get<Values, K>
-}>
 
 export interface BaseForm<Values = any> {
   /**
