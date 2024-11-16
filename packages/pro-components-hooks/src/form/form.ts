@@ -1,5 +1,4 @@
 import { useMounted } from '@vueuse/core'
-import { readonly } from 'vue-demi'
 import { uid } from '../utils/id'
 import type { BaseForm, FormOptions } from './types'
 import { provideForm } from './context'
@@ -21,7 +20,6 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   } = dependStore
 
   const {
-    values,
     matchPath,
     getFieldValue,
     setFieldValue,
@@ -52,7 +50,6 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     pauseDependenciesTrigger,
     resumeDependenciesTrigger,
     getFieldsTransformedValue,
-    values: process.env.NODE_ENV !== 'production' ? readonly(values.value) : values.value,
   }
 
   function onFieldValueUpdated(field: BaseField, value: any) {
