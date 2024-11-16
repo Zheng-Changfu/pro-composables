@@ -1,4 +1,4 @@
-import type { Ref } from 'vue-demi'
+import type { DeepReadonly, Ref } from 'vue-demi'
 import type { Get, PartialDeep, Paths, Simplify } from 'type-fest'
 import type { ArrayField, BaseField } from './field'
 import type { InternalPath, PathPattern } from './path'
@@ -50,6 +50,10 @@ export interface BaseForm<Values = any> {
    * 表单项字段仓库
    */
   fieldStore: FieldStore
+  /**
+   * 所有表单值(响应式的，只读的)
+   */
+  values: DeepReadonly<Values>
   /**
    * 表单值仓库
    */
