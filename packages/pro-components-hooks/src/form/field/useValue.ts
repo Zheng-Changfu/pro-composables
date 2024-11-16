@@ -7,8 +7,8 @@ interface UseValueOptions {
 }
 
 export function useValue<T = any>(id: string, path: ComputedRef<string[]>, options: UseValueOptions) {
+  const form = useInjectForm()
   const { onInputValue } = options
-  const form = useInjectForm()!
 
   const proxy = computed({
     get,
@@ -17,19 +17,19 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
 
   function get() {
     const p = path.value
-    const storeValue = form.valueStore.getFieldValue(p)
+    const storeValue = form?.valueStore.getFieldValue(p)
     return storeValue
   }
 
   function set(val: any) {
-    form.valueStore.setFieldValue(path.value, val)
-    const field = form.fieldStore.getField(id)
+    form?.valueStore.setFieldValue(path.value, val)
+    const field = form?.fieldStore.getField(id)
     if (field)
       field.touching = false
   }
 
   function doUpdateValue(value: any, ...args: any[]) {
-    const field = form.fieldStore.getField(id)
+    const field = form?.fieldStore.getField(id)
     if (field)
       field.touching = true
     if (onInputValue) {

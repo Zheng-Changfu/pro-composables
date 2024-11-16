@@ -4,6 +4,7 @@ import { uid } from '../../utils/id'
 import { usePath } from '../path/usePath'
 import { useInjectForm } from '../context'
 import type { BaseForm } from '../types'
+import { warnOnce } from '../../utils/warn'
 import type { ArrayField, BaseField, FieldOptions } from './types'
 import { provideField, useInjectListField } from './context'
 import { useShow } from './useShow'
@@ -80,7 +81,7 @@ function createBaseField<T = any>(
 
   const id = uid()
   const { isList } = options
-  const form = useInjectForm()!
+  const form = useInjectForm()
   const parent = useInjectListField()
   const isListPath = !!parent
 
@@ -127,34 +128,41 @@ function createBaseField<T = any>(
     field.updating = updating
   })
 
-  watch(
-    path,
-    (newPath, oldPath) => {
-      moveValue(form, parent, newPath, oldPath)
-    },
-  )
+  if (!form) {
+    if (process.env.NODE_ENV !== 'production')
+      warnOnce(`You should use the 'createForm' api at the root`)
+  }
 
-  watch(
-    show,
-    (visible) => {
-      visible
-        ? mountFieldValue(form, field)
-        : unmountFieldValue(form, field, parent)
-    },
-  )
+  if (form) {
+    watch(
+      path,
+      (newPath, oldPath) => {
+        moveValue(form, parent, newPath, oldPath)
+      },
+    )
 
-  watch(
-    () => unref(propValue),
-    (val) => {
-      if (show.value && path.value.length > 0)
-        form.valueStore.setFieldValue(path.value, val)
-    },
-  )
+    watch(
+      show,
+      (visible) => {
+        visible
+          ? mountFieldValue(form, field)
+          : unmountFieldValue(form, field, parent)
+      },
+    )
 
+    watch(
+      () => unref(propValue),
+      (val) => {
+        if (show.value && path.value.length > 0)
+          form.valueStore.setFieldValue(path.value, val)
+      },
+    )
+
+    form.dependStore.add(field)
+    mountFieldValue(form, field)
+    onUnmounted(() => unmountFieldValue(form, field, parent))
+  }
   provideField(field)
-  form.dependStore.add(field)
-  mountFieldValue(form, field)
-  onUnmounted(() => unmountFieldValue(form, field, parent))
   return field
 }
 
