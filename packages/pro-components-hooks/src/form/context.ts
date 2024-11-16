@@ -3,10 +3,10 @@ import { inject, provide } from 'vue-demi'
 import type { BaseForm } from './types'
 
 export const formContextKey = Symbol('formContext') as InjectionKey<BaseForm>
-export function provideFormContext(form: BaseForm) {
+export function provideForm(form: BaseForm) {
   provide(formContextKey, form)
 }
 
-export function useInjectFormContext() {
+export function useInjectForm() {
   return inject(formContextKey, null)
 }

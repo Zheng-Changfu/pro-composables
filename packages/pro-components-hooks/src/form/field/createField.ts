@@ -2,7 +2,7 @@ import { onUnmounted, unref, watch } from 'vue-demi'
 import { get, has } from 'lodash-es'
 import { uid } from '../../utils/id'
 import { usePath } from '../path/usePath'
-import { useInjectFormContext } from '../context'
+import { useInjectForm } from '../context'
 import type { BaseForm } from '../types'
 import type { ArrayField, BaseField, FieldOptions } from './types'
 import { provideFieldContext, useInjectListFieldContext } from './context'
@@ -80,7 +80,7 @@ function createBaseField<T = any>(
 
   const id = uid()
   const { isList } = options
-  const form = useInjectFormContext()!
+  const form = useInjectForm()!
   const parent = useInjectListFieldContext()
   const isListPath = !!parent
 
