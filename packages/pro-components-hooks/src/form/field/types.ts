@@ -1,9 +1,7 @@
 import type { ComputedRef, Ref } from 'vue-demi'
 import type { EventHookOn } from '@vueuse/core'
 import type { InternalPath } from '../path'
-import type { MaybeExpression } from '../../hooks'
 import type { Dependencie } from '../store/dependStore'
-import type { ExpressionScope } from './scope'
 
 export interface FieldOptions<T = any> {
   /**
@@ -24,21 +22,17 @@ export interface FieldOptions<T = any> {
    */
   path?: Ref<InternalPath | undefined>
   /**
-   * 字段值，支持表达式
+   * 字段值
    */
   value?: Ref<T>
   /**
-   * 表达式可以读取到的上下文
+   * 是否显示
    */
-  scope?: ExpressionScope
+  visible?: Ref<boolean | undefined>
   /**
-   * 是否显示，支持表达式
+   * 是否隐藏
    */
-  visible?: Ref<MaybeExpression<boolean | undefined>>
-  /**
-   * 是否隐藏，支持表达式
-   */
-  hidden?: Ref<MaybeExpression<boolean | undefined>>
+  hidden?: Ref<boolean | undefined>
   /**
    * 字段关联的依赖项
    */
@@ -122,26 +116,14 @@ export interface BaseField<T = any> {
    */
   value: Ref<T>
   /**
-   * 解析后的用户传递的 value
+   * 用户传递的 value
    */
-  parsedPropValue: ComputedRef<any>
+  propValue: Ref<T> | undefined
   /**
    * 是否显示
    * @default true
    */
   show: ComputedRef<boolean>
-  /**
-   * 表达式可以读取到的上下文
-   */
-  scope: ExpressionScope
-  /**
-   * 表单控件的属性
-   */
-  fieldProps: ComputedRef<Record<string, any>>
-  /**
-   * formItem 控件的属性
-   */
-  formItemProps: ComputedRef<Record<string, any>>
   /**
    * 字段关联的依赖项
    */
@@ -150,14 +132,6 @@ export interface BaseField<T = any> {
    * 更新值，内部不会使用，交给上层使用(为了区分是否为手动交互导致值的改变，而不是通过调用 api)
    */
   doUpdateValue: (val: T, ...args: any[]) => void
-  /**
-   * 设置表单控件的属性
-   */
-  doUpdateFieldProps: (props: Record<string, any>) => void
-  /**
-   * 设置 formItem 控件的属性
-   */
-  doUpdateFormItemProps: (props: Record<string, any>) => void
   /**
    * 转换字段的值，通过 getFieldsTransformedValue 可触发
    */

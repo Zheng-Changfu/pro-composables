@@ -1,5 +1,4 @@
 import { useMounted } from '@vueuse/core'
-import { computed } from 'vue-demi'
 import { uid } from '../utils/id'
 import type { BaseForm, FormOptions } from './types'
 import { provideFormContext } from './context'
@@ -8,7 +7,7 @@ import { createFieldStore } from './store/fieldStore'
 import { createValueStore } from './store/valueStore'
 import { createDependStore } from './store/dependStore'
 
-export function createForm<Values = Record<string, any>>(options: FormOptions<Values>) {
+export function createForm<Values = Record<string, any>>(options: FormOptions<Values> = {}) {
   const mounted = useMounted()
   const fieldStore = createFieldStore()
   const dependStore = createDependStore(fieldStore)
@@ -21,7 +20,6 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   } = dependStore
 
   const {
-    values,
     matchPath,
     getFieldValue,
     setFieldValue,
@@ -34,25 +32,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     getFieldsTransformedValue,
   } = valueStore
 
-  const scope = computed(() => {
-    return {
-      /**
-       * 用户传递的
-       */
-      ...(options.expressionScope?.value ?? {}),
-      /**
-       * 整个表单的值，等同于 getFieldsValue(true)
-       */
-      $values: values.value,
-      /**
-       * @alias $values
-       */
-      $vals: values.value,
-    }
-  })
-
   const form: BaseForm = {
-    scope,
     mounted,
     id: uid(),
     valueStore,

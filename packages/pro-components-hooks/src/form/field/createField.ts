@@ -1,17 +1,14 @@
-import { onUnmounted, watch } from 'vue-demi'
+import { onUnmounted, unref, watch } from 'vue-demi'
 import { get, has } from 'lodash-es'
 import { uid } from '../../utils/id'
 import { usePath } from '../path/usePath'
 import { useInjectFormContext } from '../context'
-import { useCompile, useListUpdate } from '../../hooks'
 import type { BaseForm } from '../types'
-import { useFieldProps } from './useFieldProps'
 import type { ArrayField, BaseField, FieldOptions } from './types'
 import { provideFieldContext, useInjectListFieldContext } from './context'
-import { useFormItemProps } from './useFormItemProps'
 import { useShow } from './useShow'
 import { useValue } from './useValue'
-import { createScope } from './scope'
+import { useListUpdate } from './useListUpdate'
 
 interface CreateFieldOptions {
   /**
@@ -30,7 +27,6 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
     initialValue,
     preserve = true,
     dependencies = [],
-    scope = { value: null },
     onChange,
     postValue,
     transform,
@@ -52,7 +48,6 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
       defaultValue,
       initialValue,
       dependencies,
-      scope: scope as any,
       onChange,
       postValue,
       transform,
@@ -64,7 +59,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
 }
 
 function createBaseField<T = any>(
-  fieldOptions: FieldOptions<T> & Required<Pick<FieldOptions, 'scope' | 'preserve' | 'dependencies'>>,
+  fieldOptions: FieldOptions<T> & Required<Pick<FieldOptions, 'preserve' | 'dependencies'>>,
   options: Required<CreateFieldOptions>,
 ) {
   const {
@@ -72,15 +67,14 @@ function createBaseField<T = any>(
     postValue,
     transform,
     onInputValue,
+    hidden,
+    visible,
     preserve,
     defaultValue,
     initialValue,
     dependencies,
     path: propPath,
     value: propValue,
-    scope: propScope,
-    hidden: propHidden,
-    visible: propVisible,
     ...customValues
   } = fieldOptions
 
@@ -96,32 +90,10 @@ function createBaseField<T = any>(
     stringPath,
   } = usePath(propPath)
 
-  const scope = createScope(
-    path,
-    index,
-    propScope,
-  )
-
   const { show } = useShow(
-    propHidden,
-    propVisible,
-    { scope },
+    hidden,
+    visible,
   )
-
-  const parsedPropValue = useCompile(
-    propValue!,
-    { scope },
-  )
-
-  const {
-    fieldProps,
-    doUpdateFieldProps,
-  } = useFieldProps({ scope })
-
-  const {
-    formItemProps,
-    doUpdateFormItemProps,
-  } = useFormItemProps({ scope })
 
   const {
     value,
@@ -133,17 +105,14 @@ function createBaseField<T = any>(
     show,
     path,
     value,
-    scope,
     index,
     parent,
     isList,
     preserve,
-    fieldProps,
+    propValue,
     isListPath,
     stringPath,
     dependencies,
-    formItemProps,
-    parsedPropValue,
     touching: false,
     updating: false,
     meta: fieldOptions,
@@ -151,8 +120,6 @@ function createBaseField<T = any>(
     postValue,
     transform,
     doUpdateValue,
-    doUpdateFieldProps,
-    doUpdateFormItemProps,
     ...customValues,
   }
 
@@ -177,7 +144,7 @@ function createBaseField<T = any>(
   )
 
   watch(
-    parsedPropValue,
+    () => unref(propValue),
     (val) => {
       if (show.value && path.value.length > 0)
         form.valueStore.setFieldValue(path.value, val)
@@ -199,7 +166,7 @@ function mountFieldValue(
     show,
     meta,
     path,
-    parsedPropValue,
+    propValue,
   } = field
 
   if (!show.value || path.value.length <= 0)
@@ -216,13 +183,10 @@ function mountFieldValue(
    */
   if (form.valueStore.has(p))
     val = form.valueStore.getFieldValue(p)
-
-  else if (parsedPropValue.value !== undefined)
-    val = parsedPropValue.value
-
+  else if (unref(propValue) !== undefined)
+    val = unref(propValue)
   else if (initialValue !== undefined)
     val = initialValue
-
   else if (!form.mounted.value && has(form.valueStore.initialValues, p))
     val = get(form.valueStore.initialValues, p)
 

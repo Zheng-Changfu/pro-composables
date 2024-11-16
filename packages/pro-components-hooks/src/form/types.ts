@@ -1,7 +1,6 @@
 import type { Ref } from 'vue-demi'
 import type { Get, PartialDeep, Paths, Simplify } from 'type-fest'
 import type { ArrayField, BaseField } from './field'
-import type { ExpressionScope } from './field/scope'
 import type { InternalPath, PathPattern } from './path'
 import type { DependStore } from './store/dependStore'
 import type { FieldStore } from './store/fieldStore'
@@ -13,10 +12,6 @@ export interface FormOptions<Values = any> {
    * 表单初始值
    */
   initialValues?: Values
-  /**
-   * 表达式可以读取到的作用域属性
-   */
-  expressionScope?: ExpressionScope
   /**
    * 字段值发生变化后的回调
    */
@@ -43,10 +38,6 @@ export interface BaseForm<Values = any> {
    * 唯一标识
    */
   id: string
-  /**
-   * 表达式可以读取到的上下文
-   */
-  scope: ExpressionScope
   /**
    * 表单是否挂载完成
    */

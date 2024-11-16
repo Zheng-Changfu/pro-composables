@@ -1,5 +1,4 @@
 export * from './types'
 export * from './createField'
 export * from './createArrayField'
-export type { ExpressionScope } from './scope'
 export { useInjectListFieldContext, useInjectFieldContext } from './context'
