@@ -1,4 +1,5 @@
 import { createEventHook } from '@vueuse/core'
+import { toRaw } from 'vue-demi'
 import {
   insert as _insert,
   move as _move,
@@ -10,6 +11,9 @@ import {
   shift as _shift,
   unshift as _unshift,
 } from '../utils/array'
+import { useInjectForm } from '../context'
+import type { InternalPath } from '../path'
+import { stringifyPath } from '../utils/path'
 import { provideListField } from './context'
 import { createField } from './createField'
 import type { ArrayField, ArrayFieldActionName, FieldOptions } from './types'
@@ -20,9 +24,28 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     trigger: triggerActionChange,
   } = createEventHook<ArrayFieldActionName>()
 
+  const form = useInjectForm()
+
   const field = createField(options, {
     isList: true,
   })
+
+  function get(index: number, path: InternalPath) {
+    if (form) {
+      const fullPath = `${field.stringPath.value}.${index}.${stringifyPath(path)}`
+      const value = form.getFieldValue(fullPath)
+      triggerActionChange('get')
+      return toRaw(value)
+    }
+  }
+
+  function set(index: number, path: InternalPath, value: any) {
+    if (form) {
+      const fullPath = `${field.stringPath.value}.${index}.${stringifyPath(path)}`
+      form.setFieldValue(fullPath, value)
+      triggerActionChange('set')
+    }
+  }
 
   function push(...items: T[]) {
     field.value.value = _push(field.value.value ?? [], ...items)
@@ -70,14 +93,16 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
   }
 
   const arrayField: ArrayField = Object.assign(field, {
-    push,
+    get,
+    set,
     pop,
-    insert,
-    remove,
-    shift,
-    unshift,
+    push,
     move,
+    shift,
+    insert,
     moveUp,
+    remove,
+    unshift,
     moveDown,
     onActionChange,
   })

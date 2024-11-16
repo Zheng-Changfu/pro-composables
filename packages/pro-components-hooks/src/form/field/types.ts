@@ -1,7 +1,9 @@
 import type { ComputedRef, Ref } from 'vue-demi'
 import type { EventHookOn } from '@vueuse/core'
+import type { Get } from 'type-fest'
 import type { InternalPath } from '../path'
 import type { Dependencie } from '../store/dependStore'
+import type { StringKeyof } from '../../utils/types'
 
 export interface FieldOptions<T = any> {
   /**
@@ -200,30 +202,46 @@ export interface ArrayField<T = any> extends BaseField<T[]> {
    * 列表发生了动作后触发的回调
    */
   onActionChange: EventHookOn<ArrayFieldActionName>
+  /**
+   * 获取行数据，未获取到返回空对象
+   * @param index 行索引
+   */
+  get: <Path extends InternalPath = StringKeyof<T>>(index: number, path: Path) => Get<T, Path>
+  /**
+   * 设置行中某个字段数据
+   * @param index 行索引
+   * @param path 路径
+   * @param value 值
+   */
+  set: <Path extends InternalPath = StringKeyof<T>>(index: number, path: Path, value: Get<T, Path>) => void
 }
 
 export type ArrayFieldActionName = Extract<
-  | 'push'
+  | 'get'
+  | 'set'
   | 'pop'
-  | 'insert'
-  | 'remove'
-  | 'shift'
-  | 'unshift'
   | 'move'
+  | 'push'
+  | 'shift'
+  | 'remove'
   | 'moveUp'
+  | 'insert'
+  | 'unshift'
   | 'moveDown',
   keyof ArrayField
 >
 
 export type ArrayFieldAction<T = any> = Pick<
   ArrayField<T>,
-  | 'push'
+  | 'get'
+  | 'set'
   | 'pop'
+  | 'push'
+  | 'move'
+  | 'shift'
+  | 'moveUp'
   | 'insert'
   | 'remove'
-  | 'shift'
   | 'unshift'
-  | 'move'
-  | 'moveUp'
   | 'moveDown'
 >
