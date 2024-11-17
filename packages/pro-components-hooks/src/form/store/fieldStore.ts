@@ -1,4 +1,4 @@
-import { computed, shallowReactive, toRaw } from 'vue-demi'
+import { computed, shallowReactive, toRaw } from 'vue'
 import { get, isPlainObject, merge, set } from 'lodash-es'
 import type { ArrayField, BaseField } from '../field'
 import { convertPatternToMatchFn, stringifyPath } from '../utils/path'

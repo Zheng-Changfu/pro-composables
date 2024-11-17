@@ -1,5 +1,5 @@
-import type { Ref } from 'vue-demi'
-import { computed, unref } from 'vue-demi'
+import type { Ref } from 'vue'
+import { computed, unref } from 'vue'
 import { toPath } from 'lodash-es'
 import { stringifyPath } from '../utils/path'
 import type { InternalPath } from './types'

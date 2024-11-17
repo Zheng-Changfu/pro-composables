@@ -1,5 +1,5 @@
-import type { ComputedRef, Ref } from 'vue-demi'
-import { computed } from 'vue-demi'
+import type { ComputedRef, Ref } from 'vue'
+import { computed } from 'vue'
 import { useInjectForm } from '../context'
 
 interface UseValueOptions {

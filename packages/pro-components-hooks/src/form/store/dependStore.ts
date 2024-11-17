@@ -1,4 +1,4 @@
-import { nextTick, onScopeDispose } from 'vue-demi'
+import { nextTick, onScopeDispose } from 'vue'
 import { isArray } from 'lodash-es'
 import type { BaseField } from '../field'
 import type { PathPattern } from '../path'

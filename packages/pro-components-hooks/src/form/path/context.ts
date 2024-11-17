@@ -1,5 +1,5 @@
-import type { ComputedRef, InjectionKey, Ref } from 'vue-demi'
-import { inject, provide } from 'vue-demi'
+import type { ComputedRef, InjectionKey, Ref } from 'vue'
+import { inject, provide } from 'vue'
 import type { InternalPath } from './types'
 
 export const pathContextKey = Symbol('path') as InjectionKey<ComputedRef<InternalPath> | InternalPath>

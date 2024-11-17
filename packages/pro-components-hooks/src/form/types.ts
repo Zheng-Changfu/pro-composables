@@ -1,4 +1,4 @@
-import type { Ref } from 'vue-demi'
+import type { Ref } from 'vue'
 import type { Get, PartialDeep } from 'type-fest'
 import type { PathToObject, StringKeyof } from '../utils/types'
 import type { ArrayField, BaseField } from './field'

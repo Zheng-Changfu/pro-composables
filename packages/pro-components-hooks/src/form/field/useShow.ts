@@ -1,4 +1,4 @@
-import { computed, unref } from 'vue-demi'
+import { computed, unref } from 'vue'
 import { isBoolean } from 'lodash-es'
 import type { FieldOptions } from './types'
 

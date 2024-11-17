@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref } from 'vue-demi'
+import type { ComputedRef, Ref } from 'vue'
 import type { EventHookOn } from '@vueuse/core'
 import type { Get, PartialDeep } from 'type-fest'
 import type { InternalPath } from '../path'

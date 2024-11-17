@@ -1,5 +1,5 @@
 import { createEventHook } from '@vueuse/core'
-import { toRaw } from 'vue-demi'
+import { toRaw } from 'vue'
 import {
   insert as _insert,
   move as _move,

@@ -1,4 +1,4 @@
-import { computed, defineComponent, h, onMounted, toRef } from 'vue-demi'
+import { computed, defineComponent, h, onMounted, toRef } from 'vue'
 import { createArrayField, createField, useInjectField, useInjectListField } from '../field'
 import { uid } from '../../utils/id'
 import { providePath, providePathIndex } from '../path'

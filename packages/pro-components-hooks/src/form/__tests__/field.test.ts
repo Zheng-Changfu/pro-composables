@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { defineComponent, h, nextTick, onMounted, ref } from 'vue-demi'
+import { defineComponent, h, nextTick, onMounted, ref } from 'vue'
 import { mount } from '../../__tests__/mount'
 import type { BaseField } from '../field'
 import { createForm } from '../form'

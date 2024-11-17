@@ -1,4 +1,4 @@
-import { nextTick, watch } from 'vue-demi'
+import { nextTick, watch } from 'vue'
 import type { BaseField } from '..'
 
 export function useListUpdate(field: BaseField, fn: (updating: boolean) => void) {

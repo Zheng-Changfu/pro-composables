@@ -1,6 +1,6 @@
 import { cloneDeep, get, has, set, unset } from 'lodash-es'
-import type { Ref } from 'vue-demi'
-import { ref } from 'vue-demi'
+import type { Ref } from 'vue'
+import { ref } from 'vue'
 import type { InternalPath, PathPattern } from '../path'
 import type { ValueMergeStrategy } from '../utils/value'
 import { mergeByStrategy } from '../utils/value'

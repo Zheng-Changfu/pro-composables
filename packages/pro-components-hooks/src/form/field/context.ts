@@ -1,5 +1,5 @@
-import type { InjectionKey } from 'vue-demi'
-import { inject, provide } from 'vue-demi'
+import type { InjectionKey } from 'vue'
+import { inject, provide } from 'vue'
 import type { ArrayField, BaseField } from './types'
 
 export const listFieldContextKey = Symbol('listField') as InjectionKey<ArrayField>
