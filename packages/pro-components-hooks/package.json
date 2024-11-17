@@ -27,17 +27,10 @@
     "build": "vite build"
   },
   "peerDependencies": {
-    "@vue/composition-api": "^1.0.0-rc.1",
-    "vue": "^2.7.0 || >=3.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@vue/composition-api": {
-      "optional": true
-    }
+    "vue": ">=3.0.0"
   },
   "dependencies": {
-    "@vueuse/core": "^10.9.0",
-    "vue-demi": "^0.14.7"
+    "@vueuse/core": "^10.9.0"
   },
   "devDependencies": {
     "jsdom": "^24.0.0",

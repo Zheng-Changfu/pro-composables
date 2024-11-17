@@ -4,8 +4,6 @@ export default defineConfig({
   resolve: {
     dedupe: [
       'vue',
-      'vue-demi',
-      '@vue/runtime-core',
     ],
   },
   define: {
@@ -14,15 +12,15 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     reporters: 'dot',
-    server: {
-      deps: {
-        inline: [
-          'vue2',
-          '@vue/composition-api',
-          'vue-demi',
-          'msw',
-        ],
-      },
-    },
+    // server: {
+    //   deps: {
+    //     inline: [
+    //       'vue2',
+    //       '@vue/composition-api',
+    //       'vue',
+    //       'msw',
+    //     ],
+    //   },
+    // },
   },
 })

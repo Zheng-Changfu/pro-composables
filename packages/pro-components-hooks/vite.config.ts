@@ -3,9 +3,6 @@ import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 
 export default defineConfig({
-  optimizeDeps: {
-    exclude: ['vue-demi'],
-  },
   build: {
     minify: false,
     lib: {
@@ -13,7 +10,7 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions: {
-      external: ['@vueuse/core', 'vue-demi'],
+      external: ['vue'],
       output: [
         {
           format: 'es',
@@ -26,7 +23,10 @@ export default defineConfig({
       ],
     },
   },
-  plugins: [dts({
-    rollupTypes: true,
-  })],
+  plugins: [
+    dts({
+      rollupTypes: true,
+      insertTypesEntry: true,
+    }),
+  ],
 })
