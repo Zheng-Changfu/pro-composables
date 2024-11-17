@@ -13,7 +13,10 @@ import {
 } from '../utils/array'
 import { useInjectForm } from '../context'
 import type { InternalPath } from '../path'
+import { isInternalPath } from '../path'
 import { stringifyPath } from '../utils/path'
+import type { ValueMergeStrategy } from '../utils/value'
+import { mergeByStrategy } from '../utils/value'
 import { provideListField } from './context'
 import { createField } from './createField'
 import type { ArrayField, ArrayFieldActionName, FieldOptions } from './types'
@@ -39,10 +42,27 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     }
   }
 
-  function set(index: number, path: InternalPath, value: any) {
+  function set(index: number, pathOrValues: InternalPath | object, valueOrStrategy?: ValueMergeStrategy) {
     if (form) {
-      const fullPath = `${field.stringPath.value}.${index}.${stringifyPath(path)}`
-      form.setFieldValue(fullPath, value)
+      if (isInternalPath(pathOrValues)) {
+        const path = pathOrValues
+        const value = valueOrStrategy
+        const fullPath = `${field.stringPath.value}.${index}.${stringifyPath(path)}`
+        form.setFieldValue(fullPath, value)
+      }
+      else {
+        const values = pathOrValues
+        const strategy = valueOrStrategy
+        const rowPath = `${field.stringPath.value}.${index}`
+        const row = form.getFieldValue(rowPath)
+        // 先清空行数据
+        form.setFieldValue(rowPath, {})
+        form.setFieldValue(rowPath, mergeByStrategy(
+          row,
+          values,
+          strategy,
+        ))
+      }
       triggerActionChange('set')
     }
   }

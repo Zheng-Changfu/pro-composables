@@ -1,9 +1,10 @@
 import type { ComputedRef, Ref } from 'vue-demi'
 import type { EventHookOn } from '@vueuse/core'
-import type { Get } from 'type-fest'
+import type { Get, PartialDeep } from 'type-fest'
 import type { InternalPath } from '../path'
 import type { Dependencie } from '../store/dependStore'
 import type { StringKeyof } from '../../utils/types'
+import type { ValueMergeStrategy } from '../utils/value'
 
 export interface FieldOptions<T = any> {
   /**
@@ -208,12 +209,18 @@ export interface ArrayField<T = any> extends BaseField<T[]> {
    */
   get: <Path extends InternalPath = StringKeyof<T>>(index: number, path: Path) => Get<T, Path>
   /**
-   * 设置行中某个字段数据
-   * @param index 行索引
-   * @param path 路径
-   * @param value 值
+   * 设置行数据，是一个重载函数
+   * @example
+   * ```js
+   * set(0,{name:'zcf',age:1}) // 覆盖第1行数据
+   * set(0,{name:'zcf',age:1},'shallowMerge') // 和第1行数据浅合并
+   * set(0,{name:'zcf',age:1},'merge') // 和第1行数据深度合并
+   * set(0,'name','zcf') // 设置第1行数据的 'name' 值为 'zcf'
+   * ```
    */
-  set: <Path extends InternalPath = StringKeyof<T>>(index: number, path: Path, value: Get<T, Path>) => void
+  set:
+  & ((index: number, values: PartialDeep<T>, strategy?: ValueMergeStrategy) => void)
+  & (<Path extends InternalPath = StringKeyof<T>>(index: number, path: Path, value: Get<T, Path>) => void)
 }
 
 export type ArrayFieldActionName = Extract<
