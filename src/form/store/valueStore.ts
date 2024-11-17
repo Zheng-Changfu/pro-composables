@@ -80,7 +80,7 @@ export class ValueStore {
   resolveValuesWithPostValue = (vals: any, effect?: (field: BaseField, value: any) => void) => {
     const clonedVals = cloneDeep(vals)
     const postValueFieldsPathMap = this.fieldStore.getHasPostValueFieldsPathMap.value
-    postValueFieldsPathMap.forEach(((field) => {
+    postValueFieldsPathMap.forEach((field) => {
       const { stringPath } = field
       const rawStringPath = stringPath.value
 
@@ -92,7 +92,7 @@ export class ValueStore {
           effect && effect(field, postedValue)
         }
       }
-    }))
+    })
     return clonedVals
   }
 

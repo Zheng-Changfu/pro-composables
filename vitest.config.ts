@@ -12,15 +12,5 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     reporters: 'dot',
-    // server: {
-    //   deps: {
-    //     inline: [
-    //       'vue2',
-    //       '@vue/composition-api',
-    //       'vue',
-    //       'msw',
-    //     ],
-    //   },
-    // },
   },
 })

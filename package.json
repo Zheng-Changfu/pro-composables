@@ -1,18 +1,40 @@
 {
-  "name": "cf",
+  "name": "pro-composables",
   "type": "module",
   "version": "0.0.0",
-  "private": true,
-  "author": "Changfu",
+  "description": "方便搭建业务组件库的一些 hooks，代码都不难，懒得写文档，估计也没人看",
+  "author": "zhengchangfu",
+  "license": "MIT",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "dev": "esno watch ./packages/pro-ui-hooks/index.ts",
-    "test": "pnpm --filter pro-components-hooks run test",
-    "build": "pnpm --filter pro-components-hooks run build",
+    "test": "vitest run",
+    "build": "vite build",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
     "lint:fix": "eslint . --fix",
     "release": "pnpm lint:fix && pnpm test && pnpm build && pnpm changeset && pnpm changeset:version && pnpm changeset:publish"
+  },
+  "peerDependencies": {
+    "vue": ">=3.0.0"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.9.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.18.0",
@@ -22,12 +44,13 @@
     "@types/node": "^20.12.11",
     "eslint": "^8.57.0",
     "esno": "^4.7.0",
+    "jsdom": "^24.0.0",
     "lodash-es": "^4.17.21",
     "type-fest": "^4.26.1",
     "typescript": "^5.4.5",
-    "unbuild": "^2.0.0",
     "vite": "^5.2.11",
     "vite-plugin-dts": "^4.3.0",
+    "vitest": "^1.6.0",
     "vue": "^3.4.27"
   }
 }
