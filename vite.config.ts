@@ -26,7 +26,11 @@ export default defineConfig({
   plugins: [
     dts({
       rollupTypes: true,
-      insertTypesEntry: true,
+      bundledPackages: [
+        '@vueuse/core',
+        '@vueuse/shared',
+        // 'type-fest',
+      ],
     }),
   ],
 })

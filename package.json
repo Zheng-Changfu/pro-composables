@@ -1,7 +1,7 @@
 {
   "name": "pro-composables",
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "方便搭建业务组件库的一些 hooks，代码都不难，懒得写文档，估计也没人看",
   "author": "zhengchangfu",
   "license": "MIT",
@@ -31,6 +31,7 @@
     "release": "pnpm lint:fix && pnpm test && pnpm build && pnpm changeset && pnpm changeset:version && pnpm changeset:publish"
   },
   "peerDependencies": {
+    "type-fest": ">=4.0.0",
     "vue": ">=3.0.0"
   },
   "dependencies": {
