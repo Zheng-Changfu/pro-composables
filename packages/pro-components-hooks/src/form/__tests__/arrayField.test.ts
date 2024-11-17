@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, onMounted } from 'vue-demi'
+import { cloneDeep } from 'lodash-es'
 import type { ArrayField } from '../field'
 import { mount } from '../../__tests__/mount'
 import { createForm } from '../form'
@@ -160,6 +161,118 @@ describe('arrayField api', () => {
     await nextTick()
     expect(vals[4]).toStrictEqual({ list: [{ a1: null }] })
     expect(vals[5]).toMatchObject({ list: [{ a1: null, a2: null }] })
+    vm.unmount()
+  })
+
+  it('get', async () => {
+    const vals: any[] = []
+    const Comp = defineComponent({
+      setup() {
+        let _field: ArrayField
+        createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+            ],
+          },
+        })
+
+        function onArrayFieldMounted(field: ArrayField) {
+          _field = field
+        }
+
+        onMounted(async () => {
+          await nextTick()
+          vals.push(_field.get(0, 'a'))
+          _field.push({ a: 2, b: 2, c: 2 })
+          await nextTick()
+          vals.push(_field.get(0, 'a'))
+          vals.push(_field.get(1, 'a'))
+        })
+
+        return () => {
+          return [
+            h(FormList, {
+              path: 'list',
+              onArrayFieldMounted,
+            }, [
+              h(FormItem, { path: 'a' }),
+              h(FormItem, { path: 'b' }),
+            ]),
+          ]
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    await nextTick()
+    await nextTick()
+    expect(vals).toStrictEqual([1, 1, 2])
+    vm.unmount()
+  })
+
+  it('set', async () => {
+    const vals: any[] = []
+    const Comp = defineComponent({
+      setup() {
+        let _field: ArrayField
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+            ],
+          },
+        })
+
+        function onArrayFieldMounted(field: ArrayField) {
+          _field = field
+        }
+
+        onMounted(async () => {
+          _field.set(0, { a: 3 })
+          await nextTick()
+          vals.push(
+            cloneDeep(form.getFieldsValue()),
+            cloneDeep(form.getFieldsValue(true)),
+          )
+          _field.set(0, 'b', 2)
+          await nextTick()
+          vals.push(
+            cloneDeep(form.getFieldsValue()),
+            cloneDeep(form.getFieldsValue(true)),
+          )
+          _field.set(0, { a: 4 }, 'shallowMerge')
+          await nextTick()
+          vals.push(
+            cloneDeep(form.getFieldsValue()),
+            cloneDeep(form.getFieldsValue(true)),
+          )
+        })
+
+        return () => {
+          return [
+            h(FormList, {
+              path: 'list',
+              onArrayFieldMounted,
+            }, [
+              h(FormItem, { path: 'a' }),
+              h(FormItem, { path: 'b' }),
+            ]),
+          ]
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    await nextTick()
+    expect(vals[0]).toStrictEqual({ list: [{ a: 3, b: undefined }] })
+    expect(vals[1]).toMatchObject({ list: [{ a: 3, b: undefined }] })
+    await nextTick()
+    expect(vals[2]).toStrictEqual({ list: [{ a: 3, b: 2 }] })
+    expect(vals[2]).toMatchObject({ list: [{ a: 3, b: 2 }] })
+    await nextTick()
+    expect(vals[4]).toStrictEqual({ list: [{ a: 4, b: 2 }] })
+    expect(vals[5]).toMatchObject({ list: [{ a: 4, b: 2 }] })
     vm.unmount()
   })
 
