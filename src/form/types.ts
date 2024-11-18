@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { Get, PartialDeep } from 'type-fest'
+import type { Get, PartialDeep, SimplifyDeep } from 'type-fest'
 import type { PathToObject, StringKeyof } from '../utils/types'
 import type { ArrayField, BaseField } from './field'
 import type { InternalPath, PathPattern } from './path'
@@ -12,7 +12,7 @@ export interface FormOptions<Values = any> {
   /**
    * 表单初始值
    */
-  initialValues?: Values
+  initialValues?: SimplifyDeep<Values>
   /**
    * 字段值发生变化后的回调
    */
