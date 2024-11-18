@@ -11,7 +11,7 @@ import {
   shift as _shift,
   unshift as _unshift,
 } from '../utils/array'
-import { useInjectForm } from '../context'
+import { useInjectInternalForm } from '../context'
 import type { InternalPath } from '../path'
 import { isInternalPath } from '../path'
 import { stringifyPath } from '../utils/path'
@@ -27,7 +27,7 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     trigger: triggerActionChange,
   } = createEventHook<ArrayFieldActionName>()
 
-  const form = useInjectForm()
+  const form = useInjectInternalForm()
 
   const field = createField(options, {
     isList: true,

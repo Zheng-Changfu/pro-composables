@@ -2,7 +2,7 @@ import { onUnmounted, unref, watch } from 'vue'
 import { get, has } from 'lodash-es'
 import { uid } from '../../utils/id'
 import { usePath } from '../path/usePath'
-import { useInjectForm } from '../context'
+import { useInjectInternalForm } from '../context'
 import type { BaseForm } from '../types'
 import { warnOnce } from '../../utils/warn'
 import type { ArrayField, BaseField, FieldOptions } from './types'
@@ -81,7 +81,7 @@ function createBaseField<T = any>(
 
   const id = uid()
   const { isList } = options
-  const form = useInjectForm()
+  const form = useInjectInternalForm()
   const parent = useInjectListField()
   const isListPath = !!parent
 

@@ -1,13 +1,13 @@
 import type { ComputedRef, Ref } from 'vue'
 import { computed } from 'vue'
-import { useInjectForm } from '../context'
+import { useInjectInternalForm } from '../context'
 
 interface UseValueOptions {
   onInputValue?: (fieldValue: Ref<any>, inputValue: any, ...args: any[]) => void
 }
 
 export function useValue<T = any>(id: string, path: ComputedRef<string[]>, options: UseValueOptions) {
-  const form = useInjectForm()
+  const form = useInjectInternalForm()
   const { onInputValue } = options
 
   const proxy = computed({
