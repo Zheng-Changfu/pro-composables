@@ -1,7 +1,6 @@
 import { useMounted } from '@vueuse/core'
 import { uid } from '../utils/id'
 import type { BaseForm, FormOptions } from './types'
-import { provideForm } from './context'
 import type { BaseField } from './field'
 import { createFieldStore } from './store/fieldStore'
 import { createValueStore } from './store/valueStore'
@@ -76,6 +75,5 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     onFieldValueChange && onFieldValueChange({ field, value })
   }
 
-  provideForm(form)
   return form
 }
