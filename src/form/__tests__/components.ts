@@ -2,6 +2,19 @@ import { computed, defineComponent, h, onMounted, toRef } from 'vue'
 import { createArrayField, createField, useInjectField, useInjectListField } from '../field'
 import { uid } from '../../utils/id'
 import { providePath, providePathIndex } from '../path'
+import { provideInternalForm } from '../context'
+
+export const Form = defineComponent({
+  props: [
+    'form',
+  ],
+  setup(props, { slots }) {
+    provideInternalForm(props.form)
+    return () => {
+      return slots.default?.()
+    }
+  },
+})
 
 export const FormItem = defineComponent({
   props: [

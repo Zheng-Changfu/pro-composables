@@ -3,7 +3,7 @@ import { defineComponent, h, nextTick, onMounted, ref } from 'vue'
 import { mount } from '../../__tests__/mount'
 import type { BaseField } from '../field'
 import { createForm } from '../form'
-import { FormItem } from './components'
+import { Form, FormItem } from './components'
 
 describe('baseField', () => {
   it('priority: initialValue > initialValues', async () => {
@@ -22,10 +22,10 @@ describe('baseField', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', initialValue: 2 }),
             h(FormItem, { path: 'b', initialValue: 3 }),
-          ]
+          ])
         }
       },
     })
@@ -51,10 +51,10 @@ describe('baseField', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', initialValue: 2, value: 3 }),
             h(FormItem, { path: 'b', initialValue: 3, value: 4 }),
-          ]
+          ])
         }
       },
     })
@@ -74,10 +74,10 @@ describe('baseField', () => {
           vals.push(form.getFieldsValue())
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', initialValue: 2, defaultValue: 3 }),
             h(FormItem, { path: 'b', defaultValue: 4 }),
-          ]
+          ])
         }
       },
     })
@@ -102,9 +102,9 @@ describe('baseField', () => {
           )
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: pathRef.value, value: 3 }),
-          ]
+          ])
         }
       },
     })
@@ -140,10 +140,10 @@ describe('baseField', () => {
           )
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', visible: visibleRef1.value, value: 3 }),
             h(FormItem, { path: 'b', visible: visibleRef2.value, value: 4 }),
-          ]
+          ])
         }
       },
     })
@@ -185,10 +185,10 @@ describe('baseField', () => {
           const v1 = visibleRef1.value
           const v2 = visibleRef2.value
 
-          return [
+          return h(Form, { form }, [
             v1 ? h(FormItem, { path: 'a', key: 1, value: 3 }) : null,
             v2 ? h(FormItem, { path: 'b', key: 2, value: 4 }) : null,
-          ]
+          ])
         }
       },
     })
@@ -237,10 +237,10 @@ describe('baseField', () => {
           )
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', key: 1, hidden: hiddenRef1.value, value: 3 }),
             h(FormItem, { path: 'b', key: 2, hidden: hiddenRef2.value, value: 4 }),
-          ]
+          ])
         }
       },
     })
@@ -296,10 +296,10 @@ describe('baseField', () => {
         return () => {
           const h1 = hiddenRef1.value
           const h2 = hiddenRef2.value
-          return [
+          return h(Form, { form }, [
             !h1 ? h(FormItem, { path: 'a', key: 1, value: 3 }) : null,
             !h2 ? h(FormItem, { path: 'b', key: 2, value: 4 }) : null,
-          ]
+          ])
         }
       },
     })
@@ -347,10 +347,10 @@ describe('baseField', () => {
           )
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', preserve: false, visible: visibleRef1.value, value: value1Ref.value }),
             h(FormItem, { path: 'b', preserve: false, visible: visibleRef2.value, value: value2Ref.value }),
-          ]
+          ])
         }
       },
     })
@@ -379,10 +379,10 @@ describe('update value to trigger postValue and onChange', () => {
           form.setFieldValue('unexitKey', 3)
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', onChange, postValue }),
             h(FormItem, { path: 'b', onChange, postValue }),
-          ]
+          ])
         }
       },
     })
@@ -413,10 +413,10 @@ describe('update value to trigger postValue and onChange', () => {
           })
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', onChange, postValue }),
             h(FormItem, { path: 'b', onChange, postValue }),
-          ]
+          ])
         }
       },
     })
@@ -444,10 +444,10 @@ describe('update value to trigger postValue and onChange', () => {
           form.resetFieldValue('b')
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
             h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
-          ]
+          ])
         }
       },
     })
@@ -474,10 +474,10 @@ describe('update value to trigger postValue and onChange', () => {
           form.resetFieldsValue()
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
             h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
-          ]
+          ])
         }
       },
     })
@@ -498,17 +498,17 @@ describe('update value to trigger postValue and onChange', () => {
     const postValue = vi.fn(val => val * 2)
     const Comp = defineComponent({
       setup() {
-        createForm({
+        const form = createForm({
           initialValues: {
             a: 1,
             b: 2,
           },
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', onChange, postValue }),
             h(FormItem, { path: 'b', onChange, postValue }),
-          ]
+          ])
         }
       },
     })
@@ -527,12 +527,12 @@ describe('update value to trigger postValue and onChange', () => {
     const postValue = vi.fn(val => val * 2)
     const Comp = defineComponent({
       setup() {
-        createForm()
+        const form = createForm()
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
             h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
-          ]
+          ])
         }
       },
     })
@@ -553,7 +553,7 @@ describe('update value to trigger postValue and onChange', () => {
       setup() {
         const aRef = ref(1)
         const bRef = ref(2)
-        createForm()
+        const form = createForm()
 
         onMounted(() => {
           aRef.value++
@@ -561,10 +561,10 @@ describe('update value to trigger postValue and onChange', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', value: aRef.value, onChange, postValue }),
             h(FormItem, { path: 'b', value: bRef.value, onChange, postValue }),
-          ]
+          ])
         }
       },
     })
@@ -585,8 +585,8 @@ describe('update value to trigger postValue and onChange', () => {
     const postValue = vi.fn(val => val === undefined ? 0 : val * 2)
     const Comp = defineComponent({
       setup() {
-        createForm()
         let _field: BaseField
+        const form = createForm()
         function onFieldMounted(field: BaseField) {
           _field = field
         }
@@ -594,9 +594,9 @@ describe('update value to trigger postValue and onChange', () => {
           _field.doUpdateValue(2)
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', onFieldMounted, onChange, postValue }),
-          ]
+          ])
         }
       },
     })

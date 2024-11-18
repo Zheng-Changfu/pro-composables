@@ -4,7 +4,7 @@ import { mount } from '../../__tests__/mount'
 import type { BaseForm } from '../types'
 import type { BaseField } from '../field'
 import { createForm } from '../form'
-import { FormItem, FormList } from './components'
+import { Form, FormItem, FormList } from './components'
 
 describe('not use `createForm` api', () => {
   it('not throw error', async () => {
@@ -21,6 +21,41 @@ describe('not use `createForm` api', () => {
     })
 
     const vm = mount(Comp)
+    vm.unmount()
+  })
+})
+
+describe('create multiple form', () => {
+  it('value is unique', async () => {
+    const vals1: any[] = []
+    const vals2: any[] = []
+    const Comp = defineComponent({
+      setup() {
+        const form1 = createForm()
+        const form2 = createForm()
+
+        onMounted(async () => {
+          form1.setFieldValue('a', 2)
+          vals1.push(form1.getFieldValue('a'))
+          vals2.push(form2.getFieldValue('a'))
+        })
+
+        return () => {
+          return [
+            h(Form, { form: form1 }, [
+              h(FormItem, { path: 'a' }),
+            ]),
+            h(Form, { form: form2 }, [
+              h(FormItem, { path: 'a' }),
+            ]),
+          ]
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    expect(vals1[0]).toStrictEqual(2)
+    expect(vals2[0]).toStrictEqual(undefined)
     vm.unmount()
   })
 })
@@ -72,7 +107,9 @@ describe('form props', () => {
           form.setFieldValue('a.b.c', 1)
         })
         return () => {
-          return h(FormItem, { path: 'a.b.c' })
+          return h(Form, { form }, [
+            h(FormItem, { path: 'a.b.c' }),
+          ])
         }
       },
     })
@@ -117,7 +154,7 @@ describe('form props', () => {
     const Comp = defineComponent({
       setup() {
         let _field: BaseField
-        createForm({
+        const form = createForm({
           onDependenciesValueChange,
         })
 
@@ -130,14 +167,14 @@ describe('form props', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', dependencies: ['b'] }),
             h(FormItem, { path: 'b', onFieldMounted }),
             h(FormItem, { path: 'c', dependencies: 'b' }),
             h(FormItem, { path: 'd', dependencies: /b/ }),
             h(FormItem, { path: 'e', dependencies: match }),
             h(FormItem, { path: 'f', dependencies: ['a', 'b'] }),
-          ]
+          ])
         }
       },
     })
@@ -179,14 +216,14 @@ describe('form props', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, {
               path: 'a',
               dependencies: ['b'],
               value: form.valueStore.values.value.b === 1 ? 2 : null,
             }),
             h(FormItem, { path: 'b', onFieldMounted }),
-          ]
+          ])
         }
       },
     })
@@ -220,7 +257,9 @@ describe('form api', () => {
         })
 
         return () => {
-          return h(FormItem, { path: 'a.b.c' })
+          return h(Form, { form }, [
+            h(FormItem, { path: 'a.b.c' }),
+          ])
         }
       },
     })
@@ -249,10 +288,10 @@ describe('form api', () => {
           )
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ]
+          ])
         }
       },
     })
@@ -309,7 +348,7 @@ describe('form api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a', transform: transformA }),
             h(FormItem, { path: 'b', transform: transformB }),
             h(FormList, {
@@ -320,7 +359,7 @@ describe('form api', () => {
               h(FormItem, { path: 'b', transform: transformListB }),
               h(FormItem, { path: 'd' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -368,10 +407,10 @@ describe('form api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ]
+          ])
         }
       },
     })
@@ -402,10 +441,10 @@ describe('form api', () => {
           )
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ]
+          ])
         }
       },
     })
@@ -438,10 +477,10 @@ describe('form api', () => {
           )
         })
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ]
+          ])
         }
       },
     })
@@ -473,10 +512,10 @@ describe('form api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ]
+          ])
         }
       },
     })
@@ -508,10 +547,10 @@ describe('form api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ]
+          ])
         }
       },
     })
@@ -544,10 +583,10 @@ describe('form api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'a' }),
             h(FormItem, { path: 'b' }),
-          ]
+          ])
         }
       },
     })

@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash-es'
 import type { ArrayField } from '../field'
 import { mount } from '../../__tests__/mount'
 import { createForm } from '../form'
-import { FormItem, FormList } from './components'
+import { Form, FormItem, FormList } from './components'
 
 describe('arrayField api', () => {
   it('hidden', async () => {
@@ -25,9 +25,8 @@ describe('arrayField api', () => {
             form.getFieldsValue(true),
           )
         })
-
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormItem, { path: 'u1' }),
             h(FormList, {
               path: 'list',
@@ -35,7 +34,7 @@ describe('arrayField api', () => {
             }, [
               h(FormItem, { defaultValue: '', path: 'u1' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -71,7 +70,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -82,7 +81,7 @@ describe('arrayField api', () => {
                 defaultValue: null,
               }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -129,7 +128,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -144,7 +143,7 @@ describe('arrayField api', () => {
                 defaultValue: null,
               }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -169,7 +168,7 @@ describe('arrayField api', () => {
     const Comp = defineComponent({
       setup() {
         let _field: ArrayField
-        createForm({
+        const form = createForm({
           initialValues: {
             list: [
               { a: 1, b: 1, c: 1 },
@@ -191,7 +190,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -199,7 +198,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -250,7 +249,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -258,7 +257,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -308,7 +307,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -316,7 +315,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -373,7 +372,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -381,7 +380,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -428,7 +427,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -436,7 +435,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -507,7 +506,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -515,7 +514,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -612,7 +611,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -620,7 +619,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -717,7 +716,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -725,7 +724,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -860,7 +859,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -868,7 +867,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -1009,7 +1008,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -1017,7 +1016,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -1128,7 +1127,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -1136,7 +1135,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
@@ -1277,7 +1276,7 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return [
+          return h(Form, { form }, [
             h(FormList, {
               path: 'list',
               onArrayFieldMounted,
@@ -1285,7 +1284,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'a' }),
               h(FormItem, { path: 'b' }),
             ]),
-          ]
+          ])
         }
       },
     })
