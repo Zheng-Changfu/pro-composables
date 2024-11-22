@@ -24,7 +24,6 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
     value,
     hidden,
     visible,
-    defaultValue,
     initialValue,
     preserve = true,
     dependencies = [],
@@ -46,7 +45,6 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
       hidden,
       visible,
       preserve,
-      defaultValue,
       initialValue,
       dependencies,
       onChange,
@@ -71,7 +69,6 @@ function createBaseField<T = any>(
     hidden,
     visible,
     preserve,
-    defaultValue,
     initialValue,
     dependencies,
     path: propPath,
@@ -183,11 +180,10 @@ function mountFieldValue(
   form.fieldStore.mountField(field)
 
   const p = path.value
-  const { defaultValue, initialValue } = meta
+  const { initialValue } = meta
   let val: any
   /**
-   * priority：form.valueStore > value > initialValue > initialValues > defaultValue
-   * defaultValue 是给部分组件库使用的，有的组件库默认值为 undefined 时表单会出问题
+   * priority：form.valueStore > value > initialValue > initialValues
    */
   if (form.valueStore.has(p))
     val = form.valueStore.getFieldValue(p)
@@ -197,9 +193,6 @@ function mountFieldValue(
     val = initialValue
   else if (!form.mounted.value && has(form.valueStore.initialValues, p))
     val = get(form.valueStore.initialValues, p)
-
-  if (val === undefined && defaultValue !== undefined)
-    val = defaultValue
 
   form.valueStore.setFieldValue(p, val)
   if (!form.mounted.value)

@@ -12,10 +12,6 @@ export interface FieldOptions<T = any> {
    */
   initialValue?: T
   /**
-   * 默认值，优先级最低
-   */
-  defaultValue?: T
-  /**
    * 当字段被隐藏时是否保留字段值
    * @default true
    */

@@ -64,29 +64,6 @@ describe('baseField', () => {
     vm.unmount()
   })
 
-  it('initialValue > defaultValue', async () => {
-    const vals: any[] = []
-    const Comp = defineComponent({
-      setup() {
-        const form = createForm()
-
-        onMounted(() => {
-          vals.push(form.getFieldsValue())
-        })
-        return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', initialValue: 2, defaultValue: 3 }),
-            h(FormItem, { path: 'b', defaultValue: 4 }),
-          ])
-        }
-      },
-    })
-
-    const vm = mount(Comp)
-    expect(vals[0]).toStrictEqual({ a: 2, b: 4 })
-    vm.unmount()
-  })
-
   it('path', async () => {
     const vals: any[] = []
     const Comp = defineComponent({

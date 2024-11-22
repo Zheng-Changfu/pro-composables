@@ -32,7 +32,7 @@ describe('arrayField api', () => {
               path: 'list',
               hidden: form.valueStore.values.value.u1 === '1',
             }, [
-              h(FormItem, { defaultValue: '', path: 'u1' }),
+              h(FormItem, { initialValue: '', path: 'u1' }),
             ]),
           ])
         }
@@ -78,7 +78,7 @@ describe('arrayField api', () => {
               h(FormItem, {
                 path: 'u1',
                 visible: false,
-                defaultValue: null,
+                initialValue: null,
               }),
             ]),
           ])
@@ -135,12 +135,12 @@ describe('arrayField api', () => {
             }, [
               h(FormItem, {
                 path: 'a1',
-                defaultValue: null,
+                initialValue: null,
               }),
               h(FormItem, {
                 path: 'a2',
                 visible: !!form.valueStore.values.value.list?.[0]?.a1,
-                defaultValue: null,
+                initialValue: null,
               }),
             ]),
           ])
