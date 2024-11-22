@@ -6,9 +6,6 @@ export default defineConfig({
       'vue',
     ],
   },
-  define: {
-    __DEV__: true,
-  },
   test: {
     environment: 'jsdom',
     reporters: 'dot',
