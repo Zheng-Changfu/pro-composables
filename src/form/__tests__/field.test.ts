@@ -408,7 +408,6 @@ describe('update value to trigger postValue and onChange', () => {
         onMounted(() => {
           form.setFieldsValue({
             a: 1,
-            b: 2,
             unexitKey: 3,
           })
         })
@@ -428,7 +427,7 @@ describe('update value to trigger postValue and onChange', () => {
     expect(postValue).toHaveNthReturnedWith(1, 0)
     expect(postValue).toHaveNthReturnedWith(2, 0)
     expect(postValue).toHaveNthReturnedWith(3, 2)
-    expect(postValue).toHaveNthReturnedWith(4, 4)
+    expect(postValue).toHaveNthReturnedWith(4, 0)
     vm.unmount()
   })
 

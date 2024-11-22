@@ -77,9 +77,14 @@ export class ValueStore {
       : value
   }
 
-  resolveValuesWithPostValue = (vals: any, effect?: (field: BaseField, value: any) => void) => {
+  resolveValuesWithPostValue = (
+    vals: any,
+    effect?: (field: BaseField, value: any) => void,
+    strategy: ValueMergeStrategy = 'overwrite',
+  ) => {
     const clonedVals = cloneDeep(vals)
     const postValueFieldsPathMap = this.fieldStore.getHasPostValueFieldsPathMap.value
+
     postValueFieldsPathMap.forEach((field) => {
       const { stringPath } = field
       const rawStringPath = stringPath.value
@@ -90,6 +95,15 @@ export class ValueStore {
         if (!Object.is(value, postedValue)) {
           set(clonedVals, rawStringPath, postedValue)
           effect && effect(field, postedValue)
+        }
+      }
+      else {
+        if (strategy === 'overwrite') {
+          const postedValue = field.postValue(undefined)
+          set(clonedVals, rawStringPath, postedValue)
+          if (!Object.is(undefined, postedValue)) {
+            effect && effect(field, postedValue)
+          }
         }
       }
     })
@@ -113,6 +127,7 @@ export class ValueStore {
       (field, value) => {
         effects.push(() => this.options.onFieldValueUpdated(field, value))
       },
+      strategy,
     )
     this.values.value = mergeByStrategy(
       this.values.value,
