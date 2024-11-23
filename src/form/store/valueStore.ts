@@ -99,9 +99,17 @@ export class ValueStore {
       }
       else {
         if (strategy === 'overwrite') {
+          if (field.parent) {
+            const listPath = field.parent.stringPath.value
+            const listValue = get(clonedVals, listPath, [])
+            if (field.index.value > listValue.length - 1) {
+              return
+            }
+          }
           const postedValue = field.postValue(undefined)
           set(clonedVals, rawStringPath, postedValue)
-          if (!Object.is(undefined, postedValue)) {
+          const oldValue = this.getFieldValue(rawStringPath)
+          if (!Object.is(oldValue, postedValue)) {
             effect && effect(field, postedValue)
           }
         }
@@ -111,8 +119,8 @@ export class ValueStore {
   }
 
   setFieldValue = (path: InternalPath, value: any) => {
-    const oldValue = this.getFieldValue(path)
     const field = this.fieldStore.getFieldByPath(path)
+    const oldValue = this.getFieldValue(path)
     const resolvedValue = this.resolveValueWithPostValue(field, value)
     set(this.values.value, path, resolvedValue)
 
