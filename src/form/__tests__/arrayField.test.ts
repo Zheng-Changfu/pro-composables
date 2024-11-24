@@ -218,7 +218,7 @@ describe('arrayField api', () => {
         const form = createForm({
           initialValues: {
             list: [
-              { a: 1, b: 1, c: 1 },
+              { a: 1, b: 1 },
             ],
           },
         })
@@ -240,7 +240,7 @@ describe('arrayField api', () => {
             cloneDeep(form.getFieldsValue()),
             cloneDeep(form.getFieldsValue(true)),
           )
-          _field.set(0, { a: 4 }, 'shallowMerge')
+          _field.set(0, { a: 4 })
           await nextTick()
           vals.push(
             cloneDeep(form.getFieldsValue()),
@@ -264,8 +264,8 @@ describe('arrayField api', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(vals[0]).toStrictEqual({ list: [{ a: 3, b: undefined }] })
-    expect(vals[1]).toMatchObject({ list: [{ a: 3, b: undefined }] })
+    expect(vals[0]).toStrictEqual({ list: [{ a: 3, b: 1 }] })
+    expect(vals[1]).toMatchObject({ list: [{ a: 3, b: 1 }] })
     await nextTick()
     expect(vals[2]).toStrictEqual({ list: [{ a: 3, b: 2 }] })
     expect(vals[2]).toMatchObject({ list: [{ a: 3, b: 2 }] })

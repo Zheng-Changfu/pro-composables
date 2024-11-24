@@ -1,5 +1,6 @@
 import { createEventHook } from '@vueuse/core'
 import { toRaw } from 'vue'
+import { get as _get, set as _set, has } from 'lodash-es'
 import {
   insert as _insert,
   move as _move,
@@ -42,26 +43,23 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     }
   }
 
-  function set(index: number, pathOrValues: InternalPath | object, valueOrStrategy?: ValueMergeStrategy) {
+  function set(index: number, pathOrValues: InternalPath | object, value?: any) {
     if (form) {
       if (isInternalPath(pathOrValues)) {
         const path = pathOrValues
-        const value = valueOrStrategy
         const fullPath = `${field.stringPath.value}.${index}.${stringifyPath(path)}`
         form.setFieldValue(fullPath, value)
       }
       else {
-        const values = pathOrValues
-        const strategy = valueOrStrategy
         const rowPath = `${field.stringPath.value}.${index}`
-        const row = form.getFieldValue(rowPath)
-        // 先清空行数据
-        form.setFieldValue(rowPath, {})
-        form.setFieldValue(rowPath, mergeByStrategy(
-          row,
-          values,
-          strategy,
-        ))
+        const values = _set({}, rowPath, pathOrValues)
+        const rowPattern = `${field.stringPath.value}\.${index}\.+`
+        const matchedPath = form.matchPath(new RegExp(rowPattern))
+        matchedPath.forEach((path) => {
+          if (has(values, path)) {
+            form.setFieldValue(path, _get(values, path))
+          }
+        })
       }
       triggerActionChange('set')
     }
