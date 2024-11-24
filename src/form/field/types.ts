@@ -4,7 +4,6 @@ import type { Get, PartialDeep } from 'type-fest'
 import type { InternalPath } from '../path'
 import type { Dependencie } from '../store/dependStore'
 import type { StringKeyof } from '../../utils/types'
-import type { ValueMergeStrategy } from '../utils/value'
 
 export interface FieldOptions<T = any> {
   /**
@@ -208,14 +207,12 @@ export interface ArrayField<T = any> extends BaseField<T[]> {
    * 设置行数据，是一个重载函数
    * @example
    * ```js
-   * set(0,{name:'zcf',age:1}) // 覆盖第1行数据
-   * set(0,{name:'zcf',age:1},'shallowMerge') // 和第1行数据浅合并
-   * set(0,{name:'zcf',age:1},'merge') // 和第1行数据深度合并
+   * set(0,{name:'zcf',age:1}) // 设置第1行数据的 name 和 age
    * set(0,'name','zcf') // 设置第1行数据的 'name' 值为 'zcf'
    * ```
    */
   set:
-  & ((index: number, values: PartialDeep<T>, strategy?: ValueMergeStrategy) => void)
+  & ((index: number, values: PartialDeep<T>) => void)
   & (<Path extends InternalPath = StringKeyof<T>>(index: number, path: Path, value: Get<T, Path>) => void)
 }
 
