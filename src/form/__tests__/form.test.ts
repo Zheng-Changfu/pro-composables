@@ -420,19 +420,19 @@ describe('form api', () => {
     vm.unmount()
   })
 
-  it('setFieldsValue', async () => {
+  it('setFieldsValue with overwrite', async () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        const form = createForm({
-          initialValues: {
-            a: 1,
-            b: 2,
-          },
-        })
+        const form = createForm()
 
-        onMounted(() => {
+        function postValue(val: any) {
+          return val
+        }
+
+        onMounted(async () => {
           form.setFieldsValue({ a: 2, id: 1 })
+          await nextTick()
           vals.push(
             form.getFieldsValue(),
             form.getFieldsValue(true),
@@ -442,18 +442,104 @@ describe('form api', () => {
         })
         return () => {
           return h(Form, { form }, [
-            h(FormItem, { path: 'a' }),
-            h(FormItem, { path: 'b' }),
+            h(FormItem, { path: 'a', postValue }),
+            h(FormList, {
+              path: 'list',
+              initialValue: [
+                { a: 1, b: 2 },
+              ],
+            }, [
+              h(FormItem, { path: 'a', postValue }),
+              h(FormItem, { path: 'b', postValue }),
+            ]),
           ])
         }
       },
     })
 
     const vm = mount(Comp)
-    expect(vals[0]).toStrictEqual({ a: 2, b: undefined })
-    expect(vals[1]).toStrictEqual({ a: 2, id: 1 })
+    await nextTick()
+    expect(vals[0]).toStrictEqual({ a: 2, list: [] })
+    expect(vals[1]).toStrictEqual({ a: 2, list: [], id: 1 })
     expect(vals[2]).toStrictEqual({ a: 2 })
     expect(vals[3]).toStrictEqual({ id: 1 })
+    vm.unmount()
+  })
+
+  it('setFieldsValue with merge', async () => {
+    const vals: any[] = []
+    const Comp = defineComponent({
+      setup() {
+        const form = createForm()
+
+        function postValue(val: any) {
+          return val === undefined ? null : val
+        }
+
+        onMounted(async () => {
+          form.setFieldsValue({
+            a: undefined,
+            list: [
+              {
+                a: 11,
+                c: 3,
+                list: [
+                  { a: 11, c: 3 },
+                  { a: 22 },
+                  { a: 33, c: 4 },
+                ],
+              },
+            ],
+          }, 'shallowMerge')
+          await nextTick()
+          vals.push(
+            form.getFieldsValue(),
+          )
+        })
+        return () => {
+          return h(Form, { form }, [
+            h(FormItem, { path: 'a', postValue }),
+            h(FormList, {
+              path: 'list',
+              initialValue: [
+                { a: 1, b: 2 },
+                { a: 3, b: 4 },
+              ],
+            }, [
+              h(FormItem, { path: 'a', postValue }),
+              h(FormItem, { path: 'b', postValue }),
+              h(FormList, {
+                path: 'list',
+                initialValue: [
+                  { a: 1, b: 2 },
+                  { a: 3, b: 4 },
+                ],
+              }, [
+                h(FormItem, { path: 'a', postValue }),
+                h(FormItem, { path: 'b', postValue }),
+              ]),
+            ]),
+          ])
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    await nextTick()
+    expect(vals[0]).toStrictEqual({
+      a: null,
+      list: [
+        {
+          a: 11,
+          b: null,
+          list: [
+            { a: 11, b: null },
+            { a: 22, b: null },
+            { a: 33, b: null },
+          ],
+        },
+      ],
+    })
     vm.unmount()
   })
 

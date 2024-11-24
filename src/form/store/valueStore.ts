@@ -5,6 +5,8 @@ import type { InternalPath, PathPattern } from '../path'
 import type { ValueMergeStrategy } from '../utils/value'
 import { mergeByStrategy } from '../utils/value'
 import type { BaseField } from '../field'
+import { isIndexPath } from '../utils/path'
+import { warnOnce } from '../../utils/warn'
 import type { FieldStore } from './fieldStore'
 
 interface ValueStoreOptions {
@@ -79,26 +81,26 @@ export class ValueStore {
 
   resolveValuesWithPostValue = (
     vals: any,
-    effect?: (field: BaseField, value: any) => void,
-    strategy: ValueMergeStrategy = 'overwrite',
+    strategy: ValueMergeStrategy,
+    observe?: (field: BaseField, value: any) => void,
   ) => {
     const clonedVals = cloneDeep(vals)
-    const postValueFieldsPathMap = this.fieldStore.getHasPostValueFieldsPathMap.value
+    if (strategy === 'overwrite') {
+      // 如果是覆盖表单的值，需要拿到所有的 postValue 调用
+      const postValueFieldsPathMap = this.fieldStore.getHasPostValueFieldsPathMap.value
+      postValueFieldsPathMap.forEach((field) => {
+        const { stringPath } = field
+        const rawStringPath = stringPath.value
 
-    postValueFieldsPathMap.forEach((field) => {
-      const { stringPath } = field
-      const rawStringPath = stringPath.value
-
-      if (has(clonedVals, rawStringPath)) {
-        const value = get(clonedVals, rawStringPath)
-        const postedValue = field.postValue(value)
-        if (!Object.is(value, postedValue)) {
-          set(clonedVals, rawStringPath, postedValue)
-          effect && effect(field, postedValue)
+        if (has(clonedVals, rawStringPath)) {
+          const value = get(clonedVals, rawStringPath)
+          const postedValue = field.postValue(value)
+          if (!Object.is(value, postedValue)) {
+            set(clonedVals, rawStringPath, postedValue)
+            observe && observe(field, postedValue)
+          }
         }
-      }
-      else {
-        if (strategy === 'overwrite') {
+        else {
           if (field.parent) {
             const listPath = field.parent.stringPath.value
             const listValue = get(clonedVals, listPath, [])
@@ -110,16 +112,43 @@ export class ValueStore {
           set(clonedVals, rawStringPath, postedValue)
           const oldValue = this.getFieldValue(rawStringPath)
           if (!Object.is(oldValue, postedValue)) {
-            effect && effect(field, postedValue)
+            observe && observe(field, postedValue)
           }
         }
-      }
-    })
+      })
+    }
+    else {
+      const matchedPath = this.matchPath(path => has(vals, path))
+      matchedPath.forEach((path) => {
+        const field = this.fieldStore.getFieldByPath(path)!
+        if (field.postValue) {
+          const value = get(vals, path)
+          const postedValue = field.postValue(value)
+          if (!Object.is(value, postedValue)) {
+            set(clonedVals, path, postedValue)
+            observe && observe(field, postedValue)
+          }
+        }
+      })
+    }
     return clonedVals
   }
 
   setFieldValue = (path: InternalPath, value: any) => {
     const field = this.fieldStore.getFieldByPath(path)
+    if (!field) {
+      /**
+       * 有2种情况
+       * 1: path 对应的 field 可能还没被挂载(不需要处理)
+       * 2: path 不存在对应的 field（可能写的是非表单 path(不需要处理)，可能是索引 path）
+       */
+      if (isIndexPath(path)) {
+        if (process.env.NODE_ENV !== 'production') {
+          warnOnce(`You are assigning an invalid path value`)
+        }
+        return
+      }
+    }
     const oldValue = this.getFieldValue(path)
     const resolvedValue = this.resolveValueWithPostValue(field, value)
     set(this.values.value, path, resolvedValue)
@@ -128,46 +157,31 @@ export class ValueStore {
       this.options.onFieldValueUpdated(field, resolvedValue)
   }
 
-  setFieldsValue = (vals: Record<string, any>, strategy?: ValueMergeStrategy) => {
-    const effects: Array<() => void> = []
+  setFieldsValue = (vals: Record<string, any>, strategy: ValueMergeStrategy = 'overwrite') => {
+    const observes: Array<() => void> = []
     const resolvedValues = this.resolveValuesWithPostValue(
       vals,
-      (field, value) => {
-        effects.push(() => this.options.onFieldValueUpdated(field, value))
-      },
       strategy,
+      (field, value) => {
+        observes.push(() => this.options.onFieldValueUpdated(field, value))
+      },
     )
     this.values.value = mergeByStrategy(
       this.values.value,
       resolvedValues,
       strategy,
     )
-    while (effects.length > 0)
-      effects.shift()?.()
+    while (observes.length > 0)
+      observes.shift()?.()
   }
 
   resetFieldValue = (path: InternalPath) => {
-    const oldValue = this.getFieldValue(path)
-    const field = this.fieldStore.getFieldByPath(path)
     const initialValue = cloneDeep(get(this.initialValues, path))
-    const resolvedValue = this.resolveValueWithPostValue(field, initialValue)
-    set(this.values.value, path, resolvedValue)
-
-    if (field && !Object.is(oldValue, resolvedValue))
-      this.options.onFieldValueUpdated(field, resolvedValue)
+    this.setFieldValue(path, initialValue)
   }
 
   resetFieldsValue = () => {
-    const effects: Array<() => void> = []
-    const resolvedValues = this.resolveValuesWithPostValue(
-      this.initialValues,
-      (field, value) => {
-        effects.push(() => this.options.onFieldValueUpdated(field, value))
-      },
-    )
-    this.values.value = resolvedValues
-    while (effects.length > 0)
-      effects.shift()?.()
+    this.setFieldsValue(this.initialValues)
   }
 
   setInitialValue = (path: InternalPath, value: any) => {

@@ -14,3 +14,8 @@ export function convertPatternToMatchFn(pattern: PathPattern) {
     return pattern(path, paths)
   }
 }
+
+export function isIndexPath(path: InternalPath) {
+  const arrayablePath = toPath(path)
+  return arrayablePath.length > 1 && /^\d+$/.test(arrayablePath[arrayablePath.length - 1])
+}
