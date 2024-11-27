@@ -87,7 +87,7 @@ export class ValueStore {
     const clonedVals = cloneDeep(vals)
     if (strategy === 'overwrite') {
       // 如果是覆盖表单的值，需要拿到所有的 postValue 调用
-      const postValueFieldsPathMap = this.fieldStore.getHasPostValueFieldsPathMap.value
+      const postValueFieldsPathMap = this.fieldStore.postValueFieldsPathMap.value
       postValueFieldsPathMap.forEach((field) => {
         const { stringPath } = field
         const rawStringPath = stringPath.value

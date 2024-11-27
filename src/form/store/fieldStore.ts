@@ -56,7 +56,7 @@ export class FieldStore {
     })
   }
 
-  get getHasPostValueFieldsPathMap() {
+  get postValueFieldsPathMap() {
     return computed(() => {
       const pathMap = new Map<string, BaseField & { postValue: Exclude<BaseField['postValue'], undefined> }>()
       this.idToFieldMap.forEach((field) => {
