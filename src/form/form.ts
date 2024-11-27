@@ -81,7 +81,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
       if (onValuesChange) {
         onValuesChange({
           value,
-          path: field.stringPath.value,
+          path: field.path.value,
         })
       }
     }

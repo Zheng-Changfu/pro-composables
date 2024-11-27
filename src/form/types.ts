@@ -15,11 +15,16 @@ export interface FormOptions<Values = any> {
   initialValues?: SimplifyDeep<Values>
   /**
    * 字段值发生变化后的回调(手动交互才会触发)
+   * @param value 变化后的值
+   * @param path 字段路径
    */
-  onValuesChange?: (opt: { path: string, value: any }) => void
+  onValuesChange?: (opt: {
+    value: any
+    path: string[]
+  }) => void
   /**
    * 依赖项的值发生变化后的回调(手动交互才会触发)
-   * @param val 依赖项的值
+   * @param value 依赖项的值
    * @param path 被依赖项的路径
    * @param depPath 依赖项的路径
    */
