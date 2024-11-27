@@ -1,4 +1,4 @@
-import { isRegExp, isString, toPath } from 'lodash-es'
+import { isArray, isRegExp, isString, toPath } from 'lodash-es'
 import type { InternalPath, PathPattern } from '../path'
 
 export function stringifyPath(path: InternalPath) {
@@ -18,4 +18,8 @@ export function convertPatternToMatchFn(pattern: PathPattern) {
 export function isIndexPath(path: InternalPath) {
   const arrayablePath = toPath(path)
   return arrayablePath.length > 1 && /^\d+$/.test(arrayablePath[arrayablePath.length - 1])
+}
+
+export function isInternalPath(val: any): val is InternalPath {
+  return isString(val) || (isArray(val) && val.length > 0)
 }
