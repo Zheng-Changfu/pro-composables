@@ -53,7 +53,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
 
   function onFieldValueUpdated(field: BaseField, value: any) {
     const {
-      onFieldValueChange,
+      onValuesChange,
       onDependenciesValueChange,
     } = options
 
@@ -70,9 +70,14 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
           },
         )
       }
-    }
 
-    onFieldValueChange && onFieldValueChange({ field, value })
+      if (onValuesChange) {
+        onValuesChange({
+          value,
+          path: field.stringPath.value,
+        })
+      }
+    }
   }
 
   return form

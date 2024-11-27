@@ -14,9 +14,9 @@ export interface FormOptions<Values = any> {
    */
   initialValues?: SimplifyDeep<Values>
   /**
-   * 字段值发生变化后的回调
+   * 字段值发生变化后的回调(手动交互才会触发)
    */
-  onFieldValueChange?: (opt: { field: BaseField | ArrayField, value: any }) => void
+  onValuesChange?: (opt: { path: string, value: any }) => void
   /**
    * 依赖项的值发生变化后的回调(手动交互才会触发)
    * @param field 字段控制器

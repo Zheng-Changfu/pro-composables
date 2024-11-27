@@ -96,50 +96,6 @@ describe('form props', () => {
     vm.unmount()
   })
 
-  it('onFieldValueChange', async () => {
-    const onFieldValueChange = vi.fn()
-    const Comp = defineComponent({
-      setup() {
-        const form = createForm({
-          onFieldValueChange,
-        })
-        onMounted(() => {
-          form.setFieldValue('a.b.c', 1)
-        })
-        return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a.b.c' }),
-          ])
-        }
-      },
-    })
-
-    const vm = mount(Comp)
-    await nextTick()
-    expect(onFieldValueChange).toBeCalledTimes(1)
-    vm.unmount()
-  })
-
-  // it('call onFieldValueChange on before render', async () => {
-  //   const onFieldValueChange = vi.fn()
-  //   const Comp = defineComponent({
-  //     setup() {
-  //       const form = createForm({
-  //         onFieldValueChange,
-  //       })
-  //       form.setFieldValue('a.b.c', 1)
-  //       return () => {
-  //         return h(FormItem, { path: 'a.b.c' })
-  //       }
-  //     },
-  //   })
-
-  //   const vm = mount(Comp)
-  //   await nextTick()
-  //   expect(onFieldValueChange).toBeCalledTimes(1)
-  //   vm.unmount()
-  // })
-
   it('onDependenciesValueChange', async () => {
     const depsAuguments: any = []
     const matchFnArguments: any = []
