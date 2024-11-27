@@ -1,9 +1,9 @@
 import type { Ref } from 'vue'
 import type { Get, PartialDeep, SimplifyDeep } from 'type-fest'
 import type { PathToObject, StringKeyof } from '../utils/types'
-import type { ArrayField, BaseField } from './field'
+import type { BaseField } from './field'
 import type { InternalPath, PathPattern } from './path'
-import type { DependStore } from './store/dependStore'
+import type { DepStore } from './store/depStore'
 import type { FieldStore } from './store/fieldStore'
 import type { ValueStore } from './store/valueStore'
 import type { ValueMergeStrategy } from './utils/value'
@@ -19,12 +19,15 @@ export interface FormOptions<Values = any> {
   onValuesChange?: (opt: { path: string, value: any }) => void
   /**
    * 依赖项的值发生变化后的回调(手动交互才会触发)
-   * @param field 字段控制器
-   * @param path 被依赖项的路径
-   * @param dependPath 依赖项的路径
    * @param val 依赖项的值
+   * @param path 被依赖项的路径
+   * @param depPath 依赖项的路径
    */
-  onDependenciesValueChange?: (opt: { field: BaseField, path: string[], dependPath: string[], value: any }) => void
+  onDependenciesValueChange?: (opt: {
+    value: any
+    path: string[]
+    depPath: string[]
+  }) => void
 }
 
 export interface BaseForm<Values = any> {
@@ -39,7 +42,7 @@ export interface BaseForm<Values = any> {
   /**
    * 表单项依赖仓库
    */
-  dependStore: DependStore
+  depStore: DepStore
   /**
    * 表单项字段仓库
    */

@@ -13,7 +13,7 @@ interface MatchFn extends Match {
   field: BaseField
 }
 
-export class DependStore {
+export class DepStore {
   public deps: Set<MatchFn>
   public shouldTrigger: boolean
   public fieldStore: FieldStore
@@ -51,7 +51,7 @@ export class DependStore {
     })
   }
 
-  matchDepend = (path: string, matchedFn: (dependPath: string[]) => void) => {
+  matchDependencies = (path: string, matchedFn: (dependPath: string[]) => void) => {
     if (!this.shouldTrigger)
       return
     const paths = this.fieldStore.fieldsPath.value
@@ -62,6 +62,6 @@ export class DependStore {
   }
 }
 
-export function createDependStore(fieldStore: FieldStore) {
-  return new DependStore(fieldStore)
+export function createDepStore(fieldStore: FieldStore) {
+  return new DepStore(fieldStore)
 }

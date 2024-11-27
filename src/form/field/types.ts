@@ -2,7 +2,7 @@ import type { ComputedRef, Ref } from 'vue'
 import type { EventHookOn } from '@vueuse/core'
 import type { Get, PartialDeep } from 'type-fest'
 import type { InternalPath } from '../path'
-import type { Dependencie } from '../store/dependStore'
+import type { Dependencie } from '../store/depStore'
 import type { StringKeyof } from '../../utils/types'
 
 export interface FieldOptions<T = any> {

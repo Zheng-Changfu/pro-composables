@@ -107,7 +107,7 @@ export function createField<T = any>(
       },
     )
 
-    form.dependStore.add(field)
+    form.depStore.add(field)
     mountFieldValue(form, field)
     onUnmounted(() => unmountFieldValue(form, field, indexUpdating))
   }

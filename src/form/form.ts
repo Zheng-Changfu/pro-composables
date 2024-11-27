@@ -4,22 +4,22 @@ import type { BaseForm, FormOptions } from './types'
 import type { BaseField } from './field'
 import { createFieldStore } from './store/fieldStore'
 import { createValueStore } from './store/valueStore'
-import { createDependStore } from './store/dependStore'
+import { createDepStore } from './store/depStore'
 
 export function createForm<Values = Record<string, any>>(options: FormOptions<Values> = {}) {
   const mounted = useMounted()
   const fieldStore = createFieldStore()
-  const dependStore = createDependStore(fieldStore)
+  const depStore = createDepStore(fieldStore)
   const valueStore = createValueStore(fieldStore, {
     onFieldValueUpdated,
     initialValues: options.initialValues,
   })
 
   const {
-    matchDepend,
+    matchDependencies,
     pauseDependenciesTrigger,
     resumeDependenciesTrigger,
-  } = dependStore
+  } = depStore
 
   const {
     matchPath,
@@ -37,9 +37,9 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   const form: BaseForm = {
     mounted,
     id: uid(),
+    depStore,
     valueStore,
     fieldStore,
-    dependStore,
     matchPath,
     getFieldValue,
     getFieldsValue,
@@ -66,10 +66,14 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
 
       if (onDependenciesValueChange) {
         const path = field.path.value
-        matchDepend(
+        matchDependencies(
           field.stringPath.value,
-          (dependPath) => {
-            onDependenciesValueChange!({ field, path, dependPath, value })
+          (depPath) => {
+            onDependenciesValueChange({
+              path,
+              value,
+              depPath,
+            })
           },
         )
       }
