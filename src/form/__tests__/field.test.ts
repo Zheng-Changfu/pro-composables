@@ -3,7 +3,7 @@ import { defineComponent, h, nextTick, onMounted, ref } from 'vue'
 import { mount } from '../../__tests__/mount'
 import type { BaseField } from '../field'
 import { createForm } from '../form'
-import { Form, FormItem } from './components'
+import { Form, FormItem, FormList } from './components'
 
 describe('baseField', () => {
   it('priority: initialValue > initialValues', async () => {
@@ -90,6 +90,41 @@ describe('baseField', () => {
     await nextTick()
     expect(vals[0]).toStrictEqual({ aa: 3 })
     expect(vals[1]).toStrictEqual({ aa: 3 })
+    vm.unmount()
+  })
+
+  it('path with formList', async () => {
+    const vals: any[] = []
+    const Comp = defineComponent({
+      setup() {
+        const pathRef = ref('a')
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 3 },
+            ],
+          },
+        })
+        onMounted(async () => {
+          pathRef.value = 'aa'
+          await nextTick()
+          vals.push(
+            form.getFieldsValue(),
+          )
+        })
+        return () => {
+          return h(Form, { form }, [
+            h(FormList, { path: 'list' }, [
+              h(FormItem, { path: pathRef.value }),
+            ]),
+          ])
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    await nextTick()
+    expect(vals[0]).toMatchObject({ list: [{ aa: 3 }] })
     vm.unmount()
   })
 

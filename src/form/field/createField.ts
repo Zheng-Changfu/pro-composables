@@ -5,11 +5,10 @@ import { usePath } from '../path/usePath'
 import { useInjectInternalForm } from '../context'
 import type { BaseForm } from '../types'
 import { warnOnce } from '../../utils/warn'
-import type { ArrayField, BaseField, FieldOptions } from './types'
+import type { BaseField, FieldOptions } from './types'
 import { provideField, useInjectListField } from './context'
 import { useShow } from './useShow'
 import { useValue } from './useValue'
-import { useListUpdate } from './useListUpdate'
 
 interface CreateFieldOptions {
   /**
@@ -18,14 +17,17 @@ interface CreateFieldOptions {
    */
   isList?: boolean
 }
-export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options: CreateFieldOptions = {}) {
+export function createField<T = any>(
+  fieldOptions: FieldOptions<T> = {},
+  { isList = false }: CreateFieldOptions = {},
+) {
   const {
-    path,
-    value,
     hidden,
     visible,
     initialValue,
+    path: propPath,
     preserve = true,
+    value: propValue,
     dependencies = [],
     onChange,
     postValue,
@@ -34,53 +36,9 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, options
     ...customValues
   } = fieldOptions
 
-  const {
-    isList = false,
-  } = options
-
-  return createBaseField(
-    {
-      path,
-      value,
-      hidden,
-      visible,
-      preserve,
-      initialValue,
-      dependencies,
-      onChange,
-      postValue,
-      transform,
-      onInputValue,
-      ...customValues,
-    },
-    { isList },
-  )
-}
-
-function createBaseField<T = any>(
-  fieldOptions: FieldOptions<T> & Required<Pick<FieldOptions, 'preserve' | 'dependencies'>>,
-  options: Required<CreateFieldOptions>,
-) {
-  const {
-    onChange,
-    postValue,
-    transform,
-    onInputValue,
-    hidden,
-    visible,
-    preserve,
-    initialValue,
-    dependencies,
-    path: propPath,
-    value: propValue,
-    ...customValues
-  } = fieldOptions
-
   const id = uid()
-  const { isList } = options
-  const form = useInjectInternalForm()
   const parent = useInjectListField()
-  const isListPath = !!parent
+  const form = useInjectInternalForm()
 
   const {
     path,
@@ -108,11 +66,9 @@ function createBaseField<T = any>(
     isList,
     preserve,
     propValue,
-    isListPath,
     stringPath,
     dependencies,
     touching: false,
-    updating: false,
     meta: fieldOptions,
     onChange,
     postValue,
@@ -120,10 +76,6 @@ function createBaseField<T = any>(
     doUpdateValue,
     ...customValues,
   }
-
-  useListUpdate(field, (updating) => {
-    field.updating = updating
-  })
 
   if (!form) {
     if (process.env.NODE_ENV !== 'production')
@@ -134,7 +86,7 @@ function createBaseField<T = any>(
     watch(
       path,
       (newPath, oldPath) => {
-        moveValue(form, parent, newPath, oldPath)
+        moveValue(form, newPath, oldPath, indexUpdating)
       },
     )
 
@@ -143,7 +95,7 @@ function createBaseField<T = any>(
       (visible) => {
         visible
           ? mountFieldValue(form, field)
-          : unmountFieldValue(form, field, parent)
+          : unmountFieldValue(form, field, indexUpdating)
       },
     )
 
@@ -157,7 +109,7 @@ function createBaseField<T = any>(
 
     form.dependStore.add(field)
     mountFieldValue(form, field)
-    onUnmounted(() => unmountFieldValue(form, field, parent))
+    onUnmounted(() => unmountFieldValue(form, field, indexUpdating))
   }
   provideField(field)
   return field
@@ -202,22 +154,25 @@ function mountFieldValue(
 function unmountFieldValue(
   form: BaseForm,
   field: BaseField,
-  parent: ArrayField | null,
+  indexUpdating: boolean,
 ) {
   form.fieldStore.unmountField(field)
-  if (!parent?.updating && !field.preserve)
+  if (!indexUpdating && !field.preserve) {
     form.valueStore.delete(field.path.value)
+  }
 }
 
 function moveValue(
   form: BaseForm,
-  parent: ArrayField | null,
   newPath: string[],
   oldPath: string[],
+  indexUpdating: boolean,
 ) {
-  if (!parent?.updating) {
-    const oldValue = form.valueStore.getFieldValue(oldPath)
-    form.valueStore.delete(oldPath)
-    form.valueStore.setFieldValue(newPath, oldValue)
+  if (indexUpdating) {
+    // 数组更新引起的索引变更，不需要处理
+    return
   }
+  const oldValue = form.valueStore.getFieldValue(oldPath)
+  form.valueStore.delete(oldPath)
+  form.valueStore.setFieldValue(newPath, oldValue)
 }
