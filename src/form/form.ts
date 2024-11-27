@@ -10,7 +10,10 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   const mounted = useMounted()
   const fieldStore = createFieldStore()
   const dependStore = createDependStore(fieldStore)
-  const valueStore = createValueStore(fieldStore, { onFieldValueUpdated, initialValues: options.initialValues })
+  const valueStore = createValueStore(fieldStore, {
+    onFieldValueUpdated,
+    initialValues: options.initialValues,
+  })
 
   const {
     matchDepend,
