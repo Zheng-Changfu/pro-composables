@@ -102,14 +102,6 @@ export interface BaseField<T = any> {
    */
   isList: boolean
   /**
-   * 是否为列表中的路径
-   */
-  isListPath: boolean
-  /**
-   * 列表是否在更新中(只针对 ArrayField)
-   */
-  updating: boolean
-  /**
    * 字段值
    */
   value: Ref<T>
