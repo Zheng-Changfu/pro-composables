@@ -127,7 +127,7 @@ export const FormList = defineComponent({
       const list = field.value.value ?? []
       return h(FormItem, {}, {
         default: () => list.map((_, index) => {
-          return h(FormListItem, { key: _.id, index }, slots)
+          return h(FormListItem, { key: Math.random(), index }, slots)
         }),
       })
     }
