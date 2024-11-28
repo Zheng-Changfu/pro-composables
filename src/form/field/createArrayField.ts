@@ -1,4 +1,3 @@
-import { createEventHook } from '@vueuse/core'
 import { toRaw } from 'vue'
 import { get as _get, set as _set, has } from 'lodash-es'
 import {
@@ -17,14 +16,9 @@ import type { InternalPath } from '../path'
 import { isInternalPath, stringifyPath } from '../utils/path'
 import { provideListField } from './context'
 import { createField } from './createField'
-import type { ArrayField, ArrayFieldActionName, FieldOptions } from './types'
+import type { ArrayField, FieldOptions } from './types'
 
 export function createArrayField<T = any>(options: FieldOptions<T>) {
-  const {
-    on: onActionChange,
-    trigger: triggerActionChange,
-  } = createEventHook<ArrayFieldActionName>()
-
   const form = useInjectInternalForm()
 
   const field = createField(options, {
@@ -35,7 +29,6 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     if (form) {
       const fullPath = `${field.stringPath.value}.${index}.${stringifyPath(path)}`
       const value = form.getFieldValue(fullPath)
-      triggerActionChange('get')
       return toRaw(value)
     }
   }
@@ -58,56 +51,47 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
           }
         })
       }
-      triggerActionChange('set')
     }
   }
 
   function push(...items: T[]) {
     _push(field.value.value ?? [], ...items)
-    triggerActionChange('push')
   }
 
   function pop() {
     _pop(field.value.value ?? [])
-    triggerActionChange('pop')
   }
 
   function insert(index: number, ...items: T[]) {
     _insert(field.value.value ?? [], index, ...items)
-    triggerActionChange('insert')
   }
 
   function remove(index: number) {
     _remove(field.value.value ?? [], index)
-    triggerActionChange('remove')
   }
 
   function shift() {
     _shift(field.value.value ?? [])
-    triggerActionChange('shift')
   }
 
   function unshift(...items: T[]) {
     _unshift(field.value.value ?? [], ...items)
-    triggerActionChange('unshift')
   }
 
   function move(from: number, to: number) {
     _move(field.value.value ?? [], from, to)
-    triggerActionChange('move')
   }
 
   function moveUp(index: number) {
     _moveUp(field.value.value ?? [], index)
-    triggerActionChange('moveUp')
   }
 
   function moveDown(index: number) {
     _moveDown(field.value.value ?? [], index)
-    triggerActionChange('moveDown')
   }
 
-  const arrayField: ArrayField = Object.assign(field, {
+  const arrayField: ArrayField = {
+    ...field,
     get,
     set,
     pop,
@@ -119,9 +103,7 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     remove,
     unshift,
     moveDown,
-    onActionChange,
-  })
-
+  }
   provideListField(arrayField)
   return arrayField
 }

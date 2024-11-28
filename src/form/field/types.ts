@@ -1,5 +1,4 @@
 import type { ComputedRef, Ref } from 'vue'
-import type { EventHookOn } from '@vueuse/core'
 import type { Get, PartialDeep } from 'type-fest'
 import type { InternalPath } from '../path'
 import type { Dependencie } from '../store/depStore'
@@ -187,10 +186,6 @@ export interface ArrayField<T = any> extends BaseField<T[]> {
    */
   moveDown: (index: number) => void
   /**
-   * 列表发生了动作后触发的回调
-   */
-  onActionChange: EventHookOn<ArrayFieldActionName>
-  /**
    * 获取行数据，未获取到返回空对象
    * @param index 行索引
    */
@@ -207,21 +202,6 @@ export interface ArrayField<T = any> extends BaseField<T[]> {
   & ((index: number, values: PartialDeep<T>) => void)
   & (<Path extends InternalPath = StringKeyof<T>>(index: number, path: Path, value: Get<T, Path>) => void)
 }
-
-export type ArrayFieldActionName = Extract<
-  | 'get'
-  | 'set'
-  | 'pop'
-  | 'move'
-  | 'push'
-  | 'shift'
-  | 'remove'
-  | 'moveUp'
-  | 'insert'
-  | 'unshift'
-  | 'moveDown',
-  keyof ArrayField
->
 
 export type ArrayFieldAction<T = any> = Pick<
   ArrayField<T>,
