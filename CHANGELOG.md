@@ -1,5 +1,11 @@
 # pro-composables
 
+## 1.1.0
+
+### Minor Changes
+
+- feat:release@1.1.0
+
 ## 1.0.4
 
 ### Patch Changes
