@@ -124,6 +124,7 @@ function mountFieldValue(
     show,
     meta,
     path,
+    isList,
     propValue,
   } = field
 
@@ -147,6 +148,9 @@ function mountFieldValue(
   else if (!form.mounted.value && has(form.valueStore.initialValues, p))
     val = get(form.valueStore.initialValues, p)
 
+  if (isList && val === undefined) {
+    val = []
+  }
   form.valueStore.setFieldValue(p, val)
   if (!form.mounted.value)
     form.valueStore.setInitialValue(p, val)
