@@ -1,6 +1,5 @@
 import { computed, defineComponent, h, onMounted, toRef } from 'vue'
 import { ROW_UUID, createArrayField, createField, useInjectField, useInjectListField } from '../field'
-import { uid } from '../../utils/id'
 import { providePath, providePathIndex } from '../path'
 import { provideInternalForm } from '../context'
 
