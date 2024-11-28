@@ -44,6 +44,7 @@ export function createField<T = any>(
     path,
     index,
     stringPath,
+    indexUpdating,
   } = usePath(propPath)
 
   const { show } = useShow(
@@ -86,7 +87,7 @@ export function createField<T = any>(
     watch(
       path,
       (newPath, oldPath) => {
-        moveValue(form, newPath, oldPath, indexUpdating)
+        moveValue(form, newPath, oldPath, indexUpdating.value)
       },
     )
 
@@ -95,7 +96,7 @@ export function createField<T = any>(
       (visible) => {
         visible
           ? mountFieldValue(form, field)
-          : unmountFieldValue(form, field, indexUpdating)
+          : unmountFieldValue(form, field, indexUpdating.value)
       },
     )
 
@@ -109,7 +110,7 @@ export function createField<T = any>(
 
     form.depStore.add(field)
     mountFieldValue(form, field)
-    onUnmounted(() => unmountFieldValue(form, field, indexUpdating))
+    onUnmounted(() => unmountFieldValue(form, field, indexUpdating.value))
   }
   provideField(field)
   return field
