@@ -1,11 +1,18 @@
 import type { ComputedRef, Ref } from 'vue'
 import { computed } from 'vue'
+import { isArray } from 'lodash-es'
 import { useInjectInternalForm } from '../context'
+import { uid } from '../../utils/id'
 
 interface UseValueOptions {
   onInputValue?: (fieldValue: Ref<any>, inputValue: any, ...args: any[]) => void
 }
 
+export const ROW_UUID = Symbol(
+  process.env.NODE_ENV !== 'production'
+    ? 'ROW_UUID'
+    : '',
+)
 export function useValue<T = any>(id: string, path: ComputedRef<string[]>, options: UseValueOptions) {
   const form = useInjectInternalForm()
   const { onInputValue } = options
@@ -13,6 +20,19 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
   const proxy = computed({
     get,
     set,
+  })
+
+  const uidValue = computed(() => {
+    const value = proxy.value
+    if (!isArray(value)) {
+      return value
+    }
+    value.forEach((item) => {
+      if (!item[ROW_UUID]) {
+        item[ROW_UUID] = uid()
+      }
+    })
+    return value
   })
 
   function get() {
@@ -40,7 +60,8 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
   }
 
   return {
-    value: proxy as ComputedRef<T>,
+    uidValue,
     doUpdateValue,
+    value: proxy as ComputedRef<T>,
   }
 }

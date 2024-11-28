@@ -1,4 +1,5 @@
 export * from './types'
 export * from './createField'
 export * from './createArrayField'
+export { ROW_UUID } from './useValue'
 export { useInjectListField, useInjectField } from './context'
