@@ -1,5 +1,5 @@
 import { computed, defineComponent, h, onMounted, toRef } from 'vue'
-import { createArrayField, createField, useInjectField, useInjectListField } from '../field'
+import { ROW_UUID, createArrayField, createField, useInjectField, useInjectListField } from '../field'
 import { uid } from '../../utils/id'
 import { providePath, providePathIndex } from '../path'
 import { provideInternalForm } from '../context'
@@ -85,8 +85,6 @@ export const FormList = defineComponent({
     'initialValue',
     'dependencies',
     'onFieldMounted',
-    'postValue',
-    'onChange',
     'visible',
     'hidden',
     'preserve',
@@ -99,24 +97,10 @@ export const FormList = defineComponent({
       value: toRef(props, 'value'),
       dependencies: props.dependencies,
       initialValue: props.initialValue,
-      onChange: props.onChange,
       hidden: toRef(props, 'hidden'),
       visible: toRef(props, 'visible'),
       preserve: props.preserve,
       transform: props.transform,
-      postValue: (val) => {
-        if (!val)
-          return []
-        return val.map((item: any) => {
-          if (!item.id) {
-            return {
-              ...item,
-              id: uid(),
-            }
-          }
-          return item
-        })
-      },
     })
 
     onMounted(() => {
@@ -127,7 +111,7 @@ export const FormList = defineComponent({
       const list = field.value.value ?? []
       return h(FormItem, {}, {
         default: () => list.map((_, index) => {
-          return h(FormListItem, { key: Math.random(), index }, slots)
+          return h(FormListItem, { key: _[ROW_UUID], index }, slots)
         }),
       })
     }
