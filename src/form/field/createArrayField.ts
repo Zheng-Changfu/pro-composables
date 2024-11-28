@@ -1,5 +1,4 @@
 import { toRaw } from 'vue'
-import { get as _get, set as _set, has } from 'lodash-es'
 import {
   insert as _insert,
   move as _move,
@@ -47,15 +46,9 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
         form.setFieldValue(fullPath, value)
       }
       else {
+        const values = pathOrValues
         const rowPath = `${field.stringPath.value}.${index}`
-        const values = _set({}, rowPath, pathOrValues)
-        const rowPattern = `${field.stringPath.value}\.${index}\.+`
-        const matchedPath = form.matchPath(new RegExp(rowPattern))
-        matchedPath.forEach((path) => {
-          if (has(values, path)) {
-            form.setFieldValue(path, _get(values, path))
-          }
-        })
+        form.setFieldValue(rowPath, values)
       }
     }
   }
