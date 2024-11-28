@@ -1,12 +1,12 @@
-import { cloneDeep, get, has, set, unset } from 'lodash-es'
+import { cloneDeep, get, has, isPlainObject, set, unset } from 'lodash-es'
 import type { Ref } from 'vue'
 import { ref } from 'vue'
+import { useMounted } from '@vueuse/core'
 import type { InternalPath, PathPattern } from '../path'
 import type { ValueMergeStrategy } from '../utils/value'
 import { mergeByStrategy } from '../utils/value'
 import type { BaseField } from '../field'
-import { isIndexPath } from '../utils/path'
-import { warnOnce } from '../../utils/warn'
+import { isIndexPath, stringifyPath } from '../utils/path'
 import type { FieldStore } from './fieldStore'
 
 interface ValueStoreOptions {
@@ -17,6 +17,7 @@ interface ValueStoreOptions {
  * 管理值
  */
 export class ValueStore {
+  public mounted: Ref<boolean>
   public fieldStore: FieldStore
   public options: ValueStoreOptions
   public values: Ref<Record<string, any>>
@@ -28,6 +29,7 @@ export class ValueStore {
   ) {
     this.values = ref({})
     this.options = options
+    this.mounted = useMounted()
     this.fieldStore = fieldStore
     this.initialValues = cloneDeep(options.initialValues ?? {})
   }
@@ -134,27 +136,42 @@ export class ValueStore {
     return clonedVals
   }
 
-  setFieldValue = (path: InternalPath, value: any) => {
+  private internalSetFieldValue = (path: InternalPath, value: any) => {
     const field = this.fieldStore.getFieldByPath(path)
-    if (!field) {
-      /**
-       * 有2种情况
-       * 1: path 对应的 field 可能还没被挂载(不需要处理)
-       * 2: path 不存在对应的 field（可能写的是非表单 path(不需要处理)，可能是索引 path）
-       */
-      if (isIndexPath(path)) {
-        if (process.env.NODE_ENV !== 'production') {
-          warnOnce(`You are assigning an invalid path value`)
-        }
-        return
-      }
-    }
     const oldValue = this.getFieldValue(path)
     const resolvedValue = this.resolveValueWithPostValue(field, value)
     set(this.values.value, path, resolvedValue)
 
     if (field && !Object.is(oldValue, resolvedValue))
       this.options.onFieldValueUpdated(field, resolvedValue)
+  }
+
+  setFieldValue = (path: InternalPath, value: any) => {
+    const field = this.fieldStore.getFieldByPath(path)
+    if (
+      !field
+      && this.mounted.value
+      && isIndexPath(path)
+      && isPlainObject(value)
+    ) {
+      /**
+       * 索引 path
+       * 想设置一行的值 setFieldValue('list.0',{a:1,b:2})
+       */
+      const rowPath = stringifyPath(path).replace(/\./g, '\\.')
+      const matchedPath = this.matchPath(new RegExp(`${rowPath}\.+`))
+      if (matchedPath.length > 0) {
+        // 匹配到的当前行所有 path，包含了嵌套的
+        const values = set({}, path, value)
+        matchedPath.forEach((_path) => {
+          if (has(values, _path)) {
+            this.internalSetFieldValue(_path, get(values, _path))
+          }
+        })
+      }
+      return
+    }
+    this.internalSetFieldValue(path, value)
   }
 
   setFieldsValue = (vals: Record<string, any>, strategy: ValueMergeStrategy = 'overwrite') => {
