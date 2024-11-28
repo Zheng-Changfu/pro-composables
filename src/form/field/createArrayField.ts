@@ -89,8 +89,7 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     _moveDown(field.value.value ?? [], index)
   }
 
-  const arrayField: ArrayField = {
-    ...field,
+  const arrayField: ArrayField = Object.assign(field, {
     get,
     set,
     pop,
@@ -102,7 +101,7 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     remove,
     unshift,
     moveDown,
-  }
+  })
   provideListField(arrayField)
   return arrayField
 }
