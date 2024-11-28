@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { computed, nextTick, shallowRef, unref, watch } from 'vue'
+import { computed, shallowRef, unref, watch } from 'vue'
 import { toPath } from 'lodash-es'
 import { stringifyPath } from '../utils/path'
 import type { InternalPath } from './types'
