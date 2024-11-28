@@ -8,7 +8,7 @@ import { useInjectPath, useInjectPathIndex } from './context'
 export function usePath(path?: Ref<InternalPath | undefined>) {
   const index = useInjectPathIndex()
   const parentPathRef = useInjectPath()
-  const indexUpdatingRef = shallowRef(false)
+  const indexUpdatingRef = shallowRef(false) // 索引是否在更新
 
   const pathRef = computed(() => {
     const currentPath = unref(path?.value) ?? []
