@@ -22,10 +22,12 @@ describe('baseField', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', initialValue: 2 }),
-            h(FormItem, { path: 'b', initialValue: 3 }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', initialValue: 2 }),
+              h(FormItem, { path: 'b', initialValue: 3 }),
+            ],
+          })
         }
       },
     })
@@ -51,10 +53,12 @@ describe('baseField', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', initialValue: 2, value: 3 }),
-            h(FormItem, { path: 'b', initialValue: 3, value: 4 }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', initialValue: 2, value: 3 }),
+              h(FormItem, { path: 'b', initialValue: 3, value: 4 }),
+            ],
+          })
         }
       },
     })
@@ -79,9 +83,11 @@ describe('baseField', () => {
           )
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: pathRef.value, value: 3 }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: pathRef.value, value: 3 }),
+            ],
+          })
         }
       },
     })
@@ -113,11 +119,15 @@ describe('baseField', () => {
           )
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormList, { path: 'list' }, [
-              h(FormItem, { path: pathRef.value }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, { path: 'list' }, {
+                default: () => [
+                  h(FormItem, { path: pathRef.value }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -152,10 +162,12 @@ describe('baseField', () => {
           )
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', visible: visibleRef1.value, value: 3 }),
-            h(FormItem, { path: 'b', visible: visibleRef2.value, value: 4 }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', visible: visibleRef1.value, value: 3 }),
+              h(FormItem, { path: 'b', visible: visibleRef2.value, value: 4 }),
+            ],
+          })
         }
       },
     })
@@ -197,10 +209,12 @@ describe('baseField', () => {
           const v1 = visibleRef1.value
           const v2 = visibleRef2.value
 
-          return h(Form, { form }, [
-            v1 ? h(FormItem, { path: 'a', key: 1, value: 3 }) : null,
-            v2 ? h(FormItem, { path: 'b', key: 2, value: 4 }) : null,
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              v1 ? h(FormItem, { path: 'a', key: 1, value: 3 }) : null,
+              v2 ? h(FormItem, { path: 'b', key: 2, value: 4 }) : null,
+            ],
+          })
         }
       },
     })
@@ -249,10 +263,12 @@ describe('baseField', () => {
           )
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', key: 1, hidden: hiddenRef1.value, value: 3 }),
-            h(FormItem, { path: 'b', key: 2, hidden: hiddenRef2.value, value: 4 }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', key: 1, hidden: hiddenRef1.value, value: 3 }),
+              h(FormItem, { path: 'b', key: 2, hidden: hiddenRef2.value, value: 4 }),
+            ],
+          })
         }
       },
     })
@@ -308,10 +324,12 @@ describe('baseField', () => {
         return () => {
           const h1 = hiddenRef1.value
           const h2 = hiddenRef2.value
-          return h(Form, { form }, [
-            !h1 ? h(FormItem, { path: 'a', key: 1, value: 3 }) : null,
-            !h2 ? h(FormItem, { path: 'b', key: 2, value: 4 }) : null,
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              !h1 ? h(FormItem, { path: 'a', key: 1, value: 3 }) : null,
+              !h2 ? h(FormItem, { path: 'b', key: 2, value: 4 }) : null,
+            ],
+          })
         }
       },
     })
@@ -359,10 +377,12 @@ describe('baseField', () => {
           )
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', preserve: false, visible: visibleRef1.value, value: value1Ref.value }),
-            h(FormItem, { path: 'b', preserve: false, visible: visibleRef2.value, value: value2Ref.value }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', preserve: false, visible: visibleRef1.value, value: value1Ref.value }),
+              h(FormItem, { path: 'b', preserve: false, visible: visibleRef2.value, value: value2Ref.value }),
+            ],
+          })
         }
       },
     })
@@ -391,10 +411,12 @@ describe('update value to trigger postValue and onChange', () => {
           form.setFieldValue('unexitKey', 3)
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', onChange, postValue }),
-            h(FormItem, { path: 'b', onChange, postValue }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', onChange, postValue }),
+              h(FormItem, { path: 'b', onChange, postValue }),
+            ],
+          })
         }
       },
     })
@@ -424,10 +446,12 @@ describe('update value to trigger postValue and onChange', () => {
           })
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', onChange, postValue }),
-            h(FormItem, { path: 'b', onChange, postValue }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', onChange, postValue }),
+              h(FormItem, { path: 'b', onChange, postValue }),
+            ],
+          })
         }
       },
     })
@@ -455,10 +479,12 @@ describe('update value to trigger postValue and onChange', () => {
           form.resetFieldValue('b')
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
-            h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
+              h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
+            ],
+          })
         }
       },
     })
@@ -485,10 +511,12 @@ describe('update value to trigger postValue and onChange', () => {
           form.resetFieldsValue()
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
-            h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
+              h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
+            ],
+          })
         }
       },
     })
@@ -516,10 +544,12 @@ describe('update value to trigger postValue and onChange', () => {
           },
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', onChange, postValue }),
-            h(FormItem, { path: 'b', onChange, postValue }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', onChange, postValue }),
+              h(FormItem, { path: 'b', onChange, postValue }),
+            ],
+          })
         }
       },
     })
@@ -540,10 +570,12 @@ describe('update value to trigger postValue and onChange', () => {
       setup() {
         const form = createForm()
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
-            h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
+              h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
+            ],
+          })
         }
       },
     })
@@ -572,10 +604,12 @@ describe('update value to trigger postValue and onChange', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', value: aRef.value, onChange, postValue }),
-            h(FormItem, { path: 'b', value: bRef.value, onChange, postValue }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', value: aRef.value, onChange, postValue }),
+              h(FormItem, { path: 'b', value: bRef.value, onChange, postValue }),
+            ],
+          })
         }
       },
     })
@@ -605,9 +639,11 @@ describe('update value to trigger postValue and onChange', () => {
           _field.doUpdateValue(2)
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', onFieldMounted, onChange, postValue }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', onFieldMounted, onChange, postValue }),
+            ],
+          })
         }
       },
     })

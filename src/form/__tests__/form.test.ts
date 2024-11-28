@@ -42,12 +42,16 @@ describe('create multiple form', () => {
 
         return () => {
           return [
-            h(Form, { form: form1 }, [
-              h(FormItem, { path: 'a' }),
-            ]),
-            h(Form, { form: form2 }, [
-              h(FormItem, { path: 'a' }),
-            ]),
+            h(Form, { form: form1 }, {
+              default: () => [
+                h(FormItem, { path: 'a' }),
+              ],
+            }),
+            h(Form, { form: form2 }, {
+              default: () => [
+                h(FormItem, { path: 'a' }),
+              ],
+            }),
           ]
         }
       },
@@ -103,9 +107,9 @@ describe('form props', () => {
       matchFnArguments.push(path, paths)
       return path === 'b'
     })
-    const onDependenciesValueChange = vi.fn(({ path, dependPath }) => {
+    const onDependenciesValueChange = vi.fn(({ path, depPath }) => {
       if (depsAuguments.length <= 0)
-        depsAuguments.push(path, dependPath)
+        depsAuguments.push(path, depPath)
     })
     const Comp = defineComponent({
       setup() {
@@ -123,14 +127,16 @@ describe('form props', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', dependencies: ['b'] }),
-            h(FormItem, { path: 'b', onFieldMounted }),
-            h(FormItem, { path: 'c', dependencies: 'b' }),
-            h(FormItem, { path: 'd', dependencies: /b/ }),
-            h(FormItem, { path: 'e', dependencies: match }),
-            h(FormItem, { path: 'f', dependencies: ['a', 'b'] }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', dependencies: ['b'] }),
+              h(FormItem, { path: 'b', onFieldMounted }),
+              h(FormItem, { path: 'c', dependencies: 'b' }),
+              h(FormItem, { path: 'd', dependencies: /b/ }),
+              h(FormItem, { path: 'e', dependencies: match }),
+              h(FormItem, { path: 'f', dependencies: ['a', 'b'] }),
+            ],
+          })
         }
       },
     })
@@ -172,14 +178,16 @@ describe('form props', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, {
-              path: 'a',
-              dependencies: ['b'],
-              value: form.valueStore.values.value.b === 1 ? 2 : null,
-            }),
-            h(FormItem, { path: 'b', onFieldMounted }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, {
+                path: 'a',
+                dependencies: ['b'],
+                value: form.valueStore.values.value.b === 1 ? 2 : null,
+              }),
+              h(FormItem, { path: 'b', onFieldMounted }),
+            ],
+          })
         }
       },
     })
@@ -213,9 +221,11 @@ describe('form api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a.b.c' }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a.b.c' }),
+            ],
+          })
         }
       },
     })
@@ -244,10 +254,12 @@ describe('form api', () => {
           )
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a' }),
-            h(FormItem, { path: 'b' }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a' }),
+              h(FormItem, { path: 'b' }),
+            ],
+          })
         }
       },
     })
@@ -304,18 +316,22 @@ describe('form api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', transform: transformA }),
-            h(FormItem, { path: 'b', transform: transformB }),
-            h(FormList, {
-              path: 'list',
-              transform: transformList,
-            }, [
-              h(FormItem, { path: 'a', transform: transformListA }),
-              h(FormItem, { path: 'b', transform: transformListB }),
-              h(FormItem, { path: 'd' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a', transform: transformA }),
+              h(FormItem, { path: 'b', transform: transformB }),
+              h(FormList, {
+                path: 'list',
+                transform: transformList,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a', transform: transformListA }),
+                  h(FormItem, { path: 'b', transform: transformListB }),
+                  h(FormItem, { path: 'd' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -363,10 +379,12 @@ describe('form api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a' }),
-            h(FormItem, { path: 'b' }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a' }),
+              h(FormItem, { path: 'b' }),
+            ],
+          })
         }
       },
     })
@@ -397,18 +415,22 @@ describe('form api', () => {
           )
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', postValue }),
-            h(FormList, {
-              path: 'list',
-              initialValue: [
-                { a: 1, b: 2 },
-              ],
-            }, [
+          return h(Form, { form }, {
+            default: () => [
               h(FormItem, { path: 'a', postValue }),
-              h(FormItem, { path: 'b', postValue }),
-            ]),
-          ])
+              h(FormList, {
+                path: 'list',
+                initialValue: [
+                  { a: 1, b: 2 },
+                ],
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a', postValue }),
+                  h(FormItem, { path: 'b', postValue }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -453,29 +475,35 @@ describe('form api', () => {
           )
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a', postValue }),
-            h(FormList, {
-              path: 'list',
-              initialValue: [
-                { a: 1, b: 2 },
-                { a: 3, b: 4 },
-              ],
-            }, [
+          return h(Form, { form }, {
+            default: () => [
               h(FormItem, { path: 'a', postValue }),
-              h(FormItem, { path: 'b', postValue }),
               h(FormList, {
                 path: 'list',
                 initialValue: [
                   { a: 1, b: 2 },
                   { a: 3, b: 4 },
                 ],
-              }, [
-                h(FormItem, { path: 'a', postValue }),
-                h(FormItem, { path: 'b', postValue }),
-              ]),
-            ]),
-          ])
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a', postValue }),
+                  h(FormItem, { path: 'b', postValue }),
+                  h(FormList, {
+                    path: 'list',
+                    initialValue: [
+                      { a: 1, b: 2 },
+                      { a: 3, b: 4 },
+                    ],
+                  }, {
+                    default: () => [
+                      h(FormItem, { path: 'a', postValue }),
+                      h(FormItem, { path: 'b', postValue }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -519,10 +547,12 @@ describe('form api', () => {
           )
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a' }),
-            h(FormItem, { path: 'b' }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a' }),
+              h(FormItem, { path: 'b' }),
+            ],
+          })
         }
       },
     })
@@ -554,10 +584,12 @@ describe('form api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a' }),
-            h(FormItem, { path: 'b' }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a' }),
+              h(FormItem, { path: 'b' }),
+            ],
+          })
         }
       },
     })
@@ -589,10 +621,12 @@ describe('form api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a' }),
-            h(FormItem, { path: 'b' }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a' }),
+              h(FormItem, { path: 'b' }),
+            ],
+          })
         }
       },
     })
@@ -625,10 +659,12 @@ describe('form api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'a' }),
-            h(FormItem, { path: 'b' }),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'a' }),
+              h(FormItem, { path: 'b' }),
+            ],
+          })
         }
       },
     })

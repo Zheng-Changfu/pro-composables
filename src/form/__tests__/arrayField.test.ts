@@ -26,15 +26,19 @@ describe('arrayField api', () => {
           )
         })
         return () => {
-          return h(Form, { form }, [
-            h(FormItem, { path: 'u1' }),
-            h(FormList, {
-              path: 'list',
-              hidden: form.valueStore.values.value.u1 === '1',
-            }, [
-              h(FormItem, { initialValue: '', path: 'u1' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormItem, { path: 'u1' }),
+              h(FormList, {
+                path: 'list',
+                hidden: form.valueStore.values.value.u1 === '1',
+              }, {
+                default: () => [
+                  h(FormItem, { initialValue: '', path: 'u1' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -70,18 +74,22 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, {
-                path: 'u1',
-                visible: false,
-                initialValue: null,
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, {
+                    path: 'u1',
+                    visible: false,
+                    initialValue: null,
+                  }),
+                ],
               }),
-            ]),
-          ])
+            ],
+          })
         }
       },
     })
@@ -128,22 +136,26 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, {
-                path: 'a1',
-                initialValue: null,
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, {
+                    path: 'a1',
+                    initialValue: null,
+                  }),
+                  h(FormItem, {
+                    path: 'a2',
+                    visible: !!form.valueStore.values.value.list?.[0]?.a1,
+                    initialValue: null,
+                  }),
+                ],
               }),
-              h(FormItem, {
-                path: 'a2',
-                visible: !!form.valueStore.values.value.list?.[0]?.a1,
-                initialValue: null,
-              }),
-            ]),
-          ])
+            ],
+          })
         }
       },
     })
@@ -190,15 +202,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -249,15 +265,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -307,15 +327,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -372,15 +396,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -427,15 +455,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -506,15 +538,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -611,15 +647,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -716,15 +756,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -859,15 +903,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -1008,15 +1056,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -1127,15 +1179,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
@@ -1276,15 +1332,19 @@ describe('arrayField api', () => {
         })
 
         return () => {
-          return h(Form, { form }, [
-            h(FormList, {
-              path: 'list',
-              onArrayFieldMounted,
-            }, [
-              h(FormItem, { path: 'a' }),
-              h(FormItem, { path: 'b' }),
-            ]),
-          ])
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
         }
       },
     })
