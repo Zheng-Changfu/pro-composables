@@ -63,47 +63,47 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
   }
 
   function push(...items: T[]) {
-    field.value.value = _push(field.value.value ?? [], ...items)
+    _push(field.value.value ?? [], ...items)
     triggerActionChange('push')
   }
 
   function pop() {
-    field.value.value = _pop(field.value.value ?? [])
+    _pop(field.value.value ?? [])
     triggerActionChange('pop')
   }
 
   function insert(index: number, ...items: T[]) {
-    field.value.value = _insert(field.value.value ?? [], index, ...items)
+    _insert(field.value.value ?? [], index, ...items)
     triggerActionChange('insert')
   }
 
   function remove(index: number) {
-    field.value.value = _remove(field.value.value ?? [], index)
+    _remove(field.value.value ?? [], index)
     triggerActionChange('remove')
   }
 
   function shift() {
-    field.value.value = _shift(field.value.value ?? [])
+    _shift(field.value.value ?? [])
     triggerActionChange('shift')
   }
 
   function unshift(...items: T[]) {
-    field.value.value = _unshift(field.value.value ?? [], ...items)
+    _unshift(field.value.value ?? [], ...items)
     triggerActionChange('unshift')
   }
 
   function move(from: number, to: number) {
-    field.value.value = _move(field.value.value ?? [], from, to)
+    _move(field.value.value ?? [], from, to)
     triggerActionChange('move')
   }
 
   function moveUp(index: number) {
-    field.value.value = _moveUp(field.value.value ?? [], index)
+    _moveUp(field.value.value ?? [], index)
     triggerActionChange('moveUp')
   }
 
   function moveDown(index: number) {
-    field.value.value = _moveDown(field.value.value ?? [], index)
+    _moveDown(field.value.value ?? [], index)
     triggerActionChange('moveDown')
   }
 
@@ -121,6 +121,7 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     moveDown,
     onActionChange,
   })
+
   provideListField(arrayField)
   return arrayField
 }
