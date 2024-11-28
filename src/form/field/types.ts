@@ -51,17 +51,17 @@ export interface FieldOptions<T = any> {
    */
   transform?: (val: T, path: string) => any
   /**
-   * 后置状态钩子，可以二次修改值
+   * 后置状态钩子，可以二次修改值（isList 为 true 时 无效）
    */
   postValue?: (val: T) => T
   /**
-   * 手动更新值
+   * 手动更新值（isList 为 true 时 无效）
    * @param fieldValue 表单值
    * @param inputValue 输入值
    */
   onInputValue?: (fieldValue: Ref<any>, inputValue: any, ...args: any[]) => void
   /**
-   * 值变化后的回调(手动交互导致值的改变)
+   * 值变化后的回调(手动交互导致值的改变，isList 为 true 时 无效)
    */
   onChange?: (val: T) => void
   /**

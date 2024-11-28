@@ -60,7 +60,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
       onDependenciesValueChange,
     } = options
 
-    if (field.touching) {
+    if (field.touching && !field.isList) {
       if (field.onChange)
         field.onChange(value)
 

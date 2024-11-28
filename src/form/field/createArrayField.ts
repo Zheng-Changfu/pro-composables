@@ -21,9 +21,15 @@ import type { ArrayField, FieldOptions } from './types'
 export function createArrayField<T = any>(options: FieldOptions<T>) {
   const form = useInjectInternalForm()
 
-  const field = createField(options, {
-    isList: true,
-  })
+  const field = createField({
+    ...options,
+    /**
+     * 考虑到性能问题，isList 为 true 时下面这些属性不在生效
+     */
+    onChange: undefined,
+    postValue: undefined,
+    onInputValue: undefined,
+  }, { isList: true })
 
   function get(index: number, path: InternalPath) {
     if (form) {
