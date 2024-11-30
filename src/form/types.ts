@@ -9,6 +9,11 @@ import type { ValueMergeStrategy } from './utils/value'
 
 export interface FormOptions<Values = any> {
   /**
+   * 在调用 getFieldsTransformedValue 时是否清空 null 和 undefined 的数据
+   * @default true
+   */
+  omitNil?: boolean
+  /**
    * 表单初始值
    */
   initialValues?: SimplifyDeep<Values>

@@ -3,14 +3,17 @@ import { get, isPlainObject, merge, set } from 'lodash-es'
 import type { ArrayField, BaseField } from '../field'
 import { convertPatternToMatchFn, stringifyPath } from '../utils/path'
 import type { InternalPath, PathPattern } from '../path'
+import { omitNil as _omitNil } from '../../utils/omitNil'
 
 /**
  * 管理所有的字段
  */
 export class FieldStore {
+  public omitNil: boolean
   public idToFieldMap: Map<string, BaseField>
 
-  constructor() {
+  constructor(omitNil: boolean) {
+    this.omitNil = omitNil
     this.idToFieldMap = shallowReactive(new Map())
   }
 
@@ -159,10 +162,10 @@ export class FieldStore {
     haveTransformListFields.forEach((field) => {
       this.transform(field, res)
     })
-    return res
+    return this.omitNil ? _omitNil(res) : res
   }
 }
 
-export function createFieldStore() {
-  return new FieldStore()
+export function createFieldStore(omitNil = true) {
+  return new FieldStore(omitNil)
 }

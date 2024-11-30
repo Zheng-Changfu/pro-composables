@@ -7,13 +7,17 @@ import { createValueStore } from './store/valueStore'
 import { createDepStore } from './store/depStore'
 
 export function createForm<Values = Record<string, any>>(options: FormOptions<Values> = {}) {
+  const {
+    omitNil,
+    initialValues,
+    onValuesChange,
+    onDependenciesValueChange,
+  } = options
+
   const mounted = useMounted()
-  const fieldStore = createFieldStore()
+  const fieldStore = createFieldStore(omitNil)
   const depStore = createDepStore(fieldStore)
-  const valueStore = createValueStore(fieldStore, {
-    onFieldValueUpdated,
-    initialValues: options.initialValues,
-  })
+  const valueStore = createValueStore(fieldStore, { initialValues, onFieldValueUpdated })
 
   const {
     matchDependencies,
@@ -55,11 +59,6 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   }
 
   function onFieldValueUpdated(field: BaseField, value: any) {
-    const {
-      onValuesChange,
-      onDependenciesValueChange,
-    } = options
-
     if (field.touching && !field.isList) {
       if (field.onChange)
         field.onChange(value)
