@@ -54,6 +54,7 @@ export function createField<T = any>(
 
   const {
     value,
+    uidValue,
     doUpdateValue,
   } = useValue(id, path, { onInputValue })
 
@@ -61,7 +62,6 @@ export function createField<T = any>(
     id,
     show,
     path,
-    value,
     index,
     parent,
     isList,
@@ -71,6 +71,7 @@ export function createField<T = any>(
     dependencies,
     touching: false,
     meta: fieldOptions,
+    value: isList ? uidValue : value,
     onChange,
     postValue,
     transform,
