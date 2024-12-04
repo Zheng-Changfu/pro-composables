@@ -51,13 +51,13 @@ export class DepStore {
     })
   }
 
-  matchDependencies = (path: string, matchedFn: (dependPath: string[]) => void) => {
+  matchDependencies = (path: string, matchedFn: (dependPath: string) => void) => {
     if (!this.shouldTrigger)
       return
     const paths = this.fieldStore.fieldsPath.value
     this.deps.forEach((match) => {
       if (match(path, paths))
-        matchedFn(match.field.path.value)
+        matchedFn(match.field.stringPath.value)
     })
   }
 }

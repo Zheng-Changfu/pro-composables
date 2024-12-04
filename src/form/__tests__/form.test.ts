@@ -145,7 +145,7 @@ describe('form props', () => {
     await nextTick()
     await nextTick()
     expect(onDependenciesValueChange).toBeCalledTimes(5)
-    expect(depsAuguments).toStrictEqual([['b'], ['a']])
+    expect(depsAuguments).toStrictEqual(['b', 'a'])
     expect(match).toHaveReturnedWith(true)
     expect(matchFnArguments).toStrictEqual([
       'b',

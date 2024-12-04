@@ -64,9 +64,9 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
         field.onChange(value)
 
       if (onDependenciesValueChange) {
-        const path = field.path.value
+        const path = field.stringPath.value
         matchDependencies(
-          field.stringPath.value,
+          path,
           (depPath) => {
             onDependenciesValueChange({
               path,
@@ -80,7 +80,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
       if (onValueChange) {
         onValueChange({
           value,
-          path: field.path.value,
+          path: field.stringPath.value,
         })
       }
     }

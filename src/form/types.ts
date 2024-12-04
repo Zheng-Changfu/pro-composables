@@ -24,7 +24,7 @@ export interface FormOptions<Values = any> {
    */
   onValueChange?: (opt: {
     value: any
-    path: string[]
+    path: string
   }) => void
   /**
    * 依赖项的值发生变化后的回调(手动交互才会触发)
@@ -34,8 +34,8 @@ export interface FormOptions<Values = any> {
    */
   onDependenciesValueChange?: (opt: {
     value: any
-    path: string[]
-    depPath: string[]
+    path: string
+    depPath: string
   }) => void
 }
 
