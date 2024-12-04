@@ -10,7 +10,7 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   const {
     omitNil,
     initialValues,
-    onValuesChange,
+    onValueChange,
     onDependenciesValueChange,
   } = options
 
@@ -77,8 +77,8 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
         )
       }
 
-      if (onValuesChange) {
-        onValuesChange({
+      if (onValueChange) {
+        onValueChange({
           value,
           path: field.path.value,
         })

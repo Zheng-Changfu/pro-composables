@@ -22,7 +22,7 @@ export interface FormOptions<Values = any> {
    * @param value 变化后的值
    * @param path 字段路径
    */
-  onValuesChange?: (opt: {
+  onValueChange?: (opt: {
     value: any
     path: string[]
   }) => void
