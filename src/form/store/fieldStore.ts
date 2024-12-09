@@ -1,9 +1,8 @@
 import { computed, shallowReactive, toRaw } from 'vue'
-import { get, isPlainObject, merge, set } from 'lodash-es'
+import { get, isNil, isPlainObject, merge, set } from 'lodash-es'
 import type { ArrayField, BaseField } from '../field'
 import { convertPatternToMatchFn, stringifyPath } from '../utils/path'
 import type { InternalPath, PathPattern } from '../path'
-import { omitNil as _omitNil } from '../../utils/omitNil'
 
 /**
  * 管理所有的字段
@@ -120,7 +119,9 @@ export class FieldStore {
     const val = isList ? get(values, stringPath.value) : value.value
     const transformedValue = toRaw(transform!(val, stringPath.value))
     if (!isPlainObject(transformedValue)) {
-      set(values, stringPath.value, transformedValue)
+      if (!this.omitNil || !isNil(transformedValue)) {
+        set(values, stringPath.value, transformedValue)
+      }
       return
     }
     if (!parent) {
@@ -149,11 +150,13 @@ export class FieldStore {
 
     this.idToFieldMap.forEach((field) => {
       const { isList, path, transform, value } = field
-      const val = value.value
       if (isList)
         return
+      const val = toRaw(value.value)
       if (!transform) {
-        set(res, path.value, toRaw(val))
+        if (!this.omitNil || !isNil(val)) {
+          set(res, path.value, toRaw(val))
+        }
         return
       }
       this.transform(field, res)
@@ -162,7 +165,7 @@ export class FieldStore {
     haveTransformListFields.forEach((field) => {
       this.transform(field, res)
     })
-    return this.omitNil ? _omitNil(res) : res
+    return res
   }
 }
 
