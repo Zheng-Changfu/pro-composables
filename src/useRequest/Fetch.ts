@@ -18,7 +18,7 @@ export class Fetch<Data, Params extends any[]> {
     this.state = reactive({
       data: undefined,
       error: undefined,
-      params: undefined,
+      params: [],
       loading: !options.manual,
       ...initState as any,
     })
