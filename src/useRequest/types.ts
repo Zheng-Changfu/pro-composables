@@ -54,9 +54,6 @@ export interface Options<Data, Params extends any[]> {
   // retry
   retryCount?: number
   retryInterval?: number
-
-  // ready
-  ready?: boolean
 }
 
 export interface Plugin<Data, Params extends any[]> {
@@ -90,8 +87,8 @@ export interface PluginReturn<Data, Params extends any[]> {
 }
 
 export interface Result<Data, Params extends any[]> {
-  data?: Ref<Data>
-  error?: Ref<Error>
+  data: Ref<Data>
+  error: Ref<Error>
   params: Ref<Params>
   loading: Ref<boolean>
   run: Fetch<Data, Params>['run']

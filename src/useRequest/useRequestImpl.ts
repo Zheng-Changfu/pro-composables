@@ -1,7 +1,8 @@
 import { isArray } from 'lodash-es'
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, toRefs } from 'vue'
 import { warnOnce } from '../utils/warn'
 import type { Options, Plugin, Result, Service } from './types'
+import { Fetch } from './Fetch'
 
 export function useRequestImpl<Data, Params extends any[]>(
   service: Service<Data, Params>,
@@ -9,7 +10,6 @@ export function useRequestImpl<Data, Params extends any[]>(
   plugins: Plugin<Data, Params>[] = [],
 ) {
   const {
-    ready = true,
     manual = false,
     ...rest
   } = options
@@ -22,7 +22,6 @@ export function useRequestImpl<Data, Params extends any[]>(
 
   const fetchOptions = {
     manual,
-    ready,
     ...rest,
   }
 
@@ -36,9 +35,9 @@ export function useRequestImpl<Data, Params extends any[]>(
   fetchInstance.pluginImpls = plugins.map(p => p(fetchInstance, fetchOptions))
 
   onMounted(() => {
-    if (!manual && ready) {
-      const params = options.defaultParams || []
-      fetchInstance.run(...params)
+    if (!manual) {
+      const params = options.defaultParams ?? []
+      fetchInstance.run(...params as Params)
     }
   })
 
@@ -46,16 +45,32 @@ export function useRequestImpl<Data, Params extends any[]>(
     fetchInstance.cancel()
   })
 
+  const {
+    data,
+    error,
+    params,
+    loading,
+  } = toRefs(fetchInstance.state)
+
+  const {
+    run,
+    mutate,
+    cancel,
+    refresh,
+    runAsync,
+    refreshAsync,
+  } = fetchInstance
+
   return {
-    data: fetchInstance.data,
-    error: fetchInstance.error,
-    params: fetchInstance.params,
-    loading: fetchInstance.loading,
-    run: fetchInstance.run.bind(fetchInstance),
-    cancel: fetchInstance.cancel.bind(fetchInstance),
-    mutate: fetchInstance.mutate.bind(fetchInstance),
-    refresh: fetchInstance.refresh.bind(fetchInstance),
-    runAsync: fetchInstance.runAsync.bind(fetchInstance),
-    refreshAsync: fetchInstance.refreshAsync.bind(fetchInstance),
+    data,
+    error,
+    params,
+    loading,
+    run,
+    cancel,
+    mutate,
+    refresh,
+    runAsync,
+    refreshAsync,
   } as Result<Data, Params>
 }

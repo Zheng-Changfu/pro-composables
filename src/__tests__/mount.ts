@@ -12,3 +12,16 @@ export function mount<V>(Comp: V) {
   comp.unmount = unmount
   return comp
 }
+
+export function setup(fn: () => void) {
+  const el = document.createElement('div')
+  const app = createApp({
+    setup: fn,
+    render() {
+      return null
+    },
+  })
+  const unmount = () => app.unmount()
+  app.mount(el)
+  return unmount
+}

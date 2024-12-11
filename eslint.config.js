@@ -6,6 +6,7 @@ export default antfu({
   rules: {
     'no-console': 'off',
     'no-cond-assign': 'off',
+    'ts/ban-ts-comment': 'off',
     'ts/no-unused-expressions': 'off',
     'node/prefer-global/process': 'off',
   },
