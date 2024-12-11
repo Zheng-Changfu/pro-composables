@@ -23,25 +23,35 @@ export const useRefreshOnWindowFocusPlugin: Plugin<any, any[]> = (
     }
   })
 
-  function focusHandler() {
-    if (!isDocumentVisible() || !isOnline())
-      return
-    const limitRefresh = limit(fetchInstance.refresh, options.value.focusTimespan)
-    limitRefresh()
-  }
-
   function stop() {
     cleanups.forEach(cleanup => cleanup())
     cleanups.length = 0
   }
 
+  function subscribeFocus(handler: AnyFn) {
+    const wrapHandler = () => {
+      if (!isDocumentVisible() || !isOnline())
+        return
+      handler()
+    }
+    cleanups.push(
+      useEventListener(window, 'focus', wrapHandler, false),
+      useEventListener(window, 'visibilitychange', wrapHandler, false),
+    )
+  }
+
   watch(options, () => {
     stop()
-    if (isBrowser && options.value.refreshOnWindowFocus) {
-      cleanups.push(
-        useEventListener(window, 'focus', focusHandler, false),
-        useEventListener(window, 'visibilitychange', focusHandler, false),
-      )
+    const {
+      focusTimespan,
+      refreshOnWindowFocus,
+    } = options.value
+
+    if (isBrowser && refreshOnWindowFocus) {
+      const limitRefresh = limit(fetchInstance.refresh, focusTimespan)
+      subscribeFocus(() => {
+        limitRefresh()
+      })
     }
   }, { immediate: true })
 
