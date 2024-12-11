@@ -1,7 +1,9 @@
-import type { MultiWatchSources, Ref } from 'vue'
+import type { MaybeRefOrGetter, MultiWatchSources, Ref, WatchSource } from 'vue'
 import type { Fetch } from './Fetch'
 
 export type Service<Data, Params extends any[]> = (...args: Params) => Promise<Data>
+
+type SingleWatchSource = WatchSource<unknown> | object
 
 export interface FetchState<Data, Params extends any[]> {
   loading: boolean
@@ -21,39 +23,35 @@ export interface Options<Data, Params extends any[]> {
   defaultParams?: Params
 
   // refreshDeps
-  refreshDeps?: MultiWatchSources
+  refreshDeps?: SingleWatchSource | MultiWatchSources
   refreshDepsAction?: () => void
 
   // loading delay
-  loadingDelay?: number
+  loadingDelay?: MaybeRefOrGetter<number>
 
   // polling
-  pollingInterval?: number
-  pollingWhenHidden?: boolean
-  pollingErrorRetryCount?: number
+  pollingInterval?: MaybeRefOrGetter<number>
+  pollingWhenHidden?: MaybeRefOrGetter<boolean>
+  pollingErrorRetryCount?: MaybeRefOrGetter<number>
 
   // refresh on window focus
-  refreshOnWindowFocus?: boolean
-  focusTimespan?: number
-
-  // refresh on document visibility
-  refreshOnDocumentVisibility?: boolean
-  visibilityTimespan?: number
+  refreshOnWindowFocus?: MaybeRefOrGetter<boolean>
+  focusTimespan?: MaybeRefOrGetter<number>
 
   // debounce
-  debounceWait?: number
-  debounceLeading?: boolean
-  debounceTrailing?: boolean
-  debounceMaxWait?: number
+  debounceWait?: MaybeRefOrGetter<number>
+  debounceLeading?: MaybeRefOrGetter<boolean>
+  debounceTrailing?: MaybeRefOrGetter<boolean>
+  debounceMaxWait?: MaybeRefOrGetter<number>
 
   // throttle
-  throttleWait?: number
-  throttleLeading?: boolean
-  throttleTrailing?: boolean
+  throttleWait?: MaybeRefOrGetter<number>
+  throttleLeading?: MaybeRefOrGetter<boolean>
+  throttleTrailing?: MaybeRefOrGetter<boolean>
 
   // retry
-  retryCount?: number
-  retryInterval?: number
+  retryCount?: MaybeRefOrGetter<number>
+  retryInterval?: MaybeRefOrGetter<number>
 }
 
 export interface Plugin<Data, Params extends any[]> {
