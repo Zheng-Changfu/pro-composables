@@ -1,4 +1,4 @@
-import isBrowser from '../../utils/isBrowser'
+import isBrowser from '../../../utils/isBrowser'
 
 export function isOnline() {
   if (isBrowser && typeof navigator.onLine !== 'undefined') {

@@ -4,7 +4,7 @@ import { useEventListener } from '@vueuse/core'
 import type { Plugin } from '../types'
 import { isDocumentVisible } from '../utils/isDocumentVisible'
 import { isOnline } from '../utils/isOnline'
-import isBrowser from '../../utils/isBrowser'
+import isBrowser from '../../../utils/isBrowser'
 import limit from '../utils/limit'
 
 export const useRefreshOnWindowFocusPlugin: Plugin<any, any[]> = (

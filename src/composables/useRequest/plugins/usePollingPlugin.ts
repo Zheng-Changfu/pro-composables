@@ -3,7 +3,7 @@ import type { AnyFn } from '@vueuse/core'
 import { useEventListener } from '@vueuse/core'
 import type { Plugin } from '../types'
 import { isDocumentVisible } from '../utils/isDocumentVisible'
-import isBrowser from '../../utils/isBrowser'
+import isBrowser from '../../../utils/isBrowser'
 
 export const usePollingPlugin: Plugin<any, any[]> = (
   fetchInstance,

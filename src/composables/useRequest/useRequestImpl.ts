@@ -1,6 +1,6 @@
 import { isArray } from 'lodash-es'
 import { onMounted, onUnmounted, toRefs } from 'vue'
-import { warnOnce } from '../utils/warn'
+import { warnOnce } from '../../utils/warn'
 import type { Options, Plugin, Result, Service } from './types'
 import { Fetch } from './Fetch'
 
