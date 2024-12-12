@@ -1,7 +1,8 @@
+import { computed } from 'vue'
 import { useRequest } from '../useRequest'
 import type { Data, PaginationOptions, PaginationResult, Params, Service } from './types'
 
-function usePagination<
+export function usePagination<
   TData extends Data,
   TParams extends Params,
 >(
@@ -15,30 +16,50 @@ function usePagination<
   } = options
 
   const result = useRequest(service, {
-    defaultParams: [1, 2, 3],
-    // defaultParams: [{ current: defaultCurrent, pageSize: defaultPageSize }] as Params,
+    defaultParams: [{ current: defaultCurrent, pageSize: defaultPageSize }] as any,
     refreshDepsAction: () => {
       changeCurrent(1)
     },
     ...rest,
   })
 
-  const { current = 1, pageSize = defaultPageSize } = result.params[0] || {}
+  const total = computed(() => {
+    return result.data.value?.total ?? 0
+  })
 
-  const total = result.data?.total || 0
-  const totalPage = useMemo(() => Math.ceil(total / pageSize), [pageSize, total])
+  const current = computed({
+    get() {
+      return (result.params.value[0] ?? {}).current ?? defaultCurrent
+    },
+    set(val) {
+      changeCurrent(val)
+    },
+  })
+
+  const pageSize = computed({
+    get() {
+      return (result.params.value[0] ?? {}).pageSize ?? defaultPageSize
+    },
+    set(val) {
+      changePageSize(val)
+    },
+  })
+
+  const totalPage = computed(() => {
+    const total = result.data.value?.total ?? 0
+    return Math.ceil(total / pageSize.value)
+  })
 
   function onChange(c: number, p: number) {
     let toCurrent = c <= 0 ? 1 : c
     const toPageSize = p <= 0 ? 1 : p
-    const tempTotalPage = Math.ceil(total / toPageSize)
+    const tempTotalPage = Math.ceil(total.value / toPageSize)
     if (toCurrent > tempTotalPage) {
       toCurrent = Math.max(1, tempTotalPage)
     }
 
-    const [oldPaginationParams = {}, ...restParams] = result.params || []
-
-    result.run(
+    const [oldPaginationParams = {}, ...restParams] = result.params.value ?? []
+    ;(result.run as any)(
       {
         ...oldPaginationParams,
         current: toCurrent,
@@ -49,11 +70,11 @@ function usePagination<
   }
 
   function changeCurrent(c: number) {
-    onChange(c, pageSize)
+    onChange(c, pageSize.value)
   }
 
   function changePageSize(p: number) {
-    onChange(current, p)
+    onChange(current.value, p)
   }
 
   return {
@@ -63,11 +84,9 @@ function usePagination<
       pageSize,
       total,
       totalPage,
-      onChange: useMemoizedFn(onChange),
-      changeCurrent: useMemoizedFn(changeCurrent),
-      changePageSize: useMemoizedFn(changePageSize),
+      onChange,
+      changeCurrent,
+      changePageSize,
     },
   } as PaginationResult<TData, TParams>
 }
-
-export default usePagination

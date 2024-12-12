@@ -1,147 +1,143 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
-import usePagination from '../';
-
-// 初始化
-// 基本 action
-// refreshDeps
-// cache
+import { describe, expect, it, vi } from 'vitest'
+import { nextTick, ref } from 'vue'
+import { setup } from '../../../__tests__/mount'
+import type { PaginationResult } from '../types'
+import { usePagination } from '../usePagination'
 
 describe('usePagination', () => {
-  let queryArgs;
-  const asyncFn = (query) => {
-    queryArgs = query;
+  let queryArgs: any
+  const asyncFn = (query: any) => {
+    queryArgs = query
     return Promise.resolve({
       current: query.current,
       total: 55,
       pageSize: query.pageSize,
       list: [],
-    });
-  };
+    })
+  }
 
-  const setUp = (service, options) => renderHook((o) => usePagination(service, o || options));
-
-  let hook;
+  let composable: PaginationResult<any, any>
 
   it('should fetch after first render', async () => {
-    queryArgs = undefined;
-    act(() => {
-      hook = setUp(asyncFn, {});
-    });
-    expect(hook.result.current.loading).toBe(true);
-    expect(queryArgs.current).toBe(1);
-    expect(queryArgs.pageSize).toBe(10);
-    await waitFor(() => expect(hook.result.current.loading).toBe(false));
+    queryArgs = undefined
+    const unmount = setup(() => {
+      composable = usePagination(asyncFn, {})
+    })
+    expect(composable.loading.value).toBe(true)
+    expect(queryArgs.current).toBe(1)
+    expect(queryArgs.pageSize).toBe(10)
+    await vi.waitFor(() => expect(composable.loading.value).toBe(false))
 
-    expect(hook.result.current.pagination.current).toBe(1);
-    expect(hook.result.current.pagination.pageSize).toBe(10);
-    expect(hook.result.current.pagination.total).toBe(55);
-    expect(hook.result.current.pagination.totalPage).toBe(6);
-  });
+    expect(composable.pagination.current.value).toBe(1)
+    expect(composable.pagination.pageSize.value).toBe(10)
+    expect(composable.pagination.total.value).toBe(55)
+    expect(composable.pagination.totalPage.value).toBe(6)
+    unmount()
+  })
 
   it('should action work', async () => {
-    queryArgs = undefined;
-    act(() => {
-      hook = setUp(asyncFn, {});
-    });
-    expect(hook.result.current.loading).toBe(true);
-    expect(queryArgs.current).toBe(1);
-    expect(queryArgs.pageSize).toBe(10);
-    await waitFor(() => expect(hook.result.current.loading).toBe(false));
+    queryArgs = undefined
+    const unmount = setup(() => {
+      composable = usePagination(asyncFn, {})
+    })
+    expect(composable.loading.value).toBe(true)
+    expect(queryArgs.current).toBe(1)
+    expect(queryArgs.pageSize).toBe(10)
+    await vi.waitFor(() => expect(composable.loading.value).toBe(false))
+    composable.pagination.changeCurrent(2)
+    expect(composable.loading.value).toBe(true)
+    expect(queryArgs.current).toBe(2)
+    expect(queryArgs.pageSize).toBe(10)
+    await vi.waitFor(() => expect(composable.pagination.current.value).toBe(2))
+    composable.pagination.changeCurrent(10)
+    expect(composable.loading.value).toBe(true)
+    expect(queryArgs.current).toBe(6)
+    expect(queryArgs.pageSize).toBe(10)
+    await vi.waitFor(() => expect(composable.pagination.current.value).toBe(6))
 
-    act(() => {
-      hook.result.current.pagination.changeCurrent(2);
-    });
-    expect(hook.result.current.loading).toBe(true);
-    expect(queryArgs.current).toBe(2);
-    expect(queryArgs.pageSize).toBe(10);
-    await waitFor(() => expect(hook.result.current.pagination.current).toBe(2));
+    composable.pagination.current.value = 2
+    expect(composable.loading.value).toBe(true)
+    expect(queryArgs.current).toBe(2)
+    expect(queryArgs.pageSize).toBe(10)
+    await vi.waitFor(() => expect(composable.pagination.current.value).toBe(2))
+    composable.pagination.current.value = 10
+    expect(composable.loading.value).toBe(true)
+    expect(queryArgs.current).toBe(6)
+    expect(queryArgs.pageSize).toBe(10)
+    await vi.waitFor(() => expect(composable.pagination.current.value).toBe(6))
 
-    act(() => {
-      hook.result.current.pagination.changeCurrent(10);
-    });
-    expect(hook.result.current.loading).toBe(true);
-    expect(queryArgs.current).toBe(6);
-    expect(queryArgs.pageSize).toBe(10);
-    await waitFor(() => expect(hook.result.current.pagination.current).toBe(6));
+    composable.pagination.changePageSize(20)
+    expect(composable.loading.value).toBe(true)
+    expect(queryArgs.current).toBe(3)
+    expect(queryArgs.pageSize).toBe(20)
+    await vi.waitFor(() => expect(composable.pagination.current.value).toBe(3))
+    expect(composable.pagination.pageSize.value).toBe(20)
+    expect(composable.pagination.totalPage.value).toBe(3)
 
-    act(() => {
-      hook.result.current.pagination.changePageSize(20);
-    });
-    expect(hook.result.current.loading).toBe(true);
-    expect(queryArgs.current).toBe(3);
-    expect(queryArgs.pageSize).toBe(20);
-    await waitFor(() => expect(hook.result.current.pagination.current).toBe(3));
-    expect(hook.result.current.pagination.pageSize).toBe(20);
-    expect(hook.result.current.pagination.totalPage).toBe(3);
+    composable.pagination.onChange(2, 10)
+    expect(composable.loading.value).toBe(true)
+    expect(queryArgs.current).toBe(2)
+    expect(queryArgs.pageSize).toBe(10)
+    await vi.waitFor(() => expect(composable.pagination.current.value).toBe(2))
+    expect(composable.pagination.pageSize.value).toBe(10)
+    expect(composable.pagination.totalPage.value).toBe(6)
 
-    act(() => {
-      hook.result.current.pagination.onChange(2, 10);
-    });
-    expect(hook.result.current.loading).toBe(true);
-    expect(queryArgs.current).toBe(2);
-    expect(queryArgs.pageSize).toBe(10);
-    await waitFor(() => expect(hook.result.current.pagination.current).toBe(2));
-    expect(hook.result.current.pagination.pageSize).toBe(10);
-    expect(hook.result.current.pagination.totalPage).toBe(6);
-  });
+    unmount()
+  })
 
   it('should refreshDeps work', async () => {
-    queryArgs = undefined;
-    let dep = 1;
-    act(() => {
-      hook = setUp(asyncFn, {
+    queryArgs = undefined
+    const dep = ref(1)
+
+    const unmount = setup(() => {
+      composable = usePagination(asyncFn, {
         refreshDeps: [dep],
-      });
-    });
-    expect(hook.result.current.loading).toBe(true);
-    expect(queryArgs.current).toBe(1);
-    expect(queryArgs.pageSize).toBe(10);
-    await waitFor(() => expect(hook.result.current.loading).toBe(false));
+      })
+    })
 
-    act(() => {
-      hook.result.current.pagination.onChange(3, 20);
-    });
-    expect(hook.result.current.loading).toBe(true);
-    await waitFor(() => expect(hook.result.current.pagination.current).toBe(3));
-    expect(hook.result.current.pagination.pageSize).toBe(20);
+    expect(composable.loading.value).toBe(true)
+    expect(queryArgs.current).toBe(1)
+    expect(queryArgs.pageSize).toBe(10)
+    await vi.waitFor(() => expect(composable.loading.value).toBe(false))
 
-    dep = 2;
-    hook.rerender({
-      refreshDeps: [dep],
-    });
+    composable.pagination.onChange(3, 20)
+    expect(composable.loading.value).toBe(true)
+    await vi.waitFor(() => expect(composable.pagination.current.value).toBe(3))
+    expect(composable.pagination.pageSize.value).toBe(20)
 
-    expect(hook.result.current.loading).toBe(true);
-    expect(queryArgs.current).toBe(1);
-    expect(queryArgs.pageSize).toBe(20);
-    await waitFor(() => expect(hook.result.current.pagination.current).toBe(1));
-    expect(hook.result.current.pagination.pageSize).toBe(20);
-  });
+    dep.value = 2
+    await nextTick()
+    expect(queryArgs.current).toBe(1)
+    expect(queryArgs.pageSize).toBe(20)
+    await vi.waitFor(() => expect(composable.pagination.current.value).toBe(1))
+    expect(composable.pagination.pageSize.value).toBe(20)
+    unmount()
+  })
 
   it('should default params work', async () => {
-    queryArgs = undefined;
-    act(() => {
-      hook = setUp(asyncFn, {
-        defaultPageSize: 5,
+    queryArgs = undefined
+    const unmount = setup(() => {
+      composable = usePagination(asyncFn, {
         defaultCurrent: 2,
-      });
-    });
-    expect(hook.result.current.loading).toBe(true);
-    expect(queryArgs.current).toBe(2);
-    expect(queryArgs.pageSize).toBe(5);
-    await waitFor(() => expect(hook.result.current.loading).toBe(false));
+        defaultPageSize: 5,
+      })
+    })
+    expect(composable.loading.value).toBe(true)
+    expect(queryArgs.current).toBe(2)
+    expect(queryArgs.pageSize).toBe(5)
+    await vi.waitFor(() => expect(composable.loading.value).toBe(false))
+    expect(composable.pagination.current.value).toBe(2)
+    expect(composable.pagination.pageSize.value).toBe(5)
+    expect(composable.pagination.total.value).toBe(55)
+    expect(composable.pagination.totalPage.value).toBe(11)
 
-    expect(hook.result.current.pagination.current).toBe(2);
-    expect(hook.result.current.pagination.pageSize).toBe(5);
-    expect(hook.result.current.pagination.total).toBe(55);
-    expect(hook.result.current.pagination.totalPage).toBe(11);
+    composable.pagination.changeCurrent(3)
+    expect(composable.loading.value).toBe(true)
+    expect(queryArgs.current).toBe(3)
+    expect(queryArgs.pageSize).toBe(5)
+    await vi.waitFor(() => expect(composable.pagination.current.value).toBe(3))
+    expect(composable.pagination.pageSize.value).toBe(5)
 
-    act(() => {
-      hook.result.current.pagination.changeCurrent(3);
-    });
-    expect(hook.result.current.loading).toBe(true);
-    expect(queryArgs.current).toBe(3);
-    expect(queryArgs.pageSize).toBe(5);
-    await waitFor(() => expect(hook.result.current.pagination.current).toBe(3));
-    expect(hook.result.current.pagination.pageSize).toBe(5);
-  });
-});
+    unmount()
+  })
+})

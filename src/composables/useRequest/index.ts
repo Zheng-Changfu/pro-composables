@@ -4,6 +4,7 @@
 export { useRequest } from './useRequest'
 
 export type {
+  Result as UseRequestReturn,
   Plugin as UseRequestPlugin,
   Options as UseRequestOptions,
   Service as UseRequestService,

@@ -1,8 +1,16 @@
+import type { ComputedRef, WritableComputedRef } from 'vue'
 import type { Options, Result } from '../useRequest/types'
 
 export interface Data { total: number, list: any[] }
 
-export type Params = [{ current: number, pageSize: number, [key: string]: any }, ...any[]]
+export type Params = [
+  {
+    current: number
+    pageSize: number
+    [key: string]: any
+  },
+  ...any[],
+]
 
 export type Service<TData extends Data, TParams extends Params> = (
   ...args: TParams
@@ -11,13 +19,13 @@ export type Service<TData extends Data, TParams extends Params> = (
 export interface PaginationResult<TData extends Data, TParams extends Params>
   extends Result<TData, TParams> {
   pagination: {
-    current: number
-    pageSize: number
-    total: number
-    totalPage: number
-    onChange: (current: number, pageSize: number) => void
+    total: ComputedRef<number>
+    totalPage: ComputedRef<number>
+    current: WritableComputedRef<number>
+    pageSize: WritableComputedRef<number>
     changeCurrent: (current: number) => void
     changePageSize: (pageSize: number) => void
+    onChange: (current: number, pageSize: number) => void
   }
 }
 
