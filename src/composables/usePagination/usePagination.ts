@@ -1,4 +1,5 @@
-import { computed } from 'vue'
+import { computed, onMounted, watch } from 'vue'
+import { isNil } from 'lodash-es'
 import { useRequest } from '../useRequest'
 import type { Data, PaginationOptions, PaginationResult, Params, Service } from './types'
 
@@ -10,17 +11,17 @@ export function usePagination<
   options: PaginationOptions<TData, TParams> = {},
 ) {
   const {
+    manual,
+    refreshDeps,
     defaultCurrent = 1,
     defaultPageSize = 10,
     ...rest
   } = options
 
   const result = useRequest(service, {
-    defaultParams: [{ current: defaultCurrent, pageSize: defaultPageSize }] as any,
-    refreshDepsAction: () => {
-      changeCurrent(1)
-    },
+    refreshDeps: [],
     ...rest,
+    manual: true,
   })
 
   const total = computed(() => {
@@ -59,7 +60,8 @@ export function usePagination<
     }
 
     const [oldPaginationParams = {}, ...restParams] = result.params.value ?? []
-    ;(result.run as any)(
+    result.run(
+      // @ts-ignore
       {
         ...oldPaginationParams,
         current: toCurrent,
@@ -76,6 +78,34 @@ export function usePagination<
   function changePageSize(p: number) {
     onChange(current.value, p)
   }
+
+  if (!isNil(refreshDeps)) {
+    watch(refreshDeps, () => {
+      if (!manual) {
+        options.refreshDepsAction
+          ? options.refreshDepsAction()
+          : changeCurrent(1)
+      }
+    })
+  }
+
+  onMounted(() => {
+    if (!manual) {
+      /**
+       * 第一次请求不修正参数
+       */
+      const [oldPaginationParams = {}, ...restParams] = result.params.value ?? []
+      result.run(
+      // @ts-ignore
+        {
+          ...oldPaginationParams,
+          current: current.value,
+          pageSize: pageSize.value,
+        },
+        ...restParams,
+      )
+    }
+  })
 
   return {
     ...result,

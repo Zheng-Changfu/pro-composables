@@ -20,8 +20,6 @@ export interface Options<Data, Params extends any[]> {
   onError?: (e: Error, params: Params) => void
   onFinally?: (params: Params, data?: Data, e?: Error) => void
 
-  defaultParams?: Params
-
   // refreshDeps
   refreshDeps?: SingleWatchSource | MultiWatchSources
   refreshDepsAction?: () => void

@@ -1,6 +1,4 @@
-import { isArray } from 'lodash-es'
 import { onMounted, onUnmounted, toRefs } from 'vue'
-import { warnOnce } from '../../utils/warn'
 import type { Options, Plugin, Result, Service } from './types'
 import { Fetch } from './Fetch'
 
@@ -13,12 +11,6 @@ export function useRequestImpl<Data, Params extends any[]>(
     manual = false,
     ...rest
   } = options
-
-  if (process.env.NODE_ENV !== 'production') {
-    if (options.defaultParams && !isArray(options.defaultParams)) {
-      warnOnce(`expected defaultParams is array, got ${typeof options.defaultParams}`)
-    }
-  }
 
   const fetchOptions = {
     manual,
@@ -36,8 +28,8 @@ export function useRequestImpl<Data, Params extends any[]>(
 
   onMounted(() => {
     if (!manual) {
-      const params = options.defaultParams ?? []
-      fetchInstance.run(...params as Params)
+      // @ts-ignore
+      fetchInstance.run()
     }
   })
 

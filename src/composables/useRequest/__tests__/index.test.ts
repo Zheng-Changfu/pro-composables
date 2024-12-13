@@ -164,18 +164,4 @@ describe('useRequest', () => {
     expect(composable.data.value).toBe('hello')
     unmount()
   })
-
-  it('useRequest defaultParams should work', async () => {
-    const unmount = setup(() => {
-      composable = useRequest(request, {
-        defaultParams: [1, 2, 3] as any,
-      })
-    })
-    expect(composable.loading.value).toBe(true)
-    vi.runAllTimers()
-    expect(composable.params.value).toEqual([1, 2, 3])
-    await vi.waitFor(() => expect(composable.data.value).toBe('success'))
-    expect(composable.loading.value).toBe(false)
-    unmount()
-  })
 })
