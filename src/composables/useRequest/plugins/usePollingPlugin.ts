@@ -1,6 +1,6 @@
-import { computed, onScopeDispose, ref, toValue } from 'vue'
+import { computed, onScopeDispose, ref } from 'vue'
 import type { AnyFn } from '@vueuse/core'
-import { useEventListener } from '@vueuse/core'
+import { toValue, useEventListener } from '@vueuse/core'
 import type { Plugin } from '../types'
 import { isDocumentVisible } from '../utils/isDocumentVisible'
 import isBrowser from '../../../utils/isBrowser'

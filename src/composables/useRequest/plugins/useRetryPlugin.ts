@@ -1,4 +1,5 @@
-import { computed, onScopeDispose, ref, toValue } from 'vue'
+import { computed, onScopeDispose, ref } from 'vue'
+import { toValue } from '@vueuse/core'
 import type { Plugin } from '../types'
 
 export const useRetryPlugin: Plugin<any, any[]> = (

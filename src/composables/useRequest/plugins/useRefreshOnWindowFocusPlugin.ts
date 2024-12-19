@@ -1,6 +1,6 @@
-import { computed, toValue, watch } from 'vue'
+import { computed, watch } from 'vue'
 import type { AnyFn } from '@vueuse/core'
-import { useEventListener } from '@vueuse/core'
+import { toValue, useEventListener } from '@vueuse/core'
 import type { Plugin } from '../types'
 import { isDocumentVisible } from '../utils/isDocumentVisible'
 import { isOnline } from '../utils/isOnline'

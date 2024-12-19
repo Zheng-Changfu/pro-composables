@@ -1,6 +1,7 @@
-import { computed, onScopeDispose, toValue, watch } from 'vue'
+import { computed, onScopeDispose, watch } from 'vue'
 import type { DebounceSettings, DebouncedFunc } from 'lodash-es'
 import { throttle } from 'lodash-es'
+import { toValue } from '@vueuse/core'
 import type { AnyFn } from '@vueuse/core'
 import type { Plugin } from '../types'
 

@@ -1,4 +1,5 @@
-import { onScopeDispose, toValue } from 'vue'
+import { onScopeDispose } from 'vue'
+import { toValue } from '@vueuse/core'
 import type { Plugin } from '../types'
 
 export const useLoadingDelayPlugin: Plugin<any, any[]> = (

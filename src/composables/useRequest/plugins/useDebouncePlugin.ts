@@ -1,7 +1,8 @@
-import { computed, onScopeDispose, toValue, watch } from 'vue'
+import { computed, onScopeDispose, watch } from 'vue'
 import type { DebounceSettings, DebouncedFunc } from 'lodash-es'
 import { debounce } from 'lodash-es'
 import type { AnyFn } from '@vueuse/core'
+import { toValue } from '@vueuse/core'
 import type { Plugin } from '../types'
 
 export const useDebouncePlugin: Plugin<any, any[]> = (
