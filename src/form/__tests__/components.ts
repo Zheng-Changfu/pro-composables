@@ -1,6 +1,6 @@
 import { computed, defineComponent, h, onMounted, toRef } from 'vue'
 import { ROW_UUID, createArrayField, createField, useInjectField, useInjectListField } from '../field'
-import { providePath, providePathIndex } from '../path'
+import { providePathIndex } from '../path'
 import { provideInternalForm } from '../context'
 
 export const Form = defineComponent({
@@ -60,15 +60,6 @@ export const FormListItem = defineComponent({
     'index',
   ],
   setup(props, { slots }) {
-    const parent = useInjectListField()!
-    const path = computed(() => {
-      const { index } = props
-      return [
-        ...parent.path.value,
-        index,
-      ]
-    })
-    providePath(path)
     providePathIndex(toRef(props, 'index'))
 
     return () => {
