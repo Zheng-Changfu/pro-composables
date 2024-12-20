@@ -1,5 +1,5 @@
-import { computed, defineComponent, h, onMounted, toRef } from 'vue'
-import { ROW_UUID, createArrayField, createField, useInjectField, useInjectListField } from '../field'
+import { defineComponent, h, onMounted, toRef } from 'vue'
+import { ROW_UUID, createArrayField, createField, useInjectField } from '../field'
 import { providePathIndex } from '../path'
 import { provideInternalForm } from '../context'
 
