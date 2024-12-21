@@ -13,7 +13,6 @@ import {
 import { useInjectInternalForm } from '../context'
 import type { InternalPath } from '../path'
 import { isInternalPath, stringifyPath } from '../utils/path'
-import { provideListField } from './context'
 import { createField } from './createField'
 import type { ArrayField, FieldOptions } from './types'
 
@@ -102,6 +101,5 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
     unshift,
     moveDown,
   })
-  provideListField(arrayField)
   return arrayField
 }

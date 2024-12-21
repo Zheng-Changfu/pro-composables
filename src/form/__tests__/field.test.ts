@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, onMounted, ref } from 'vue'
+import { cloneDeep } from 'lodash-es'
 import { mount } from '../../__tests__/mount'
 import type { BaseField } from '../field'
 import { createForm } from '../form'
-import { Form, FormItem, FormList } from './components'
+import { Form, FormItem } from './components'
 
 describe('baseField', () => {
   it('priority: initialValue > initialValues', async () => {
@@ -68,75 +69,75 @@ describe('baseField', () => {
     vm.unmount()
   })
 
-  it('path', async () => {
-    const vals: any[] = []
-    const Comp = defineComponent({
-      setup() {
-        const pathRef = ref('a')
-        const form = createForm()
-        onMounted(async () => {
-          pathRef.value = 'aa'
-          await nextTick()
-          vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
-          )
-        })
-        return () => {
-          return h(Form, { form }, {
-            default: () => [
-              h(FormItem, { path: pathRef.value, value: 3 }),
-            ],
-          })
-        }
-      },
-    })
+  // it('path', async () => {
+  //   const vals: any[] = []
+  //   const Comp = defineComponent({
+  //     setup() {
+  //       const pathRef = ref('a')
+  //       const form = createForm()
+  //       onMounted(async () => {
+  //         pathRef.value = 'aa'
+  //         await nextTick()
+  //         vals.push(
+  //           form.getFieldsValue(),
+  //           form.getFieldsValue(true),
+  //         )
+  //       })
+  //       return () => {
+  //         return h(Form, { form }, {
+  //           default: () => [
+  //             h(FormItem, { path: pathRef.value, value: 3 }),
+  //           ],
+  //         })
+  //       }
+  //     },
+  //   })
 
-    const vm = mount(Comp)
-    await nextTick()
-    expect(vals[0]).toStrictEqual({ aa: 3 })
-    expect(vals[1]).toStrictEqual({ aa: 3 })
-    vm.unmount()
-  })
+  //   const vm = mount(Comp)
+  //   await nextTick()
+  //   expect(vals[0]).toStrictEqual({ aa: 3 })
+  //   expect(vals[1]).toStrictEqual({ aa: 3 })
+  //   vm.unmount()
+  // })
 
-  it('path with formList', async () => {
-    const vals: any[] = []
-    const Comp = defineComponent({
-      setup() {
-        const pathRef = ref('a')
-        const form = createForm({
-          initialValues: {
-            list: [
-              { a: 3 },
-            ],
-          },
-        })
-        onMounted(async () => {
-          pathRef.value = 'aa'
-          await nextTick()
-          vals.push(
-            form.getFieldsValue(),
-          )
-        })
-        return () => {
-          return h(Form, { form }, {
-            default: () => [
-              h(FormList, { path: 'list' }, {
-                default: () => [
-                  h(FormItem, { path: pathRef.value }),
-                ],
-              }),
-            ],
-          })
-        }
-      },
-    })
+  // it('path with formList', async () => {
+  //   const vals: any[] = []
+  //   const Comp = defineComponent({
+  //     setup() {
+  //       const pathRef = ref('a')
+  //       const form = createForm({
+  //         initialValues: {
+  //           list: [
+  //             { a: 3 },
+  //           ],
+  //         },
+  //       })
+  //       onMounted(async () => {
+  //         pathRef.value = 'aa'
+  //         await nextTick()
+  //         vals.push(
+  //           form.getFieldsValue(),
+  //         )
+  //       })
+  //       return () => {
+  //         return h(Form, { form }, {
+  //           default: () => [
+  //             h(FormList, { path: 'list' }, {
+  //               default: () => [
+  //                 h(FormItem, { path: pathRef.value }),
+  //               ],
+  //             }),
+  //           ],
+  //         })
+  //       }
+  //     },
+  //   })
 
-    const vm = mount(Comp)
-    await nextTick()
-    expect(vals[0]).toMatchObject({ list: [{ aa: 3 }] })
-    vm.unmount()
-  })
+  //   const vm = mount(Comp)
+  //   await nextTick()
+  //   expect(vals[0]).toMatchObject({ list: [{ aa: 3 }] })
+  //   vm.unmount()
+  // })
 
   it('visible-directive-v-show', async () => {
     const vals: any[] = []
@@ -394,6 +395,55 @@ describe('baseField', () => {
     await nextTick()
     expect(vals[2]).toStrictEqual({ a: 456 })
     expect(vals[3]).toStrictEqual({ a: 456 })
+    vm.unmount()
+  })
+
+  it('preserve with manual list', async () => {
+    const vals: any[] = []
+    const Comp = defineComponent({
+      setup() {
+        const form = createForm()
+
+        onMounted(async () => {
+          form.setFieldValue('list', [
+            { a: 1 },
+            { a: 2 },
+            { a: 3 },
+          ])
+          await nextTick()
+          vals.push(
+            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.getFieldsValue()),
+          )
+          form.setFieldValue('list', [
+            { a: 1 },
+            { a: 3 },
+          ])
+          await nextTick()
+          vals.push(
+            cloneDeep(form.getFieldsValue()),
+            cloneDeep(form.getFieldsValue(true)),
+          )
+        })
+
+        return () => {
+          const list = form.getFieldValue('list') ?? []
+          return h(Form, { form }, {
+            default: () => list.map((item: any, index: number) => {
+              return h(FormItem, { key: item.a, preserve: false, path: `list.${index}.a`, value: item.a })
+            }),
+          })
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    await nextTick()
+    expect(vals[0]).toStrictEqual({ list: [{ a: 1 }, { a: 2 }, { a: 3 }] })
+    expect(vals[1]).toStrictEqual({ list: [{ a: 1 }, { a: 2 }, { a: 3 }] })
+    await nextTick()
+    expect(vals[2]).toStrictEqual({ list: [{ a: 1 }, { a: 3 }] })
+    expect(vals[3]).toStrictEqual({ list: [{ a: 1 }, { a: 3 }] })
     vm.unmount()
   })
 })

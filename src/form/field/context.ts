@@ -2,20 +2,13 @@ import type { InjectionKey } from 'vue'
 import { inject, provide } from 'vue'
 import type { ArrayField, BaseField } from './types'
 
-export const listFieldContextKey = Symbol('listField') as InjectionKey<ArrayField>
-export function provideListField(field: ArrayField) {
-  provide(listFieldContextKey, field)
-}
-
-export function useInjectListField() {
-  return inject(listFieldContextKey, null)
-}
-
-export const fieldContextKey = Symbol('field') as InjectionKey<BaseField>
+export const fieldContextKey = Symbol('field') as InjectionKey<BaseField | ArrayField>
 export function provideField(field: BaseField) {
   provide(fieldContextKey, field)
 }
 
-export function useInjectField() {
+export function useInjectField(): BaseField | null
+export function useInjectField(isArrayField: true): ArrayField | null
+export function useInjectField(_?: boolean) {
   return inject(fieldContextKey, null)
 }

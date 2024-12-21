@@ -99,10 +99,8 @@ export const FormList = defineComponent({
 
     return () => {
       const list = field.value.value ?? []
-      return h(FormItem, {}, {
-        default: () => list.map((_, index) => {
-          return h(FormListItem, { key: _[ROW_UUID], index }, slots)
-        }),
+      return list.map((_, index) => {
+        return h(FormListItem, { key: _[ROW_UUID], index }, slots)
       })
     }
   },

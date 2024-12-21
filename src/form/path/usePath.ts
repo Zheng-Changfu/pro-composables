@@ -1,15 +1,14 @@
 import type { Ref } from 'vue'
-import { computed, nextTick, shallowRef, unref, watch } from 'vue'
+import { computed, unref } from 'vue'
 import { toPath } from 'lodash-es'
 import { stringifyPath } from '../utils/path'
-import { useInjectListField } from '../field'
+import { useInjectField } from '../field/context'
 import type { InternalPath } from './types'
 import { useInjectPathIndex } from './context'
 
 export function usePath(path?: Ref<InternalPath | undefined>) {
   const index = useInjectPathIndex()
-  const parent = useInjectListField()
-  const indexUpdatingRef = shallowRef(false) // 索引是否在更新
+  const parent = useInjectField(true)
 
   const indexRef = computed(() => {
     return unref(index)
@@ -32,21 +31,9 @@ export function usePath(path?: Ref<InternalPath | undefined>) {
     return []
   })
 
-  watch(
-    indexRef,
-    () => {
-      indexUpdatingRef.value = true
-      nextTick(() => {
-        indexUpdatingRef.value = false
-      })
-    },
-    { flush: 'sync' },
-  )
-
   return {
     path: pathRef,
     index: indexRef,
-    indexUpdating: indexUpdatingRef,
     stringPath: computed(() => stringifyPath(pathRef.value)),
   }
 }

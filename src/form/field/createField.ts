@@ -6,7 +6,7 @@ import { useInjectInternalForm } from '../context'
 import type { BaseForm } from '../types'
 import { warnOnce } from '../../utils/warn'
 import type { BaseField, FieldOptions } from './types'
-import { provideField, useInjectListField } from './context'
+import { provideField, useInjectField } from './context'
 import { useShow } from './useShow'
 import { useValue } from './useValue'
 
@@ -37,14 +37,13 @@ export function createField<T = any>(
   } = fieldOptions
 
   const id = uid()
-  const parent = useInjectListField()
+  const parent = useInjectField(true)
   const form = useInjectInternalForm()
 
   const {
     path,
     index,
     stringPath,
-    indexUpdating,
   } = usePath(propPath)
 
   const { show } = useShow(
@@ -86,18 +85,11 @@ export function createField<T = any>(
 
   if (form) {
     watch(
-      path,
-      (newPath, oldPath) => {
-        moveValue(form, newPath, oldPath, indexUpdating.value)
-      },
-    )
-
-    watch(
       show,
       (visible) => {
         visible
           ? mountFieldValue(form, field)
-          : unmountFieldValue(form, field, indexUpdating.value)
+          : unmountFieldValue(form, field)
       },
     )
 
@@ -111,16 +103,13 @@ export function createField<T = any>(
 
     form.depStore.add(field)
     mountFieldValue(form, field)
-    onUnmounted(() => unmountFieldValue(form, field, indexUpdating.value))
+    onUnmounted(() => unmountFieldValue(form, field))
   }
   provideField(field)
   return field
 }
 
-function mountFieldValue(
-  form: BaseForm,
-  field: BaseField,
-) {
+function mountFieldValue(form: BaseForm, field: BaseField) {
   const {
     show,
     meta,
@@ -157,28 +146,12 @@ function mountFieldValue(
     form.valueStore.setInitialValue(p, val)
 }
 
-function unmountFieldValue(
-  form: BaseForm,
-  field: BaseField,
-  indexUpdating: boolean,
-) {
+function unmountFieldValue(form: BaseForm, field: BaseField) {
+  if (!field.preserve) {
+    const oldField = form.fieldStore.getFieldByPath(field.path.value)
+    if (oldField?.id === field.id) {
+      form.valueStore.delete(field.path.value)
+    }
+  }
   form.fieldStore.unmountField(field)
-  if (!indexUpdating && !field.preserve) {
-    form.valueStore.delete(field.path.value)
-  }
-}
-
-function moveValue(
-  form: BaseForm,
-  newPath: string[],
-  oldPath: string[],
-  indexUpdating: boolean,
-) {
-  if (indexUpdating) {
-    // 数组更新引起的索引变更，不需要处理
-    return
-  }
-  const oldValue = form.valueStore.getFieldValue(oldPath)
-  form.valueStore.delete(oldPath)
-  form.valueStore.setFieldValue(newPath, oldValue)
 }
