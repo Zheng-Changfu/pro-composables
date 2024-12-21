@@ -1,5 +1,11 @@
 # pro-composables
 
+## 1.4.0
+
+### Minor Changes
+
+- v1.4.0
+
 ## 1.3.6
 
 ### Patch Changes
