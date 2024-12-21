@@ -1,6 +1,6 @@
 import { defineComponent, h, onMounted, toRef } from 'vue'
 import { ROW_UUID, createArrayField, createField, useInjectField } from '../field'
-import { providePathIndex } from '../path'
+import { provideFieldIndex } from '../path'
 import { provideInternalForm } from '../context'
 
 export const Form = defineComponent({
@@ -60,7 +60,7 @@ export const FormListItem = defineComponent({
     'index',
   ],
   setup(props, { slots }) {
-    providePathIndex(toRef(props, 'index'))
+    provideFieldIndex(toRef(props, 'index'))
 
     return () => {
       return slots.default?.(props.index)

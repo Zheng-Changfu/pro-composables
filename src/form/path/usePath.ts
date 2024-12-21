@@ -4,10 +4,10 @@ import { toPath } from 'lodash-es'
 import { stringifyPath } from '../utils/path'
 import { useInjectField } from '../field/context'
 import type { InternalPath } from './types'
-import { useInjectPathIndex } from './context'
+import { useInjectFieldIndex } from './context'
 
 export function usePath(path?: Ref<InternalPath | undefined>) {
-  const index = useInjectPathIndex()
+  const index = useInjectFieldIndex()
   const parent = useInjectField(true)
 
   const indexRef = computed(() => {
