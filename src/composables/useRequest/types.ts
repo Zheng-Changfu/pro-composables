@@ -1,9 +1,10 @@
-import type { MaybeRefOrGetter, MultiWatchSources, Ref, WatchSource } from 'vue'
+import type { MaybeRefOrGetter, Ref, WatchSource } from 'vue'
 import type { Fetch } from './Fetch'
 
 export type Service<Data, Params extends any[]> = (...args: Params) => Promise<Data>
 
 type SingleWatchSource = WatchSource<unknown> | object
+type MultiWatchSources = (WatchSource<unknown> | object)[]
 
 export interface FetchState<Data, Params extends any[]> {
   loading: boolean

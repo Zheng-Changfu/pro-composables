@@ -5,53 +5,58 @@
   "description": "方便搭建业务组件库的一些 hooks，代码都不难，懒得写文档，估计也没人看",
   "author": "zhengchangfu",
   "license": "MIT",
+  "homepage": "https://naive-ui.pro-components.cn/zh-CN/os-theme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zheng-Changfu/pro-composables"
+  },
   "sideEffects": false,
   "publishConfig": {
     "access": "public"
   },
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "types": "./es/index.d.ts",
+      "import": "./es/index.js",
+      "require": "./lib/index.js"
     }
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./lib/index.js",
+  "module": "./es/index.js",
+  "types": "./es/index.d.ts",
   "files": [
-    "dist"
+    "es",
+    "lib"
   ],
   "scripts": {
     "test": "vitest run",
-    "build": "vite build",
+    "build": "pnpm build:es && pnpm build:lib",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
-    "lint:fix": "eslint . --fix",
+    "lint:fix": "eslint --fix src/**/*.ts",
+    "build:es": "vite build --config vite.es.config.ts",
+    "build:lib": "vite build --config vite.lib.config.ts",
     "release": "pnpm lint:fix && pnpm test && pnpm build && pnpm changeset && pnpm changeset:version && pnpm changeset:publish"
   },
-  "peerDependencies": {
-    "type-fest": ">=4.0.0",
-    "vue": ">=3.0.0"
-  },
   "dependencies": {
-    "@vueuse/core": "^10.9.0"
+    "@types/lodash-es": "^4.17.12",
+    "@vueuse/core": "^11.3.0",
+    "lodash-es": "^4.17.21",
+    "type-fest": "^4.30.2",
+    "vue": "3.4.27"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.18.0",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.1",
-    "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.12.11",
     "eslint": "^8.57.0",
     "esno": "^4.7.0",
     "jsdom": "^24.0.0",
-    "lodash-es": "^4.17.21",
-    "type-fest": "^4.26.1",
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
     "vite-plugin-dts": "^4.3.0",
-    "vitest": "^1.6.0",
-    "vue": "^3.4.27"
+    "vitest": "^1.6.0"
   }
 }
