@@ -44,6 +44,7 @@ export function createField<T = any>(
     path,
     index,
     stringPath,
+    analysisPath,
   } = usePath(propPath)
 
   const { show } = useShow(
@@ -74,6 +75,7 @@ export function createField<T = any>(
     onChange,
     postValue,
     transform,
+    analysisPath,
     doUpdateValue,
     ...customValues,
   }

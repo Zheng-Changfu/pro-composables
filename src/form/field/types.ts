@@ -133,6 +133,17 @@ export interface BaseField<T = any> {
    * 值变化后的回调(手动交互导致值的改变)
    */
   onChange?: (val: T) => void
+
+  analysisPath: () => ({
+    /**
+     * 'list.0.a.1.b' => 1
+     */
+    index: number
+    /**
+     * 'list.0.a.1.b' => ['list','0','a']
+     */
+    parentPath: string[]
+  })
   /**
    * 是否正在手动交互状态中
    * @default false

@@ -1,4 +1,4 @@
-import { cloneDeep, get, has, isPlainObject, set, unset } from 'lodash-es'
+import { cloneDeep, get, has, isArray, isPlainObject, set, unset } from 'lodash-es'
 import type { Ref } from 'vue'
 import { ref } from 'vue'
 import { useMounted } from '@vueuse/core'
@@ -103,10 +103,14 @@ export class ValueStore {
           }
         }
         else {
-          if (field.parent) {
-            const listPath = field.parent.stringPath.value
-            const listValue = get(clonedVals, listPath, [])
-            if (field.index.value > listValue.length - 1) {
+          const {
+            index,
+            parentPath,
+          } = field.analysisPath()
+
+          if (index !== -1 && parentPath.length > 0) {
+            const listValue = get(clonedVals, parentPath, [])
+            if (isArray(listValue) && index > listValue.length - 1) {
               return
             }
           }

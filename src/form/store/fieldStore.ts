@@ -1,5 +1,5 @@
 import { computed, shallowReactive, toRaw } from 'vue'
-import { get, isNil, isPlainObject, merge, set } from 'lodash-es'
+import { get, isArray, isNil, isPlainObject, merge, set } from 'lodash-es'
 import type { ArrayField, BaseField } from '../field'
 import { convertPatternToMatchFn, stringifyPath } from '../utils/path'
 import type { InternalPath, PathPattern } from '../path'
@@ -104,12 +104,11 @@ export class FieldStore {
 
   private transform = (field: BaseField, values: Record<string, any>) => {
     const {
-      index,
       value,
-      parent,
       isList,
       stringPath,
       transform,
+      analysisPath,
     } = field
     /**
      * transform:
@@ -122,15 +121,20 @@ export class FieldStore {
       if (!this.omitNil || !isNil(transformedValue)) {
         set(values, stringPath.value, transformedValue)
       }
-      return
     }
-    if (!parent) {
+    else {
+      const { index, parentPath } = analysisPath()
+      if (index !== -1 && parentPath.length > 0) {
+        const listValue = get(values, parentPath, [])
+        if (isArray(listValue)) {
+          const currentLevelPath = [...parentPath, index]
+          const beMergeObj = get(values, currentLevelPath)
+          merge(beMergeObj, transformedValue)
+          return
+        }
+      }
       merge(values, transformedValue)
-      return
     }
-    const currentLevelPath = [...parent.path.value, index.value]
-    const beMergeObj = get(values, currentLevelPath)
-    merge(beMergeObj, transformedValue)
   }
 
   getFieldsTransformedValue = () => {
