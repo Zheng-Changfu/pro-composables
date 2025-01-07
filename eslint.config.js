@@ -11,5 +11,6 @@ export default antfu({
     'unicorn/no-new-array': 'off',
     'ts/no-unused-expressions': 'off',
     'node/prefer-global/process': 'off',
+    'ts/explicit-function-return-type': 'off',
   },
 })
