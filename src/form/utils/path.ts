@@ -1,5 +1,5 @@
-import { isArray, isRegExp, isString, toPath } from 'lodash-es'
 import type { InternalPath, PathPattern } from '../path'
+import { isArray, isRegExp, isString, toPath } from 'lodash-es'
 
 export function stringifyPath(path: InternalPath) {
   return path ? toPath(path).join('.') : ''

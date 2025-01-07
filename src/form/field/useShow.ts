@@ -1,6 +1,6 @@
+import type { FieldOptions } from './types'
 import { isBoolean } from 'lodash-es'
 import { computed, unref } from 'vue'
-import type { FieldOptions } from './types'
 
 export function useShow(
   propHidden: FieldOptions['hidden'],

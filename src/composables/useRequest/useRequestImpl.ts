@@ -1,5 +1,5 @@
-import { onMounted, onUnmounted, toRefs } from 'vue'
 import type { Options, Plugin, Result, Service } from './types'
+import { onMounted, onUnmounted, toRefs } from 'vue'
 import { Fetch } from './Fetch'
 
 export function useRequestImpl<Data, Params extends any[]>(

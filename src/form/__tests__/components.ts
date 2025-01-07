@@ -1,6 +1,6 @@
 import { defineComponent, h, onMounted, toRef } from 'vue'
 import { provideInternalForm } from '../context'
-import { ROW_UUID, createArrayField, createField, useInjectField } from '../field'
+import { createArrayField, createField, ROW_UUID, useInjectField } from '../field'
 import { provideFieldIndex } from '../path'
 
 export const Form = defineComponent({

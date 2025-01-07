@@ -1,9 +1,9 @@
-import { isArray } from 'lodash-es'
-import { nextTick, onScopeDispose } from 'vue'
 import type { BaseField } from '../field'
 import type { PathPattern } from '../path'
-import { convertPatternToMatchFn } from '../utils/path'
 import type { FieldStore } from './fieldStore'
+import { isArray } from 'lodash-es'
+import { nextTick, onScopeDispose } from 'vue'
+import { convertPatternToMatchFn } from '../utils/path'
 
 export type Dependencie = PathPattern
 

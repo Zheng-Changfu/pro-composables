@@ -34,7 +34,7 @@
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
-    "lint:fix": "eslint --fix .",
+    "lint:fix": "eslint . --fix",
     "build:es": "vite build --config vite.es.config.ts",
     "build:lib": "vite build --config vite.lib.config.ts",
     "release": "pnpm lint:fix && pnpm test && pnpm build && pnpm changeset && pnpm changeset:version && pnpm changeset:publish"

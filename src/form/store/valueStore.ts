@@ -1,13 +1,13 @@
 import type { Ref } from 'vue'
+import type { BaseField } from '../field'
+import type { InternalPath, PathPattern } from '../path'
+import type { ValueMergeStrategy } from '../utils/value'
+import type { FieldStore } from './fieldStore'
 import { useMounted } from '@vueuse/core'
 import { cloneDeep, get, has, isArray, isPlainObject, set, unset } from 'lodash-es'
 import { ref } from 'vue'
-import type { ValueMergeStrategy } from '../utils/value'
-import type { InternalPath, PathPattern } from '../path'
-import type { BaseField } from '../field'
 import { isIndexPath, stringifyPath } from '../utils/path'
 import { mergeByStrategy } from '../utils/value'
-import type { FieldStore } from './fieldStore'
 
 interface ValueStoreOptions {
   initialValues: any

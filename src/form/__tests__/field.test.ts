@@ -1,7 +1,7 @@
+import type { BaseField } from '../field'
 import { cloneDeep } from 'lodash-es'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, onMounted, ref } from 'vue'
-import type { BaseField } from '../field'
 import { mount } from '../../__tests__/mount'
 import { createForm } from '../form'
 import { Form, FormItem } from './components'

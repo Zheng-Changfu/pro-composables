@@ -1,9 +1,9 @@
 import type { Ref } from 'vue'
+import type { InternalPath } from './types'
 import { toPath } from 'lodash-es'
 import { computed, unref } from 'vue'
 import { useInjectField } from '../field/context'
 import { stringifyPath } from '../utils/path'
-import type { InternalPath } from './types'
 import { useInjectFieldIndex } from './context'
 
 export function usePath(path?: Ref<InternalPath | undefined>) {

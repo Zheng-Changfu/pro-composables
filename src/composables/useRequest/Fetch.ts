@@ -1,6 +1,6 @@
+import type { FetchState, Options, PluginReturn, Service } from './types'
 import { isFunction } from 'lodash-es'
 import { reactive } from 'vue'
-import type { FetchState, Options, PluginReturn, Service } from './types'
 
 export class Fetch<Data, Params extends any[]> {
   public count: number = 0

@@ -1,7 +1,7 @@
-import { get, isArray, isNil, isPlainObject, merge, set } from 'lodash-es'
-import { computed, shallowReactive, toRaw } from 'vue'
 import type { ArrayField, BaseField } from '../field'
 import type { InternalPath, PathPattern } from '../path'
+import { get, isArray, isNil, isPlainObject, merge, set } from 'lodash-es'
+import { computed, shallowReactive, toRaw } from 'vue'
 import { convertPatternToMatchFn, stringifyPath } from '../utils/path'
 
 /**

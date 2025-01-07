@@ -1,6 +1,6 @@
+import type { BaseField } from '../field'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, onMounted } from 'vue'
-import type { BaseField } from '../field'
 import { mount } from '../../__tests__/mount'
 import { createForm } from '../form'
 import { Form, FormItem, FormList } from './components'

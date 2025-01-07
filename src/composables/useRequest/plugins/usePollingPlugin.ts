@@ -1,7 +1,7 @@
 import type { AnyFn } from '@vueuse/core'
+import type { Plugin } from '../types'
 import { toValue, useEventListener } from '@vueuse/core'
 import { computed, onScopeDispose, ref } from 'vue'
-import type { Plugin } from '../types'
 import isBrowser from '../../../utils/isBrowser'
 import { isDocumentVisible } from '../utils/isDocumentVisible'
 

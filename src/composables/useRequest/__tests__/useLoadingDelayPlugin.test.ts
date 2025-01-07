@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest'
 import type { Result } from '../types'
+import { describe, expect, it, vi } from 'vitest'
 import { setup } from '../../../__tests__/mount'
 import { useRequest } from '../useRequest'
 import { request } from '../utils/testingHelpers'
