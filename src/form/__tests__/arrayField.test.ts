@@ -1,6 +1,6 @@
+import { cloneDeep } from 'lodash-es'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, onMounted } from 'vue'
-import { cloneDeep } from 'lodash-es'
 import type { ArrayField } from '../field'
 import { mount } from '../../__tests__/mount'
 import { createForm } from '../form'

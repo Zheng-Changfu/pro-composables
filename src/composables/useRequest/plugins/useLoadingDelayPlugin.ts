@@ -1,6 +1,6 @@
-import { onScopeDispose } from 'vue'
-import { toValue } from '@vueuse/core'
 import type { Plugin } from '../types'
+import { toValue } from '@vueuse/core'
+import { onScopeDispose } from 'vue'
 
 export const useLoadingDelayPlugin: Plugin<any, any[]> = (
   fetchInstance,

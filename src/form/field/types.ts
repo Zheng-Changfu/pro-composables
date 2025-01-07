@@ -1,8 +1,8 @@
-import type { ComputedRef, Ref } from 'vue'
 import type { Get, PartialDeep } from 'type-fest'
+import type { ComputedRef, Ref } from 'vue'
+import type { StringKeyof } from '../../utils/types'
 import type { InternalPath } from '../path'
 import type { Dependencie } from '../store/depStore'
-import type { StringKeyof } from '../../utils/types'
 
 export interface FieldOptions<T = any> {
   /**
@@ -18,10 +18,6 @@ export interface FieldOptions<T = any> {
    * 字段路径
    */
   path?: Ref<InternalPath | undefined>
-  /**
-   * 字段值
-   */
-  value?: Ref<T>
   /**
    * 是否显示
    */
@@ -104,10 +100,6 @@ export interface BaseField<T = any> {
    * 字段值
    */
   value: Ref<T>
-  /**
-   * 用户传递的 value
-   */
-  propValue: Ref<T> | undefined
   /**
    * 是否显示
    * @default true

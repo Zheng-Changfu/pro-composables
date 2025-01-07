@@ -1,8 +1,8 @@
 import type { ComputedRef, Ref } from 'vue'
-import { computed } from 'vue'
 import { isArray } from 'lodash-es'
-import { useInjectInternalForm } from '../context'
+import { computed } from 'vue'
 import { uid } from '../../utils/id'
+import { useInjectInternalForm } from '../context'
 
 interface UseValueOptions {
   onInputValue?: (fieldValue: Ref<any>, inputValue: any, ...args: any[]) => void

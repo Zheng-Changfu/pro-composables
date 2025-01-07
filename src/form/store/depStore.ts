@@ -1,5 +1,5 @@
-import { nextTick, onScopeDispose } from 'vue'
 import { isArray } from 'lodash-es'
+import { nextTick, onScopeDispose } from 'vue'
 import type { BaseField } from '../field'
 import type { PathPattern } from '../path'
 import { convertPatternToMatchFn } from '../utils/path'

@@ -1,8 +1,8 @@
-import { computed, shallowReactive, toRaw } from 'vue'
 import { get, isArray, isNil, isPlainObject, merge, set } from 'lodash-es'
+import { computed, shallowReactive, toRaw } from 'vue'
 import type { ArrayField, BaseField } from '../field'
-import { convertPatternToMatchFn, stringifyPath } from '../utils/path'
 import type { InternalPath, PathPattern } from '../path'
+import { convertPatternToMatchFn, stringifyPath } from '../utils/path'
 
 /**
  * 管理所有的字段
@@ -24,7 +24,7 @@ export class FieldStore {
         const val = value.value
         if (isList) {
           const len = (val ?? []).length
-          set(res, path.value, Array.from(Array(len), () => ({})))
+          set(res, path.value, Array.from(new Array(len), () => ({})))
         }
       })
 
@@ -146,7 +146,7 @@ export class FieldStore {
       const val = value.value
       if (isList) {
         const len = (val ?? []).length
-        set(res, path.value, Array.from(Array(len), () => ({})))
+        set(res, path.value, Array.from(new Array(len), () => ({})))
         if (transform)
           haveTransformListFields.push(field as ArrayField)
       }

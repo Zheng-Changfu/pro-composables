@@ -7,6 +7,7 @@ export default antfu({
     'no-console': 'off',
     'no-cond-assign': 'off',
     'ts/ban-ts-comment': 'off',
+    'unicorn/no-new-array': 'off',
     'ts/no-unused-expressions': 'off',
     'node/prefer-global/process': 'off',
   },

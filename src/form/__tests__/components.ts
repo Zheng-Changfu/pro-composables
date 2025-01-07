@@ -1,7 +1,7 @@
 import { defineComponent, h, onMounted, toRef } from 'vue'
+import { provideInternalForm } from '../context'
 import { ROW_UUID, createArrayField, createField, useInjectField } from '../field'
 import { provideFieldIndex } from '../path'
-import { provideInternalForm } from '../context'
 
 export const Form = defineComponent({
   props: [
@@ -32,7 +32,6 @@ export const FormItem = defineComponent({
   setup(props, { slots }) {
     const field = createField({
       path: toRef(props, 'path'),
-      value: toRef(props, 'value'),
       dependencies: props.dependencies,
       initialValue: props.initialValue,
       postValue: props.postValue,
@@ -84,7 +83,6 @@ export const FormList = defineComponent({
   setup(props, { slots }) {
     const field = createArrayField({
       path: toRef(props, 'path'),
-      value: toRef(props, 'value'),
       dependencies: props.dependencies,
       initialValue: props.initialValue,
       hidden: toRef(props, 'hidden'),

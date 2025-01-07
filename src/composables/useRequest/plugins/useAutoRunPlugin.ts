@@ -1,5 +1,5 @@
-import { watch } from 'vue'
 import { isNil } from 'lodash-es'
+import { watch } from 'vue'
 import type { Plugin } from '../types'
 
 export const useAutoRunPlugin: Plugin<any, any[]> = (

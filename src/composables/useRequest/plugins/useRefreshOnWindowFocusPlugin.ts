@@ -1,10 +1,10 @@
-import { computed, watch } from 'vue'
 import type { AnyFn } from '@vueuse/core'
 import { toValue, useEventListener } from '@vueuse/core'
+import { computed, watch } from 'vue'
 import type { Plugin } from '../types'
+import isBrowser from '../../../utils/isBrowser'
 import { isDocumentVisible } from '../utils/isDocumentVisible'
 import { isOnline } from '../utils/isOnline'
-import isBrowser from '../../../utils/isBrowser'
 import limit from '../utils/limit'
 
 export const useRefreshOnWindowFocusPlugin: Plugin<any, any[]> = (

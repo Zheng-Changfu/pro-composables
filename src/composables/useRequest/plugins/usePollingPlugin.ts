@@ -1,9 +1,9 @@
-import { computed, onScopeDispose, ref } from 'vue'
 import type { AnyFn } from '@vueuse/core'
 import { toValue, useEventListener } from '@vueuse/core'
+import { computed, onScopeDispose, ref } from 'vue'
 import type { Plugin } from '../types'
-import { isDocumentVisible } from '../utils/isDocumentVisible'
 import isBrowser from '../../../utils/isBrowser'
+import { isDocumentVisible } from '../utils/isDocumentVisible'
 
 export const usePollingPlugin: Plugin<any, any[]> = (
   fetchInstance,

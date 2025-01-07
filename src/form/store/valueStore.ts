@@ -1,12 +1,12 @@
-import { cloneDeep, get, has, isArray, isPlainObject, set, unset } from 'lodash-es'
 import type { Ref } from 'vue'
-import { ref } from 'vue'
 import { useMounted } from '@vueuse/core'
-import type { InternalPath, PathPattern } from '../path'
+import { cloneDeep, get, has, isArray, isPlainObject, set, unset } from 'lodash-es'
+import { ref } from 'vue'
 import type { ValueMergeStrategy } from '../utils/value'
-import { mergeByStrategy } from '../utils/value'
+import type { InternalPath, PathPattern } from '../path'
 import type { BaseField } from '../field'
 import { isIndexPath, stringifyPath } from '../utils/path'
+import { mergeByStrategy } from '../utils/value'
 import type { FieldStore } from './fieldStore'
 
 interface ValueStoreOptions {

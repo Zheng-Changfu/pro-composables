@@ -1,7 +1,7 @@
+import type { PaginationResult } from '../types'
 import { describe, expect, it, vi } from 'vitest'
 import { nextTick, ref } from 'vue'
 import { setup } from '../../../__tests__/mount'
-import type { PaginationResult } from '../types'
 import { usePagination } from '../usePagination'
 
 describe('usePagination', () => {

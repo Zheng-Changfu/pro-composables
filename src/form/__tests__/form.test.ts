@@ -1,8 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, onMounted } from 'vue'
-import { mount } from '../../__tests__/mount'
-import type { BaseForm } from '../types'
 import type { BaseField } from '../field'
+import { mount } from '../../__tests__/mount'
 import { createForm } from '../form'
 import { Form, FormItem, FormList } from './components'
 
@@ -151,52 +150,6 @@ describe('form props', () => {
       'b',
       ['a', 'b', 'c', 'd', 'e', 'f'],
     ])
-    vm.unmount()
-  })
-
-  it('onDependenciesValueChange called should with before nextTick', async () => {
-    let aVal: any
-    const onDependenciesValueChangeMock = vi.fn((form: BaseForm) => {
-      aVal = form.getFieldValue('a')
-    })
-    const Comp = defineComponent({
-      setup() {
-        let _field: BaseField
-
-        const form = createForm({
-          onDependenciesValueChange() {
-            onDependenciesValueChangeMock(form)
-          },
-        })
-
-        function onFieldMounted(field: BaseField) {
-          _field = field
-        }
-
-        onMounted(() => {
-          _field.doUpdateValue(1)
-        })
-
-        return () => {
-          return h(Form, { form }, {
-            default: () => [
-              h(FormItem, {
-                path: 'a',
-                dependencies: ['b'],
-                value: form.valueStore.values.value.b === 1 ? 2 : null,
-              }),
-              h(FormItem, { path: 'b', onFieldMounted }),
-            ],
-          })
-        }
-      },
-    })
-
-    const vm = mount(Comp)
-    await nextTick()
-    await nextTick()
-    expect(onDependenciesValueChangeMock).toHaveBeenCalled()
-    expect(aVal).toBe(null)
     vm.unmount()
   })
 })

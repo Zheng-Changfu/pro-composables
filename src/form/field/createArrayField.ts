@@ -1,4 +1,6 @@
 import { toRaw } from 'vue'
+import type { InternalPath } from '../path'
+import { useInjectInternalForm } from '../context'
 import {
   insert as _insert,
   move as _move,
@@ -10,11 +12,9 @@ import {
   shift as _shift,
   unshift as _unshift,
 } from '../utils/array'
-import { useInjectInternalForm } from '../context'
-import type { InternalPath } from '../path'
 import { isInternalPath, stringifyPath } from '../utils/path'
-import { createField } from './createField'
 import type { ArrayField, FieldOptions } from './types'
+import { createField } from './createField'
 
 export function createArrayField<T = any>(options: FieldOptions<T>) {
   const form = useInjectInternalForm()

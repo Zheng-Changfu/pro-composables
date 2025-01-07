@@ -1,7 +1,7 @@
-export { usePagination } from './usePagination'
-
 export type {
-  Service as UsePaginationService,
-  PaginationResult as UsePaginationReturn,
   PaginationOptions as UsePaginationOptions,
+  PaginationResult as UsePaginationReturn,
+  Service as UsePaginationService,
 } from './types'
+
+export { usePagination } from './usePagination'

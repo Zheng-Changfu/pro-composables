@@ -1,5 +1,5 @@
-import type { Ref } from 'vue'
 import type { Get, PartialDeep, SimplifyDeep } from 'type-fest'
+import type { Ref } from 'vue'
 import type { PathToObject, StringKeyof } from '../utils/types'
 import type { InternalPath, PathPattern } from './path'
 import type { DepStore } from './store/depStore'

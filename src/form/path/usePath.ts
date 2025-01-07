@@ -1,8 +1,8 @@
 import type { Ref } from 'vue'
-import { computed, unref } from 'vue'
 import { toPath } from 'lodash-es'
-import { stringifyPath } from '../utils/path'
+import { computed, unref } from 'vue'
 import { useInjectField } from '../field/context'
+import { stringifyPath } from '../utils/path'
 import type { InternalPath } from './types'
 import { useInjectFieldIndex } from './context'
 

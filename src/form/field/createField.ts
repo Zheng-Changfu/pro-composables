@@ -1,10 +1,10 @@
-import { onUnmounted, unref, watch } from 'vue'
 import { get, has } from 'lodash-es'
-import { uid } from '../../utils/id'
-import { usePath } from '../path/usePath'
-import { useInjectInternalForm } from '../context'
+import { onUnmounted, watch } from 'vue'
 import type { BaseForm } from '../types'
+import { uid } from '../../utils/id'
 import { warnOnce } from '../../utils/warn'
+import { useInjectInternalForm } from '../context'
+import { usePath } from '../path/usePath'
 import type { BaseField, FieldOptions } from './types'
 import { provideField, useInjectField } from './context'
 import { useShow } from './useShow'
@@ -27,7 +27,6 @@ export function createField<T = any>(
     initialValue,
     path: propPath,
     preserve = true,
-    value: propValue,
     dependencies = [],
     onChange,
     postValue,
@@ -66,7 +65,6 @@ export function createField<T = any>(
     parent,
     isList,
     preserve,
-    propValue,
     stringPath,
     dependencies,
     touching: false,
@@ -95,14 +93,6 @@ export function createField<T = any>(
       },
     )
 
-    watch(
-      () => unref(propValue),
-      (val) => {
-        if (show.value && path.value.length > 0)
-          form.valueStore.setFieldValue(path.value, val)
-      },
-    )
-
     form.depStore.add(field)
     mountFieldValue(form, field)
     onUnmounted(() => unmountFieldValue(form, field))
@@ -117,7 +107,6 @@ function mountFieldValue(form: BaseForm, field: BaseField) {
     meta,
     path,
     isList,
-    propValue,
   } = field
 
   if (!show.value || path.value.length <= 0)
@@ -129,16 +118,17 @@ function mountFieldValue(form: BaseForm, field: BaseField) {
   const { initialValue } = meta
   let val: any
   /**
-   * priority：form.valueStore > value > initialValue > initialValues
+   * priority：form.valueStore > initialValue > initialValues
    */
-  if (form.valueStore.has(p))
+  if (form.valueStore.has(p)) {
     val = form.valueStore.getFieldValue(p)
-  else if (unref(propValue) !== undefined)
-    val = unref(propValue)
-  else if (initialValue !== undefined)
+  }
+  else if (initialValue !== undefined) {
     val = initialValue
-  else if (!form.mounted.value && has(form.valueStore.initialValues, p))
+  }
+  else if (!form.mounted.value && has(form.valueStore.initialValues, p)) {
     val = get(form.valueStore.initialValues, p)
+  }
 
   if (isList && val === undefined) {
     val = []

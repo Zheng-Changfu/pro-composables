@@ -1,10 +1,10 @@
 import { useMounted } from '@vueuse/core'
 import { uid } from '../utils/id'
-import type { BaseForm, FormOptions } from './types'
 import type { BaseField } from './field'
+import type { BaseForm, FormOptions } from './types'
+import { createDepStore } from './store/depStore'
 import { createFieldStore } from './store/fieldStore'
 import { createValueStore } from './store/valueStore'
-import { createDepStore } from './store/depStore'
 
 export function createForm<Values = Record<string, any>>(options: FormOptions<Values> = {}) {
   const {

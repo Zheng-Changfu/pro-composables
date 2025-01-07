@@ -1,8 +1,8 @@
+import type { Result } from '../types'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { setup } from '../../../__tests__/mount'
-import { request } from '../utils/testingHelpers'
-import type { Result } from '../types'
 import { useRequest } from '../useRequest'
+import { request } from '../utils/testingHelpers'
 
 describe('useRequest', () => {
   beforeAll(() => {
