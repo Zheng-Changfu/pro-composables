@@ -139,7 +139,7 @@ export class FieldStore {
 
   getFieldsTransformedValue = () => {
     const res = {} as any
-    const haveTransformListFields: ArrayField[] = []
+    const fieldsWithTransform: ArrayField[] = []
 
     this.idToFieldMap.forEach((field) => {
       const { isList, path, transform, value } = field
@@ -148,7 +148,7 @@ export class FieldStore {
         const len = (val ?? []).length
         set(res, path.value, Array.from(new Array(len), () => ({})))
         if (transform)
-          haveTransformListFields.push(field as ArrayField)
+          fieldsWithTransform.push(field as ArrayField)
       }
     })
 
@@ -166,7 +166,7 @@ export class FieldStore {
       this.transform(field, res)
     })
 
-    haveTransformListFields.forEach((field) => {
+    fieldsWithTransform.forEach((field) => {
       this.transform(field, res)
     })
     return res
