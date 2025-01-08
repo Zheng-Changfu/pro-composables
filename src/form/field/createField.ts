@@ -1,6 +1,6 @@
 import type { BaseForm } from '../types'
 import type { BaseField, FieldOptions } from './types'
-import { get, has } from 'lodash-es'
+import { has } from 'lodash-es'
 import { onUnmounted, watch } from 'vue'
 import { uid } from '../../utils/id'
 import { warnOnce } from '../../utils/warn'
