@@ -31,27 +31,7 @@ export function usePath(path?: Ref<InternalPath | undefined>) {
     return []
   })
 
-  function analysisPath() {
-    const path = pathRef.value
-    let index = -1
-    let parentPath: string[] = []
-
-    for (let i = path.length - 1; i >= 0; i--) {
-      if (!Number.isNaN(Number(path[i]))) {
-        index = Number(path[i])
-        parentPath = path.slice(0, i)
-        break
-      }
-    }
-
-    return {
-      index,
-      parentPath,
-    }
-  }
-
   return {
-    analysisPath,
     path: pathRef,
     index: indexRef,
     stringPath: computed(() => stringifyPath(pathRef.value)),

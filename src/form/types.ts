@@ -103,10 +103,6 @@ export interface BaseForm<Values = any> {
    */
   setInitialValues: (values: PartialDeep<Values>, strategy?: ValueMergeStrategy) => void
   /**
-   * 获取全部表单值，不包含被隐藏的和设置过的（被 transform 处理过的）
-   */
-  getFieldsTransformedValue: () => Values
-  /**
    * 匹配路径
    * @returns 返回匹配到的路径数组
    */

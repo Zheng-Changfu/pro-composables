@@ -37,26 +37,32 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
 
   function get() {
     const p = path.value
-    const storeValue = form?.valueStore.getFieldValue(p)
-    return storeValue
+    return form
+      ? form.valueStore.getFieldValue(p)
+      : undefined
   }
 
   function set(val: any) {
-    form?.valueStore.setFieldValue(path.value, val)
-    const field = form?.fieldStore.getField(id)
-    if (field)
-      field.touching = false
+    if (form) {
+      form.valueStore.setFieldValue(path.value, val)
+      const field = form?.fieldStore.getField(id)
+      if (field)
+        field.touching = false
+    }
   }
 
   function doUpdateValue(value: any, ...args: any[]) {
-    const field = form?.fieldStore.getField(id)
-    if (field)
-      field.touching = true
-    if (onInputValue) {
-      onInputValue(proxy, value, ...args)
-      return
+    if (form) {
+      const field = form.fieldStore.getField(id)
+      if (field) {
+        field.touching = true
+      }
+      if (onInputValue) {
+        onInputValue(proxy, value, ...args)
+        return
+      }
+      proxy.value = value
     }
-    proxy.value = value
   }
 
   return {

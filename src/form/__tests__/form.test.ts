@@ -224,97 +224,6 @@ describe('form api', () => {
     vm.unmount()
   })
 
-  it('getFieldsTransformedValue', async () => {
-    const vals: any[] = []
-    const paths: string[] = []
-    const transformA = vi.fn((val, path) => {
-      paths.push(path)
-      return val
-    })
-    const transformB = vi.fn((val, path) => {
-      paths.push(path)
-      return { c: val }
-    })
-    const transformListA = vi.fn((val, path) => {
-      paths.push(path)
-      return val.toString()
-    })
-    const transformListB = vi.fn((val, path) => {
-      paths.push(path)
-      return { c: val }
-    })
-    const transformList = vi.fn((val, path) => {
-      paths.push(path)
-      return val.map((item: any) => ({ ...item, z: 'z' }))
-    })
-
-    const Comp = defineComponent({
-      setup() {
-        const form = createForm({
-          initialValues: {
-            a: 1,
-            b: 2,
-            list: [
-              { a: 1, b: 1, d: 1, dd2: 3 },
-            ],
-          },
-        })
-
-        onMounted(async () => {
-          await nextTick()
-          vals.push(
-            { ...form.getFieldsValue() },
-            { ...form.getFieldsTransformedValue() },
-          )
-        })
-
-        return () => {
-          return h(Form, { form }, {
-            default: () => [
-              h(FormItem, { path: 'a', transform: transformA }),
-              h(FormItem, { path: 'b', transform: transformB }),
-              h(FormList, {
-                path: 'list',
-                transform: transformList,
-              }, {
-                default: () => [
-                  h(FormItem, { path: 'a', transform: transformListA }),
-                  h(FormItem, { path: 'b', transform: transformListB }),
-                  h(FormItem, { path: 'd' }),
-                ],
-              }),
-            ],
-          })
-        }
-      },
-    })
-
-    const vm = mount(Comp)
-    await nextTick()
-    expect(vals[0]).toStrictEqual({
-      a: 1,
-      b: 2,
-      list: [
-        { a: 1, b: 1, d: 1 },
-      ],
-    })
-    expect(vals[1]).toStrictEqual({
-      a: 1,
-      c: 2,
-      list: [
-        { a: '1', c: 1, d: 1, z: 'z' },
-      ],
-    })
-    expect(paths).toStrictEqual([
-      'a',
-      'b',
-      'list.0.a',
-      'list.0.b',
-      'list',
-    ])
-    vm.unmount()
-  })
-
   it('setFieldValue', async () => {
     const vals: any[] = []
     const Comp = defineComponent({
@@ -353,10 +262,6 @@ describe('form api', () => {
       setup() {
         const form = createForm()
 
-        function postValue(val: any) {
-          return val
-        }
-
         onMounted(async () => {
           form.setFieldsValue({ a: 2, id: 1 })
           await nextTick()
@@ -370,7 +275,7 @@ describe('form api', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', postValue }),
+              h(FormItem, { path: 'a' }),
               h(FormList, {
                 path: 'list',
                 initialValue: [
@@ -378,8 +283,8 @@ describe('form api', () => {
                 ],
               }, {
                 default: () => [
-                  h(FormItem, { path: 'a', postValue }),
-                  h(FormItem, { path: 'b', postValue }),
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
                 ],
               }),
             ],
@@ -401,11 +306,9 @@ describe('form api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        const form = createForm()
-
-        function postValue(val: any) {
-          return val === undefined ? null : val
-        }
+        const form = createForm({
+          omitNil: false,
+        })
 
         onMounted(async () => {
           form.setFieldsValue({
@@ -414,11 +317,7 @@ describe('form api', () => {
               {
                 a: 11,
                 c: 3,
-                list: [
-                  { a: 11, c: 3 },
-                  { a: 22 },
-                  { a: 33, c: 4 },
-                ],
+                list: [{ a: 11, c: 3 }, { a: 22 }, { a: 33, c: 4 }],
               },
             ],
           }, 'shallowMerge')
@@ -427,10 +326,11 @@ describe('form api', () => {
             form.getFieldsValue(),
           )
         })
+
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', postValue }),
+              h(FormItem, { path: 'a' }),
               h(FormList, {
                 path: 'list',
                 initialValue: [
@@ -439,8 +339,8 @@ describe('form api', () => {
                 ],
               }, {
                 default: () => [
-                  h(FormItem, { path: 'a', postValue }),
-                  h(FormItem, { path: 'b', postValue }),
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
                   h(FormList, {
                     path: 'list',
                     initialValue: [
@@ -449,8 +349,8 @@ describe('form api', () => {
                     ],
                   }, {
                     default: () => [
-                      h(FormItem, { path: 'a', postValue }),
-                      h(FormItem, { path: 'b', postValue }),
+                      h(FormItem, { path: 'a' }),
+                      h(FormItem, { path: 'b' }),
                     ],
                   }),
                 ],
@@ -464,15 +364,15 @@ describe('form api', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(vals[0]).toStrictEqual({
-      a: null,
+      a: undefined,
       list: [
         {
           a: 11,
-          b: null,
+          b: undefined,
           list: [
-            { a: 11, b: null },
-            { a: 22, b: null },
-            { a: 33, b: null },
+            { a: 11, b: undefined },
+            { a: 22, b: undefined },
+            { a: 33, b: undefined },
           ],
         },
       ],

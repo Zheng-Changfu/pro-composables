@@ -17,12 +17,12 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   const mounted = useMounted()
   const fieldStore = createFieldStore(omitNil)
   const depStore = createDepStore(fieldStore)
-  const valueStore = createValueStore(fieldStore, { initialValues, onFieldValueUpdated })
+  const valueStore = createValueStore(fieldStore, { initialValues, onManualValueChange })
 
   const {
-    matchDependencies,
-    pauseDependenciesTrigger,
-    resumeDependenciesTrigger,
+    match: matchDependencies,
+    pause: pauseDependenciesTrigger,
+    resume: resumeDependenciesTrigger,
   } = depStore
 
   const {
@@ -35,7 +35,6 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     setInitialValue,
     resetFieldsValue,
     setInitialValues,
-    getFieldsTransformedValue,
   } = valueStore
 
   const form: BaseForm = {
@@ -55,34 +54,32 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
     setInitialValues,
     pauseDependenciesTrigger,
     resumeDependenciesTrigger,
-    getFieldsTransformedValue,
   }
 
-  function onFieldValueUpdated(field: BaseField, value: any) {
-    if (field.touching && !field.isList) {
-      if (field.onChange)
-        field.onChange(value)
+  function onManualValueChange(field: BaseField, value: any) {
+    if (field.onChange) {
+      field.onChange(value)
+    }
 
-      if (onDependenciesValueChange) {
-        const path = field.stringPath.value
-        matchDependencies(
-          path,
-          (depPath) => {
-            onDependenciesValueChange({
-              path,
-              value,
-              depPath,
-            })
-          },
-        )
-      }
+    if (onValueChange) {
+      onValueChange({
+        value,
+        path: field.stringPath.value,
+      })
+    }
 
-      if (onValueChange) {
-        onValueChange({
-          value,
-          path: field.stringPath.value,
-        })
-      }
+    if (onDependenciesValueChange) {
+      const path = field.stringPath.value
+      matchDependencies(
+        path,
+        (depPath) => {
+          onDependenciesValueChange({
+            path,
+            value,
+            depPath,
+          })
+        },
+      )
     }
   }
 

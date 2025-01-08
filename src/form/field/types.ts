@@ -1,6 +1,4 @@
-import type { Get, PartialDeep } from 'type-fest'
 import type { ComputedRef, Ref } from 'vue'
-import type { StringKeyof } from '../../utils/types'
 import type { InternalPath } from '../path'
 import type { Dependencie } from '../store/depStore'
 
@@ -30,26 +28,6 @@ export interface FieldOptions<T = any> {
    * 字段关联的依赖项
    */
   dependencies?: Dependencie | Dependencie[]
-  /**
-   * 转换字段的值，通过 getFieldsTransformedValue 可触发
-   * @param val 当前字段的值
-   * @param path 当前字段的路径
-   * @returns 新的值,如果返回的是一个对象，将和当前字段所在层级的对象进行深度合并(lodash-es merge)
-   * @example
-   * ```js
-   * // key:['a','b']} => key:'a,b'
-   * transform:val => val.join()
-   * // b:val => a:val
-   * transform:val => ({a:val})
-   * // date:[startDate,endDate] => {startDate,endDate}
-   * transform:val => ({startDate:val[0],endDate:val[1]})
-   * ```
-   */
-  transform?: (val: T, path: string) => any
-  /**
-   * 后置状态钩子，可以二次修改值（isList 为 true 时 无效）
-   */
-  postValue?: (val: T) => T
   /**
    * 手动更新值（isList 为 true 时 无效）
    * @param fieldValue 表单值
@@ -114,28 +92,9 @@ export interface BaseField<T = any> {
    */
   doUpdateValue: (val: T, ...args: any[]) => void
   /**
-   * 转换字段的值，通过 getFieldsTransformedValue 可触发
-   */
-  transform?: (val: T, path: string) => any
-  /**
-   * 后置状态钩子，可以二次修改值
-   */
-  postValue?: (val: T) => T
-  /**
    * 值变化后的回调(手动交互导致值的改变)
    */
   onChange?: (val: T) => void
-
-  analysisPath: () => ({
-    /**
-     * 'list.0.a.1.b' => 1
-     */
-    index: number
-    /**
-     * 'list.0.a.1.b' => ['list','0','a']
-     */
-    parentPath: string[]
-  })
   /**
    * 是否正在手动交互状态中
    * @default false
@@ -188,28 +147,10 @@ export interface ArrayField<T = any> extends BaseField<T[]> {
    * 下移数据
    */
   moveDown: (index: number) => void
-  /**
-   * 获取行数据，未获取到返回空对象
-   * @param index 行索引
-   */
-  get: <Path extends InternalPath = StringKeyof<T>>(index: number, path: Path) => Get<T, Path>
-  /**
-   * 设置行数据，是一个重载函数
-   * @example
-   * ```js
-   * set(0,{name:'zcf',age:1}) // 设置第1行数据的 name 和 age
-   * set(0,'name','zcf') // 设置第1行数据的 'name' 值为 'zcf'
-   * ```
-   */
-  set:
-  & ((index: number, values: PartialDeep<T>) => void)
-  & (<Path extends InternalPath = StringKeyof<T>>(index: number, path: Path, value: Get<T, Path>) => void)
 }
 
 export type ArrayFieldAction<T = any> = Pick<
   ArrayField<T>,
-  | 'get'
-  | 'set'
   | 'pop'
   | 'push'
   | 'move'

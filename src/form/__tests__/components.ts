@@ -22,24 +22,20 @@ export const FormItem = defineComponent({
     'initialValue',
     'dependencies',
     'onFieldMounted',
-    'postValue',
     'onChange',
     'visible',
     'hidden',
     'preserve',
-    'transform',
   ],
   setup(props, { slots }) {
     const field = createField({
       path: toRef(props, 'path'),
       dependencies: props.dependencies,
       initialValue: props.initialValue,
-      postValue: props.postValue,
       onChange: props.onChange,
       hidden: toRef(props, 'hidden'),
       visible: toRef(props, 'visible'),
       preserve: props.preserve,
-      transform: props.transform,
     })
     const listField = useInjectField()
     onMounted(() => {
@@ -77,7 +73,6 @@ export const FormList = defineComponent({
     'visible',
     'hidden',
     'preserve',
-    'transform',
     'onArrayFieldMounted',
   ],
   setup(props, { slots }) {
@@ -88,7 +83,6 @@ export const FormList = defineComponent({
       hidden: toRef(props, 'hidden'),
       visible: toRef(props, 'visible'),
       preserve: props.preserve,
-      transform: props.transform,
     })
 
     onMounted(() => {

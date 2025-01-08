@@ -1,7 +1,4 @@
-import type { InternalPath } from '../path'
 import type { ArrayField, FieldOptions } from './types'
-import { toRaw } from 'vue'
-import { useInjectInternalForm } from '../context'
 import {
   insert as _insert,
   move as _move,
@@ -13,44 +10,17 @@ import {
   shift as _shift,
   unshift as _unshift,
 } from '../utils/array'
-import { isInternalPath, stringifyPath } from '../utils/path'
 import { createField } from './createField'
 
 export function createArrayField<T = any>(options: FieldOptions<T>) {
-  const form = useInjectInternalForm()
-
   const field = createField({
     ...options,
     /**
      * 考虑到性能问题，isList 为 true 时下面这些属性不在生效
      */
     onChange: undefined,
-    postValue: undefined,
     onInputValue: undefined,
   }, { isList: true })
-
-  function get(index: number, path: InternalPath) {
-    if (form) {
-      const fullPath = `${field.stringPath.value}.${index}.${stringifyPath(path)}`
-      const value = form.getFieldValue(fullPath)
-      return toRaw(value)
-    }
-  }
-
-  function set(index: number, pathOrValues: InternalPath | object, value?: any) {
-    if (form) {
-      if (isInternalPath(pathOrValues)) {
-        const path = pathOrValues
-        const fullPath = `${field.stringPath.value}.${index}.${stringifyPath(path)}`
-        form.setFieldValue(fullPath, value)
-      }
-      else {
-        const values = pathOrValues
-        const rowPath = `${field.stringPath.value}.${index}`
-        form.setFieldValue(rowPath, values)
-      }
-    }
-  }
 
   function push(...items: T[]) {
     _push(field.value.value ?? [], ...items)
@@ -89,8 +59,6 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
   }
 
   const arrayField: ArrayField = Object.assign(field, {
-    get,
-    set,
     pop,
     push,
     move,

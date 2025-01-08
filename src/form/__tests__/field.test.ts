@@ -7,7 +7,7 @@ import { createForm } from '../form'
 import { Form, FormItem } from './components'
 
 describe('baseField', () => {
-  it('priority: initialValue > initialValues', async () => {
+  it('priority: initialValues > initialValue', async () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
@@ -34,7 +34,7 @@ describe('baseField', () => {
     })
 
     const vm = mount(Comp)
-    expect(vals[0]).toStrictEqual({ a: 2, b: 3 })
+    expect(vals[0]).toStrictEqual({ a: 1, b: 2 })
     vm.unmount()
   })
 
@@ -414,10 +414,9 @@ describe('baseField', () => {
   })
 })
 
-describe('update value to trigger postValue and onChange', () => {
+describe('update value to trigger onChange', () => {
   it('setFieldValue', async () => {
     const onChange = vi.fn()
-    const postValue = vi.fn(val => val === undefined ? 0 : val * 2)
     const Comp = defineComponent({
       setup() {
         const form = createForm()
@@ -429,8 +428,8 @@ describe('update value to trigger postValue and onChange', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', onChange, postValue }),
-              h(FormItem, { path: 'b', onChange, postValue }),
+              h(FormItem, { path: 'a', onChange }),
+              h(FormItem, { path: 'b', onChange }),
             ],
           })
         }
@@ -440,17 +439,11 @@ describe('update value to trigger postValue and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
-    expect(postValue).toHaveBeenCalledTimes(4)
-    expect(postValue).toHaveNthReturnedWith(1, 0)
-    expect(postValue).toHaveNthReturnedWith(2, 0)
-    expect(postValue).toHaveNthReturnedWith(3, 2)
-    expect(postValue).toHaveNthReturnedWith(4, 4)
     vm.unmount()
   })
 
   it('setFieldsValue', async () => {
     const onChange = vi.fn()
-    const postValue = vi.fn(val => val === undefined ? 0 : val * 2)
     const Comp = defineComponent({
       setup() {
         const form = createForm()
@@ -464,8 +457,8 @@ describe('update value to trigger postValue and onChange', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', onChange, postValue }),
-              h(FormItem, { path: 'b', onChange, postValue }),
+              h(FormItem, { path: 'a', onChange }),
+              h(FormItem, { path: 'b', onChange }),
             ],
           })
         }
@@ -475,17 +468,11 @@ describe('update value to trigger postValue and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
-    expect(postValue).toHaveBeenCalledTimes(4)
-    expect(postValue).toHaveNthReturnedWith(1, 0)
-    expect(postValue).toHaveNthReturnedWith(2, 0)
-    expect(postValue).toHaveNthReturnedWith(3, 2)
-    expect(postValue).toHaveNthReturnedWith(4, 0)
     vm.unmount()
   })
 
   it('resetFieldValue', async () => {
     const onChange = vi.fn()
-    const postValue = vi.fn(val => val * 2)
     const Comp = defineComponent({
       setup() {
         const form = createForm()
@@ -497,8 +484,8 @@ describe('update value to trigger postValue and onChange', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
-              h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
+              h(FormItem, { path: 'a', initialValue: 1, onChange }),
+              h(FormItem, { path: 'b', initialValue: 2, onChange }),
             ],
           })
         }
@@ -508,17 +495,11 @@ describe('update value to trigger postValue and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
-    expect(postValue).toHaveBeenCalledTimes(4)
-    expect(postValue).toHaveNthReturnedWith(1, 2)
-    expect(postValue).toHaveNthReturnedWith(2, 4)
-    expect(postValue).toHaveNthReturnedWith(3, 2)
-    expect(postValue).toHaveNthReturnedWith(4, 4)
     vm.unmount()
   })
 
   it('resetFieldsValue', async () => {
     const onChange = vi.fn()
-    const postValue = vi.fn(val => val * 2)
     const Comp = defineComponent({
       setup() {
         const form = createForm()
@@ -529,8 +510,8 @@ describe('update value to trigger postValue and onChange', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
-              h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
+              h(FormItem, { path: 'a', initialValue: 1, onChange }),
+              h(FormItem, { path: 'b', initialValue: 2, onChange }),
             ],
           })
         }
@@ -540,17 +521,11 @@ describe('update value to trigger postValue and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
-    expect(postValue).toHaveBeenCalledTimes(4)
-    expect(postValue).toHaveNthReturnedWith(1, 2)
-    expect(postValue).toHaveNthReturnedWith(2, 4)
-    expect(postValue).toHaveNthReturnedWith(3, 2)
-    expect(postValue).toHaveNthReturnedWith(4, 4)
     vm.unmount()
   })
 
   it('initialValues', async () => {
     const onChange = vi.fn()
-    const postValue = vi.fn(val => val * 2)
     const Comp = defineComponent({
       setup() {
         const form = createForm({
@@ -562,8 +537,8 @@ describe('update value to trigger postValue and onChange', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', onChange, postValue }),
-              h(FormItem, { path: 'b', onChange, postValue }),
+              h(FormItem, { path: 'a', onChange }),
+              h(FormItem, { path: 'b', onChange }),
             ],
           })
         }
@@ -573,23 +548,19 @@ describe('update value to trigger postValue and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
-    expect(postValue).toHaveBeenCalledTimes(2)
-    expect(postValue).toHaveNthReturnedWith(1, 2)
-    expect(postValue).toHaveNthReturnedWith(2, 4)
     vm.unmount()
   })
 
   it('initialValue', async () => {
     const onChange = vi.fn()
-    const postValue = vi.fn(val => val * 2)
     const Comp = defineComponent({
       setup() {
         const form = createForm()
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', initialValue: 1, onChange, postValue }),
-              h(FormItem, { path: 'b', initialValue: 2, onChange, postValue }),
+              h(FormItem, { path: 'a', initialValue: 1, onChange }),
+              h(FormItem, { path: 'b', initialValue: 2, onChange }),
             ],
           })
         }
@@ -599,15 +570,11 @@ describe('update value to trigger postValue and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(0)
-    expect(postValue).toHaveBeenCalledTimes(2)
-    expect(postValue).toHaveNthReturnedWith(1, 2)
-    expect(postValue).toHaveNthReturnedWith(2, 4)
     vm.unmount()
   })
 
   it('doUpdateValue', async () => {
     const onChange = vi.fn()
-    const postValue = vi.fn(val => val === undefined ? 0 : val * 2)
     const Comp = defineComponent({
       setup() {
         let _field: BaseField
@@ -621,7 +588,7 @@ describe('update value to trigger postValue and onChange', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', onFieldMounted, onChange, postValue }),
+              h(FormItem, { path: 'a', onFieldMounted, onChange }),
             ],
           })
         }
@@ -631,9 +598,6 @@ describe('update value to trigger postValue and onChange', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(onChange).toHaveBeenCalledTimes(1)
-    expect(postValue).toHaveBeenCalledTimes(2)
-    expect(postValue).toHaveNthReturnedWith(1, 0)
-    expect(postValue).toHaveNthReturnedWith(2, 4)
     vm.unmount()
   })
 })

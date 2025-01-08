@@ -29,8 +29,6 @@ export function createField<T = any>(
     preserve = true,
     dependencies = [],
     onChange,
-    postValue,
-    transform,
     onInputValue,
     ...customValues
   } = fieldOptions
@@ -43,7 +41,6 @@ export function createField<T = any>(
     path,
     index,
     stringPath,
-    analysisPath,
   } = usePath(propPath)
 
   const { show } = useShow(
@@ -71,9 +68,6 @@ export function createField<T = any>(
     meta: fieldOptions,
     value: isList ? uidValue : value,
     onChange,
-    postValue,
-    transform,
-    analysisPath,
     doUpdateValue,
     ...customValues,
   }
@@ -95,47 +89,39 @@ export function createField<T = any>(
 
     form.depStore.add(field)
     mountFieldValue(form, field)
-    onUnmounted(() => unmountFieldValue(form, field))
+    onUnmounted(() => {
+      unmountFieldValue(form, field)
+    })
   }
   provideField(field)
   return field
 }
 
 function mountFieldValue(form: BaseForm, field: BaseField) {
-  const {
-    show,
-    meta,
-    path,
-    isList,
-  } = field
+  if (field.show.value && field.path.value.length > 0) {
+    form.fieldStore.mountField(field)
+    const path = field.path.value
+    const formMounted = form.mounted.value
+    const initialValue = field.meta.initialValue
+    let val: any
+    /**
+     * priority：form.valueStore > initialValues > initialValue
+     */
+    if (has(form.valueStore.values.value, path)) {
+      val = form.valueStore.getFieldValue(path)
+    }
+    else if (initialValue !== undefined) {
+      val = initialValue
+    }
 
-  if (!show.value || path.value.length <= 0)
-    return
-
-  form.fieldStore.mountField(field)
-
-  const p = path.value
-  const { initialValue } = meta
-  let val: any
-  /**
-   * priority：form.valueStore > initialValue > initialValues
-   */
-  if (form.valueStore.has(p)) {
-    val = form.valueStore.getFieldValue(p)
+    if (field.isList && val === undefined) {
+      val = []
+    }
+    form.valueStore.setFieldValue(path, val)
+    if (!formMounted) {
+      form.valueStore.setInitialValue(path, val)
+    }
   }
-  else if (initialValue !== undefined) {
-    val = initialValue
-  }
-  else if (!form.mounted.value && has(form.valueStore.initialValues, p)) {
-    val = get(form.valueStore.initialValues, p)
-  }
-
-  if (isList && val === undefined) {
-    val = []
-  }
-  form.valueStore.setFieldValue(p, val)
-  if (!form.mounted.value)
-    form.valueStore.setInitialValue(p, val)
 }
 
 function unmountFieldValue(form: BaseForm, field: BaseField) {

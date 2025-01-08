@@ -41,24 +41,25 @@ export class DepStore {
     })
   }
 
-  pauseDependenciesTrigger = () => {
+  pause = () => {
     this.shouldTrigger = false
   }
 
-  resumeDependenciesTrigger = () => {
+  resume = () => {
     nextTick(() => {
       this.shouldTrigger = true
     })
   }
 
-  matchDependencies = (path: string, matchedFn: (dependPath: string) => void) => {
-    if (!this.shouldTrigger)
-      return
-    const paths = this.fieldStore.fieldsPath.value
-    this.deps.forEach((match) => {
-      if (match(path, paths))
-        matchedFn(match.field.stringPath.value)
-    })
+  match = (path: string, matchedFn: (dependPath: string) => void) => {
+    if (this.shouldTrigger) {
+      const paths = this.fieldStore.fieldsPath.value
+      this.deps.forEach((match) => {
+        if (match(path, paths)) {
+          matchedFn(match.field.stringPath.value)
+        }
+      })
+    }
   }
 }
 
