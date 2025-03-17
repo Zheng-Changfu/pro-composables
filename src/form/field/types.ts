@@ -1,5 +1,6 @@
 import type { ComputedRef, Ref } from 'vue'
 import type { InternalPath } from '../path'
+import type { ROW_UUID } from './useValue'
 
 export interface FieldOptions<T = any> {
   /**
@@ -73,6 +74,13 @@ export interface BaseField<T = any> {
    * 字段值
    */
   value: Ref<T>
+  /**
+   * 列表字段值(携带 uid)
+   */
+  uidValue: ComputedRef<{
+    [ROW_UUID]: string
+    [key: PropertyKey]: any
+  }[]>
   /**
    * 是否显示
    * @default true

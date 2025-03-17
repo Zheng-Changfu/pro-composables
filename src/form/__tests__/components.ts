@@ -30,7 +30,6 @@ export const FormItem = defineComponent({
   setup(props, { slots }) {
     const field = createField({
       path: toRef(props, 'path'),
-      dependencies: props.dependencies,
       initialValue: props.initialValue,
       onChange: props.onChange,
       hidden: toRef(props, 'hidden'),
@@ -78,7 +77,6 @@ export const FormList = defineComponent({
   setup(props, { slots }) {
     const field = createArrayField({
       path: toRef(props, 'path'),
-      dependencies: props.dependencies,
       initialValue: props.initialValue,
       hidden: toRef(props, 'hidden'),
       visible: toRef(props, 'visible'),
@@ -90,7 +88,7 @@ export const FormList = defineComponent({
     })
 
     return () => {
-      const list = field.value.value ?? []
+      const list = field.uidValue.value ?? []
       return list.map((_, index) => {
         return h(FormListItem, { key: _[ROW_UUID], index }, slots)
       })

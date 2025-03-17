@@ -23,26 +23,12 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
     set,
   })
 
-  // const uidValue = computed(() => {
-  //   const value = proxy.value
-  //   if (!isArray(value)) {
-  //     return value
-  //   }
-  //   value.forEach((item) => {
-  //     if (!item[ROW_UUID]) {
-  //       item[ROW_UUID] = uid()
-  //     }
-  //   })
-  //   return value
-  // })
-
   const uidValue = computed(() => {
     const value = proxy.value
     if (!isArray(value)) {
       return value
     }
-
-    const v = value.map((item) => {
+    return value.map((item) => {
       const rawItem = toRaw(item)
       if (!listItemToUUIDMap.has(rawItem)) {
         listItemToUUIDMap.set(rawItem, uid())
@@ -52,8 +38,6 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
         [ROW_UUID]: listItemToUUIDMap.get(rawItem),
       }
     })
-
-    return v
   })
 
   function get() {
