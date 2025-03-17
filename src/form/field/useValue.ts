@@ -1,6 +1,6 @@
 import type { ComputedRef, Ref } from 'vue'
 import { isArray } from 'lodash-es'
-import { computed } from 'vue'
+import { computed, toRaw } from 'vue'
 import { uid } from '../../utils/id'
 import { useInjectInternalForm } from '../context'
 
@@ -16,23 +16,44 @@ export const ROW_UUID = Symbol(
 export function useValue<T = any>(id: string, path: ComputedRef<string[]>, options: UseValueOptions) {
   const form = useInjectInternalForm()
   const { onInputValue } = options
+  const listItemToUUIDMap = new WeakMap<object, string>()
 
   const proxy = computed({
     get,
     set,
   })
 
+  // const uidValue = computed(() => {
+  //   const value = proxy.value
+  //   if (!isArray(value)) {
+  //     return value
+  //   }
+  //   value.forEach((item) => {
+  //     if (!item[ROW_UUID]) {
+  //       item[ROW_UUID] = uid()
+  //     }
+  //   })
+  //   return value
+  // })
+
   const uidValue = computed(() => {
     const value = proxy.value
     if (!isArray(value)) {
       return value
     }
-    value.forEach((item) => {
-      if (!item[ROW_UUID]) {
-        item[ROW_UUID] = uid()
+
+    const v = value.map((item) => {
+      const rawItem = toRaw(item)
+      if (!listItemToUUIDMap.has(rawItem)) {
+        listItemToUUIDMap.set(rawItem, uid())
+      }
+      return {
+        ...item,
+        [ROW_UUID]: listItemToUUIDMap.get(rawItem),
       }
     })
-    return value
+
+    return v
   })
 
   function get() {
