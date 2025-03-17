@@ -2,84 +2,59 @@ import type { BaseField } from './field'
 import type { BaseForm, FormOptions } from './types'
 import { useMounted } from '@vueuse/core'
 import { uid } from '../utils/id'
-import { createDepStore } from './store/depStore'
 import { createFieldStore } from './store/fieldStore'
 import { createValueStore } from './store/valueStore'
 
-export function createForm<Values = Record<string, any>>(options: FormOptions<Values> = {}) {
+export function createForm<Values = Record<string, any>, FieldsValue = Values>(options: FormOptions<Values> = {}) {
   const {
     omitNil,
     initialValues,
     onValueChange,
-    onDependenciesValueChange,
   } = options
 
   const mounted = useMounted()
-  const fieldStore = createFieldStore(omitNil)
-  const depStore = createDepStore(fieldStore)
-  const valueStore = createValueStore(fieldStore, { initialValues, onManualValueChange })
+  const fieldStore = createFieldStore<FieldsValue>(omitNil)
+  const valueStore = createValueStore<Values>(fieldStore, {
+    initialValues,
+    onValueChange: onManualValueChange,
+  })
 
   const {
-    match: matchDependencies,
-    pause: pauseDependenciesTrigger,
-    resume: resumeDependenciesTrigger,
-  } = depStore
+    fieldsValue,
+  } = fieldStore
 
   const {
-    matchPath,
-    getFieldValue,
-    setFieldValue,
-    getFieldsValue,
-    setFieldsValue,
+    values,
     resetFieldValue,
     setInitialValue,
     resetFieldsValue,
     setInitialValues,
   } = valueStore
 
-  const form: BaseForm = {
+  const form: BaseForm<Values, FieldsValue> = {
     mounted,
     id: uid(),
-    depStore,
-    valueStore,
-    fieldStore,
-    matchPath,
-    getFieldValue,
-    getFieldsValue,
-    setFieldValue,
-    setFieldsValue,
+    values,
+    fieldsValue,
     resetFieldValue,
     resetFieldsValue,
     setInitialValue,
     setInitialValues,
-    pauseDependenciesTrigger,
-    resumeDependenciesTrigger,
+    _: {
+      valueStore,
+      fieldStore,
+    },
   }
 
   function onManualValueChange(field: BaseField, value: any) {
     if (field.onChange) {
       field.onChange(value)
     }
-
     if (onValueChange) {
       onValueChange({
         value,
         path: field.stringPath.value,
       })
-    }
-
-    if (onDependenciesValueChange) {
-      const path = field.stringPath.value
-      matchDependencies(
-        path,
-        (depPath) => {
-          onDependenciesValueChange({
-            path,
-            value,
-            depPath,
-          })
-        },
-      )
     }
   }
 

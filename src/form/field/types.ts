@@ -1,6 +1,5 @@
 import type { ComputedRef, Ref } from 'vue'
 import type { InternalPath } from '../path'
-import type { Dependencie } from '../store/depStore'
 
 export interface FieldOptions<T = any> {
   /**
@@ -24,10 +23,6 @@ export interface FieldOptions<T = any> {
    * 是否隐藏
    */
   hidden?: Ref<boolean | undefined>
-  /**
-   * 字段关联的依赖项
-   */
-  dependencies?: Dependencie | Dependencie[]
   /**
    * 手动更新值（isList 为 true 时 无效）
    * @param fieldValue 表单值
@@ -83,10 +78,6 @@ export interface BaseField<T = any> {
    * @default true
    */
   show: ComputedRef<boolean>
-  /**
-   * 字段关联的依赖项
-   */
-  dependencies: Dependencie | Dependencie[]
   /**
    * 更新值，内部不会使用，交给上层使用(为了区分是否为手动交互导致值的改变，而不是通过调用 api)
    */

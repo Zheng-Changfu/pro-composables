@@ -1,6 +1,7 @@
+import type { PartialDeep } from 'type-fest'
 import type { Ref } from 'vue'
 import type { BaseField } from '../field'
-import type { InternalPath, PathPattern } from '../path'
+import type { InternalPath } from '../path'
 import type { ValueMergeStrategy } from '../utils/value'
 import type { FieldStore } from './fieldStore'
 import { cloneDeep, get, set, unset } from 'lodash-es'
@@ -9,15 +10,15 @@ import { mergeByStrategy } from '../utils/value'
 
 interface ValueStoreOptions {
   initialValues: any
-  onManualValueChange: (field: BaseField, value: any) => void
+  onValueChange: (field: BaseField, value: any) => void
 }
 /**
  * 管理值
  */
-export class ValueStore {
+export class ValueStore<Values = Record<string, any>> {
+  public values: Ref<Values>
   public fieldStore: FieldStore
   public options: ValueStoreOptions
-  public values: Ref<Record<string, any>>
   public initialValues: Record<string, any>
 
   constructor(
@@ -34,36 +35,13 @@ export class ValueStore {
     return get(this.values.value, path)
   }
 
-  getFieldsValue = (paths?: Array<InternalPath> | true) => {
-    if (paths === true) {
-      // 所有的值，包含用户设置的和可能被隐藏的字段
-      return this.values.value
-    }
-    if (!paths) {
-      // 拿到存在的表单值返回
-      return this.fieldStore.fieldsValue.value
-    }
-    return paths.reduce<Record<string, any>>(
-      (p, path) => {
-        const value = this.getFieldValue(path)
-        set(p, path, value)
-        return p
-      },
-      {},
-    )
-  }
-
   delete(path: InternalPath) {
     return unset(this.values.value, path)
   }
 
-  matchPath = (pattern: PathPattern) => {
-    return this.fieldStore.matchFieldPath(pattern)
-  }
-
   setFieldValue = (path: InternalPath, value: any) => {
     const oldValue = this.getFieldValue(path)
-    set(this.values.value, path, value)
+    set(this.values.value as any, path, value)
     if (!Object.is(oldValue, value)) {
       const field = this.fieldStore.getFieldByPath(path)
       if (
@@ -72,17 +50,9 @@ export class ValueStore {
         && field.touching
         && field.show.value
       ) {
-        this.options.onManualValueChange(field, value)
+        this.options.onValueChange(field, value)
       }
     }
-  }
-
-  setFieldsValue = (vals: Record<string, any>, strategy: ValueMergeStrategy = 'overwrite') => {
-    this.values.value = mergeByStrategy(
-      this.values.value,
-      vals,
-      strategy,
-    )
   }
 
   resetFieldValue = (path: InternalPath) => {
@@ -91,14 +61,14 @@ export class ValueStore {
   }
 
   resetFieldsValue = () => {
-    this.setFieldsValue(this.initialValues)
+    this.values.value = cloneDeep(this.initialValues) as any
   }
 
   setInitialValue = (path: InternalPath, value: any) => {
     set(this.initialValues, path, cloneDeep(value))
   }
 
-  setInitialValues = (vals: Record<string, any>, strategy?: ValueMergeStrategy) => {
+  setInitialValues = (vals: PartialDeep<Values>, strategy?: ValueMergeStrategy) => {
     this.initialValues = mergeByStrategy(
       this.initialValues,
       cloneDeep(vals),
@@ -107,6 +77,6 @@ export class ValueStore {
   }
 }
 
-export function createValueStore(fieldStore: FieldStore, options: ValueStoreOptions) {
-  return new ValueStore(fieldStore, options)
+export function createValueStore<Values = Record<string, any>>(fieldStore: FieldStore, options: ValueStoreOptions) {
+  return new ValueStore<Values>(fieldStore, options)
 }

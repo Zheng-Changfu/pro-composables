@@ -1,15 +1,14 @@
 import type { Get, PartialDeep, SimplifyDeep } from 'type-fest'
-import type { Ref } from 'vue'
-import type { PathToObject, StringKeyof } from '../utils/types'
-import type { InternalPath, PathPattern } from './path'
-import type { DepStore } from './store/depStore'
+import type { ComputedRef, Ref } from 'vue'
+import type { StringKeyof } from '../utils/types'
+import type { InternalPath } from './path'
 import type { FieldStore } from './store/fieldStore'
 import type { ValueStore } from './store/valueStore'
 import type { ValueMergeStrategy } from './utils/value'
 
 export interface FormOptions<Values = any> {
   /**
-   * 在调用 getFieldsTransformedValue 时是否清空 null 和 undefined 的数据
+   * 取 fieldsValue 值时是否清空 null 和 undefined 的数据
    * @default true
    */
   omitNil?: boolean
@@ -26,20 +25,16 @@ export interface FormOptions<Values = any> {
     value: any
     path: string
   }) => void
-  /**
-   * 依赖项的值发生变化后的回调(手动交互才会触发)
-   * @param value 依赖项的值
-   * @param path 被依赖项的路径
-   * @param depPath 依赖项的路径
-   */
-  onDependenciesValueChange?: (opt: {
-    value: any
-    path: string
-    depPath: string
-  }) => void
 }
 
-export interface BaseForm<Values = any> {
+export interface BaseForm<Values = any, FieldsValue = Values> {
+  /**
+   * 内部使用
+   */
+  _: {
+    valueStore: ValueStore<Values>
+    fieldStore: FieldStore<FieldsValue>
+  }
   /**
    * 唯一标识
    */
@@ -49,43 +44,13 @@ export interface BaseForm<Values = any> {
    */
   mounted: Ref<boolean>
   /**
-   * 表单项依赖仓库
+   * 表单值和用户设置的(包括隐藏的)
    */
-  depStore: DepStore
+  values: Ref<Values>
   /**
-   * 表单项字段仓库
+   * 表单值
    */
-  fieldStore: FieldStore
-  /**
-   * 表单值仓库
-   */
-  valueStore: ValueStore
-  /**
-   * 获取指定路径字段的值
-   */
-  getFieldValue: <T extends InternalPath = StringKeyof<Values>>(path: T) => Get<Values, T>
-  /**
-   * 获取全部或者部分路径字段的值
-   * @example
-   * ```js
-   * getFieldsValue() // 获取表单值
-   * getFieldsValue(true) // 获取完整的值，包含被隐藏的和 setFieldsValue 设置进去的值
-   * getFieldsValue(['name','age','list.0.a']) // 获取指定路径字段的值
-   * ```
-   */
-  getFieldsValue:
-  & (() => Values)
-  & ((val: true) => Values)
-  & (<T extends string = StringKeyof<Values>>(paths: T[]) => PathToObject<T[], Values>
-  )
-  /**
-   * 设置指定路径字段的值
-   */
-  setFieldValue: <T extends InternalPath = StringKeyof<Values>>(path: T, value: Get<Values, T>) => void
-  /**
-   * 设置一组值
-   */
-  setFieldsValue: (values: PartialDeep<Values>, strategy?: ValueMergeStrategy) => void
+  fieldsValue: ComputedRef<FieldsValue>
   /**
    * 重置指定路径字段的值
    */
@@ -102,17 +67,4 @@ export interface BaseForm<Values = any> {
    * 设置一组初始值
    */
   setInitialValues: (values: PartialDeep<Values>, strategy?: ValueMergeStrategy) => void
-  /**
-   * 匹配路径
-   * @returns 返回匹配到的路径数组
-   */
-  matchPath: (pattern: PathPattern) => string[]
-  /**
-   * 暂停 onDependenciesValueChange 的触发
-   */
-  pauseDependenciesTrigger: () => void
-  /**
-   * 恢复 onDependenciesValueChange 的触发
-   */
-  resumeDependenciesTrigger: () => void
 }

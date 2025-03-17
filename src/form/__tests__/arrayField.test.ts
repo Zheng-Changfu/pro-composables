@@ -1,5 +1,5 @@
 import type { ArrayField } from '../field'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, set } from 'lodash-es'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, onMounted } from 'vue'
 import { mount } from '../../__tests__/mount'
@@ -14,15 +14,15 @@ describe('arrayField api', () => {
         const form = createForm()
 
         onMounted(async () => {
-          form.setFieldValue('list[0].u1', '234')
+          set(form.values.value, 'list.0.u1', '234')
           await nextTick()
-          form.setFieldValue('u1', '1')
+          form.values.value.u1 = '1'
           await nextTick()
-          form.setFieldValue('u1', '2')
+          form.values.value.u1 = '2'
           await nextTick()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
         })
         return () => {
@@ -31,7 +31,7 @@ describe('arrayField api', () => {
               h(FormItem, { path: 'u1' }),
               h(FormList, {
                 path: 'list',
-                hidden: form.valueStore.values.value.u1 === '1',
+                hidden: form.values.value.u1 === '1',
               }, {
                 default: () => [
                   h(FormItem, { initialValue: '', path: 'u1' }),
@@ -68,8 +68,8 @@ describe('arrayField api', () => {
           _field.push({})
           await nextTick()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
         })
 
@@ -118,22 +118,22 @@ describe('arrayField api', () => {
           _field.push({ })
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           await nextTick()
-          form.setFieldValue('list.0.a1', 1)
+          form.values.value.list[0].a1 = 1
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           await nextTick()
-          form.setFieldValue('list.0.a1', null)
+          form.values.value.list[0].a1 = null
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 
@@ -151,7 +151,7 @@ describe('arrayField api', () => {
                   }),
                   h(FormItem, {
                     path: 'a2',
-                    visible: !!form.valueStore.values.value.list?.[0]?.a1,
+                    visible: !!form.values.value.list?.[0]?.a1,
                     initialValue: null,
                   }),
                 ],
@@ -197,14 +197,14 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.push({ a: 2, b: 2, c: 2 })
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 
@@ -266,14 +266,14 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.pop()
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 
@@ -325,14 +325,14 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.insert(0, { a: 0, b: 0, c: 0 })
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 
@@ -396,26 +396,26 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.remove(1)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.remove(0)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.remove(0)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 
@@ -505,26 +505,26 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.shift()
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.shift()
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.shift()
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 
@@ -614,26 +614,26 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.unshift({ a: 0, b: 0, c: 0 })
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.unshift({ a: -1, b: -1, c: -1 })
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.unshift({ a: -2, b: -2, c: -2 })
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 
@@ -749,38 +749,38 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.move(2, 1)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.move(0, 2)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.move(1, 2)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.move(0, -1)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.move(1, 3)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 
@@ -914,26 +914,26 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.moveUp(1)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.moveUp(0)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.moveUp(2)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 
@@ -1037,26 +1037,26 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.moveDown(1)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.moveDown(2)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.moveDown(0)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 
@@ -1161,56 +1161,56 @@ describe('arrayField api', () => {
         onMounted(async () => {
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.remove(1)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.insert(1, {})
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.remove(0)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.insert(2, { a: 1 })
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.move(0, 2)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.remove(1)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.remove(0)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
           _field.remove(0)
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 

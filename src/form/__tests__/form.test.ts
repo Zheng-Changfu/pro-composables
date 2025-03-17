@@ -1,5 +1,4 @@
-import type { BaseField } from '../field'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, onMounted } from 'vue'
 import { mount } from '../../__tests__/mount'
 import { createForm } from '../form'
@@ -34,9 +33,9 @@ describe('create multiple form', () => {
         const form2 = createForm()
 
         onMounted(async () => {
-          form1.setFieldValue('a', 2)
-          vals1.push(form1.getFieldValue('a'))
-          vals2.push(form2.getFieldValue('a'))
+          form1.values.value.a = 2
+          vals1.push(form1.values.value.a)
+          vals2.push(form2.values.value.a)
         })
 
         return () => {
@@ -79,7 +78,7 @@ describe('form props', () => {
           },
         })
         onMounted(() => {
-          val = form.valueStore.initialValues
+          val = form._.valueStore.initialValues
         })
         return () => {
           return null
@@ -96,60 +95,6 @@ describe('form props', () => {
         e: 1,
       },
     })
-    vm.unmount()
-  })
-
-  it('onDependenciesValueChange', async () => {
-    const depsAuguments: any = []
-    const matchFnArguments: any = []
-    const match = vi.fn((path, paths) => {
-      matchFnArguments.push(path, paths)
-      return path === 'b'
-    })
-    const onDependenciesValueChange = vi.fn(({ path, depPath }) => {
-      if (depsAuguments.length <= 0)
-        depsAuguments.push(path, depPath)
-    })
-    const Comp = defineComponent({
-      setup() {
-        let _field: BaseField
-        const form = createForm({
-          onDependenciesValueChange,
-        })
-
-        function onFieldMounted(field: BaseField) {
-          _field = field
-        }
-
-        onMounted(() => {
-          _field.doUpdateValue(1)
-        })
-
-        return () => {
-          return h(Form, { form }, {
-            default: () => [
-              h(FormItem, { path: 'a', dependencies: ['b'] }),
-              h(FormItem, { path: 'b', onFieldMounted }),
-              h(FormItem, { path: 'c', dependencies: 'b' }),
-              h(FormItem, { path: 'd', dependencies: /b/ }),
-              h(FormItem, { path: 'e', dependencies: match }),
-              h(FormItem, { path: 'f', dependencies: ['a', 'b'] }),
-            ],
-          })
-        }
-      },
-    })
-
-    const vm = mount(Comp)
-    await nextTick()
-    await nextTick()
-    expect(onDependenciesValueChange).toBeCalledTimes(5)
-    expect(depsAuguments).toStrictEqual(['b', 'a'])
-    expect(match).toHaveReturnedWith(true)
-    expect(matchFnArguments).toStrictEqual([
-      'b',
-      ['a', 'b', 'c', 'd', 'e', 'f'],
-    ])
     vm.unmount()
   })
 })
@@ -170,7 +115,7 @@ describe('form api', () => {
         })
 
         onMounted(() => {
-          val = form.getFieldValue('a.b.c')
+          val = form.values.value.a.b.c
         })
 
         return () => {
@@ -201,9 +146,9 @@ describe('form api', () => {
 
         onMounted(() => {
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
-            form.getFieldsValue(['a']),
+            form.fieldsValue.value,
+            form.values.value,
+            { a: form.values.value.a },
           )
         })
         return () => {
@@ -236,8 +181,8 @@ describe('form api', () => {
         })
 
         onMounted(() => {
-          form.setFieldValue('a', 2)
-          vals.push(form.getFieldValue('a'))
+          form.values.value.a = 2
+          vals.push(form.values.value.a)
         })
 
         return () => {
@@ -263,13 +208,16 @@ describe('form api', () => {
         const form = createForm()
 
         onMounted(async () => {
-          form.setFieldsValue({ a: 2, id: 1 })
+          form.values.value = {
+            a: 2,
+            id: 1,
+          }
           await nextTick()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
-            form.getFieldsValue(['a']),
-            form.getFieldsValue(['id']),
+            form.fieldsValue.value,
+            form.values.value,
+            { a: form.values.value.a },
+            { id: form.values.value.id },
           )
         })
         return () => {
@@ -311,7 +259,8 @@ describe('form api', () => {
         })
 
         onMounted(async () => {
-          form.setFieldsValue({
+          form.values.value = {
+            ...form.values.value,
             a: undefined,
             list: [
               {
@@ -320,10 +269,10 @@ describe('form api', () => {
                 list: [{ a: 11, c: 3 }, { a: 22 }, { a: 33, c: 4 }],
               },
             ],
-          }, 'shallowMerge')
+          }
           await nextTick()
           vals.push(
-            form.getFieldsValue(),
+            form.fieldsValue.value,
           )
         })
 
@@ -392,11 +341,11 @@ describe('form api', () => {
         })
 
         onMounted(() => {
-          form.setFieldsValue({ a: 2, b: 3, id: 1 })
+          form.values.value = { a: 2, b: 3, id: 1 } as any
           form.resetFieldValue('a')
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
         })
         return () => {
@@ -428,11 +377,11 @@ describe('form api', () => {
         })
 
         onMounted(() => {
-          form.setFieldsValue({ a: 2, b: 3, id: 1 })
+          form.values.value = { a: 2, b: 3, id: 1 } as any
           form.resetFieldsValue()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
         })
 
@@ -468,8 +417,8 @@ describe('form api', () => {
           form.setInitialValue('a', 2)
           form.resetFieldsValue()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
         })
 
@@ -502,12 +451,12 @@ describe('form api', () => {
         })
 
         onMounted(() => {
-          form.setFieldsValue({ a: 3, b: 4, id: 1 })
+          form.values.value = { a: 3, b: 4, id: 1 } as any
           form.setInitialValues({ a: 2, b: 3 })
           form.resetFieldsValue()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
         })
 

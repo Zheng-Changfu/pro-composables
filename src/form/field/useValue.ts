@@ -38,14 +38,14 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
   function get() {
     const p = path.value
     return form
-      ? form.valueStore.getFieldValue(p)
+      ? form._.valueStore.getFieldValue(p)
       : undefined
   }
 
   function set(val: any) {
     if (form) {
-      form.valueStore.setFieldValue(path.value, val)
-      const field = form?.fieldStore.getField(id)
+      form._.valueStore.setFieldValue(path.value, val)
+      const field = form._.fieldStore.getField(id)
       if (field)
         field.touching = false
     }
@@ -53,7 +53,7 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
 
   function doUpdateValue(value: any, ...args: any[]) {
     if (form) {
-      const field = form.fieldStore.getField(id)
+      const field = form._.fieldStore.getField(id)
       if (field) {
         field.touching = true
       }

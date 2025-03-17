@@ -1,13 +1,13 @@
 import type { BaseField } from '../field'
-import type { InternalPath, PathPattern } from '../path'
+import type { InternalPath } from '../path'
 import { isNil, set } from 'lodash-es'
 import { computed, shallowReactive, toRaw } from 'vue'
-import { convertPatternToMatchFn, stringifyPath } from '../utils/path'
+import { stringifyPath } from '../utils/path'
 
 /**
  * 管理所有的字段
  */
-export class FieldStore {
+export class FieldStore<FieldsValue = any> {
   public omitNil: boolean
   public idToFieldMap: Map<string, BaseField>
 
@@ -17,7 +17,7 @@ export class FieldStore {
   }
 
   get fieldsValue() {
-    return computed(() => {
+    return computed<FieldsValue>(() => {
       const res = {} as any
       this.idToFieldMap.forEach((field) => {
         const { isList, path, value } = field
@@ -38,16 +38,6 @@ export class FieldStore {
         }
       })
       return res
-    })
-  }
-
-  get fieldsPath() {
-    return computed(() => {
-      const paths: string[] = []
-      this.idToFieldMap.forEach((field) => {
-        paths.push(field.stringPath.value)
-      })
-      return paths
     })
   }
 
@@ -73,24 +63,11 @@ export class FieldStore {
     this.idToFieldMap.delete(field.id)
   }
 
-  matchFieldPath = (pattern: PathPattern) => {
-    const matchedPaths: string[] = []
-    const paths = this.fieldsPath.value
-    const matchFn = convertPatternToMatchFn(pattern)
-
-    this.idToFieldMap.forEach((field) => {
-      const path = field.stringPath.value
-      if (matchFn(path, paths))
-        matchedPaths.push(path)
-    })
-    return matchedPaths
-  }
-
   getFieldByPath = (path: InternalPath) => {
     return this.fieldsPathMap.value.get(stringifyPath(path))
   }
 }
 
-export function createFieldStore(omitNil = true) {
-  return new FieldStore(omitNil)
+export function createFieldStore<FieldsValue = any>(omitNil = true) {
+  return new FieldStore<FieldsValue>(omitNil)
 }

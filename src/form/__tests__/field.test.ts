@@ -19,7 +19,7 @@ describe('baseField', () => {
         })
 
         onMounted(() => {
-          vals.push(form.getFieldsValue())
+          vals.push(form.fieldsValue.value)
         })
 
         return () => {
@@ -48,8 +48,8 @@ describe('baseField', () => {
   //         pathRef.value = 'aa'
   //         await nextTick()
   //         vals.push(
-  //           form.getFieldsValue(),
-  //           form.getFieldsValue(true),
+  //           form.fieldsValue.value,
+  //           form.values.value,
   //         )
   //       })
   //       return () => {
@@ -85,7 +85,7 @@ describe('baseField', () => {
   //         pathRef.value = 'aa'
   //         await nextTick()
   //         vals.push(
-  //           form.getFieldsValue(),
+  //           form.fieldsValue.value,
   //         )
   //       })
   //       return () => {
@@ -120,15 +120,15 @@ describe('baseField', () => {
           visibleRef1.value = false
           await nextTick()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
           visibleRef1.value = true
           visibleRef2.value = false
           await nextTick()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
         })
         return () => {
@@ -164,15 +164,15 @@ describe('baseField', () => {
           visibleRef1.value = false
           await nextTick()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
           visibleRef1.value = true
           visibleRef2.value = false
           await nextTick()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
         })
         return () => {
@@ -209,27 +209,27 @@ describe('baseField', () => {
 
         onMounted(async () => {
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
           hiddenRef1.value = false
           await nextTick()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
           hiddenRef1.value = true
           hiddenRef2.value = false
           await nextTick()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
           hiddenRef1.value = false
           await nextTick()
           vals.push(
-            form.getFieldsValue(),
-            form.getFieldsValue(true),
+            form.fieldsValue.value,
+            form.values.value,
           )
         })
         return () => {
@@ -268,27 +268,27 @@ describe('baseField', () => {
 
         onMounted(async () => {
           vals.push(
-            { ...form.getFieldsValue() },
-            { ...form.getFieldsValue(true) },
+            { ...form.fieldsValue.value },
+            { ...form.values.value },
           )
           hiddenRef1.value = false
           await nextTick()
           vals.push(
-            { ...form.getFieldsValue() },
-            { ...form.getFieldsValue(true) },
+            { ...form.fieldsValue.value },
+            { ...form.values.value },
           )
           hiddenRef1.value = true
           hiddenRef2.value = false
           await nextTick()
           vals.push(
-            { ...form.getFieldsValue() },
-            { ...form.getFieldsValue(true) },
+            { ...form.fieldsValue.value },
+            { ...form.values.value },
           )
           hiddenRef1.value = false
           await nextTick()
           vals.push(
-            { ...form.getFieldsValue() },
-            { ...form.getFieldsValue(true) },
+            { ...form.fieldsValue.value },
+            { ...form.values.value },
           )
         })
         return () => {
@@ -332,15 +332,15 @@ describe('baseField', () => {
           visibleRef1.value = false
           await nextTick()
           vals.push(
-            { ...form.getFieldsValue() }, // {b:4}
-            { ...form.getFieldsValue(true) }, // {b:4}
+            { ...form.fieldsValue.value }, // {b:4}
+            { ...form.values.value }, // {b:4}
           )
           visibleRef1.value = true
           visibleRef2.value = false
           await nextTick()
           vals.push(
-            { ...form.getFieldsValue() },
-            { ...form.getFieldsValue(true) },
+            { ...form.fieldsValue.value },
+            { ...form.values.value },
           )
         })
         return () => {
@@ -371,29 +371,29 @@ describe('baseField', () => {
         const form = createForm()
 
         onMounted(async () => {
-          form.setFieldValue('list', [
+          form.values.value.list = [
             { a: 1 },
             { a: 2 },
             { a: 3 },
-          ])
+          ]
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue(true)),
-            cloneDeep(form.getFieldsValue()),
+            cloneDeep(form.values.value),
+            cloneDeep(form.fieldsValue.value),
           )
-          form.setFieldValue('list', [
+          form.values.value.list = [
             { a: 1 },
             { a: 3 },
-          ])
+          ]
           await nextTick()
           vals.push(
-            cloneDeep(form.getFieldsValue()),
-            cloneDeep(form.getFieldsValue(true)),
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
           )
         })
 
         return () => {
-          const list = form.getFieldValue('list') ?? []
+          const list = form.values.value.list ?? []
           return h(Form, { form }, {
             default: () => list.map((item: any, index: number) => {
               return h(FormItem, { key: item.a, preserve: false, path: `list.${index}.a`, value: item.a })
@@ -421,9 +421,9 @@ describe('update value to trigger onChange', () => {
       setup() {
         const form = createForm()
         onMounted(() => {
-          form.setFieldValue('a', 1)
-          form.setFieldValue('b', 2)
-          form.setFieldValue('unexitKey', 3)
+          form.values.value.a = 1
+          form.values.value.b = 2
+          form.values.value.unexitKey = 3
         })
         return () => {
           return h(Form, { form }, {
@@ -449,10 +449,10 @@ describe('update value to trigger onChange', () => {
         const form = createForm()
 
         onMounted(() => {
-          form.setFieldsValue({
+          form.values.value = {
             a: 1,
             unexitKey: 3,
-          })
+          }
         })
         return () => {
           return h(Form, { form }, {
