@@ -29,7 +29,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "vitest run ./src/form/__tests__/debug.test.ts",
+    "test": "vitest run",
     "build": "pnpm build:es && pnpm build:lib",
     "changeset": "changeset",
     "changeset:version": "changeset version",
