@@ -1,5 +1,11 @@
 # pro-composables
 
+## 3.0.0
+
+### Major Changes
+
+- v3.0.0
+
 ## 2.0.0
 
 ### Major Changes

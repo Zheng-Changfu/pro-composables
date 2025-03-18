@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
-import { dependencies } from './package.json'
+import { dependencies, peerDependencies } from './package.json'
 
 export default defineConfig({
   build: {
@@ -10,7 +10,10 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: Object.keys(dependencies),
+      external: Object.keys({
+        ...dependencies,
+        ...peerDependencies,
+      }),
       output: {
         dir: 'es',
         preserveModules: true,
