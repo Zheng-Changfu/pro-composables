@@ -1,6 +1,6 @@
 import type { ComputedRef, Ref } from 'vue'
 import type { InternalPath } from '../path'
-import type { ROW_UUID } from './useValue'
+import type { ROW_UUID_KEY } from './useValue'
 
 export interface FieldOptions<T = any> {
   /**
@@ -78,7 +78,7 @@ export interface BaseField<T = any> {
    * 列表字段值(携带 uid)
    */
   uidValue: ComputedRef<{
-    [ROW_UUID]: string
+    [ROW_UUID_KEY]: string
     [key: PropertyKey]: any
   }[]>
   /**

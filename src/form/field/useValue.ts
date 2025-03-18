@@ -8,9 +8,9 @@ interface UseValueOptions {
   onInputValue?: (fieldValue: Ref<any>, inputValue: any, ...args: any[]) => void
 }
 
-export const ROW_UUID = Symbol(
+export const ROW_UUID_KEY = Symbol(
   process.env.NODE_ENV !== 'production'
-    ? 'ROW_UUID'
+    ? 'ROW_UUID_KEY'
     : '',
 )
 export function useValue<T = any>(id: string, path: ComputedRef<string[]>, options: UseValueOptions) {
@@ -35,7 +35,7 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
       }
       return {
         ...item,
-        [ROW_UUID]: listItemToUUIDMap.get(rawItem),
+        [ROW_UUID_KEY]: listItemToUUIDMap.get(rawItem),
       }
     })
   })

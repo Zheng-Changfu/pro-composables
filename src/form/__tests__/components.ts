@@ -1,6 +1,6 @@
 import { defineComponent, h, onMounted, toRef } from 'vue'
 import { provideInternalForm } from '../context'
-import { createArrayField, createField, ROW_UUID, useInjectField } from '../field'
+import { createArrayField, createField, ROW_UUID_KEY, useInjectField } from '../field'
 import { provideFieldIndex } from '../path'
 
 export const Form = defineComponent({
@@ -90,7 +90,7 @@ export const FormList = defineComponent({
     return () => {
       const list = field.uidValue.value ?? []
       return list.map((_, index) => {
-        return h(FormListItem, { key: _[ROW_UUID], index }, slots)
+        return h(FormListItem, { key: _[ROW_UUID_KEY], index }, slots)
       })
     }
   },
