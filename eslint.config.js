@@ -13,4 +13,9 @@ export default antfu({
     'node/prefer-global/process': 'off',
     'ts/explicit-function-return-type': 'off',
   },
+  ignores: [
+    'es',
+    'lib',
+    'node_modules',
+  ],
 })
