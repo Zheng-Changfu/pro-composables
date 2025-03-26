@@ -7,37 +7,6 @@ import { createForm } from '../form'
 import { Form, FormItem } from './components'
 
 describe('baseField', () => {
-  it('priority: initialValues > initialValue', async () => {
-    const vals: any[] = []
-    const Comp = defineComponent({
-      setup() {
-        const form = createForm({
-          initialValues: {
-            a: 1,
-            b: 2,
-          },
-        })
-
-        onMounted(() => {
-          vals.push(form.fieldsValue.value)
-        })
-
-        return () => {
-          return h(Form, { form }, {
-            default: () => [
-              h(FormItem, { path: 'a', initialValue: 2 }),
-              h(FormItem, { path: 'b', initialValue: 3 }),
-            ],
-          })
-        }
-      },
-    })
-
-    const vm = mount(Comp)
-    expect(vals[0]).toStrictEqual({ a: 1, b: 2 })
-    vm.unmount()
-  })
-
   // it('path', async () => {
   //   const vals: any[] = []
   //   const Comp = defineComponent({
@@ -112,7 +81,12 @@ describe('baseField', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        const form = createForm()
+        const form = createForm({
+          initialValues: {
+            a: 3,
+            b: 4,
+          },
+        })
         const visibleRef1 = ref(true)
         const visibleRef2 = ref(true)
 
@@ -134,8 +108,8 @@ describe('baseField', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', visible: visibleRef1.value, initialValue: 3 }),
-              h(FormItem, { path: 'b', visible: visibleRef2.value, initialValue: 4 }),
+              h(FormItem, { path: 'a', visible: visibleRef1.value }),
+              h(FormItem, { path: 'b', visible: visibleRef2.value }),
             ],
           })
         }
@@ -156,7 +130,12 @@ describe('baseField', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        const form = createForm()
+        const form = createForm({
+          initialValues: {
+            a: 3,
+            b: 4,
+          },
+        })
         const visibleRef1 = ref(true)
         const visibleRef2 = ref(true)
 
@@ -181,8 +160,8 @@ describe('baseField', () => {
 
           return h(Form, { form }, {
             default: () => [
-              v1 ? h(FormItem, { path: 'a', key: 1, initialValue: 3 }) : null,
-              v2 ? h(FormItem, { path: 'b', key: 2, initialValue: 4 }) : null,
+              v1 ? h(FormItem, { path: 'a', key: 1 }) : null,
+              v2 ? h(FormItem, { path: 'b', key: 2 }) : null,
             ],
           })
         }
@@ -203,7 +182,12 @@ describe('baseField', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        const form = createForm()
+        const form = createForm({
+          initialValues: {
+            a: 3,
+            b: 4,
+          },
+        })
         const hiddenRef1 = ref(true)
         const hiddenRef2 = ref(true)
 
@@ -235,8 +219,8 @@ describe('baseField', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', key: 1, hidden: hiddenRef1.value, initialValue: 3 }),
-              h(FormItem, { path: 'b', key: 2, hidden: hiddenRef2.value, initialValue: 4 }),
+              h(FormItem, { path: 'a', key: 1, hidden: hiddenRef1.value }),
+              h(FormItem, { path: 'b', key: 2, hidden: hiddenRef2.value }),
             ],
           })
         }
@@ -245,10 +229,10 @@ describe('baseField', () => {
 
     const vm = mount(Comp)
     expect(vals[0]).toStrictEqual({ })
-    expect(vals[1]).toStrictEqual({})
+    expect(vals[1]).toStrictEqual({ a: 3, b: 4 })
     await nextTick()
     expect(vals[2]).toStrictEqual({ a: 3 })
-    expect(vals[3]).toStrictEqual({ a: 3 })
+    expect(vals[3]).toStrictEqual({ a: 3, b: 4 })
     await nextTick()
     expect(vals[4]).toStrictEqual({ b: 4 })
     expect(vals[5]).toStrictEqual({ a: 3, b: 4 })
@@ -262,7 +246,12 @@ describe('baseField', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        const form = createForm()
+        const form = createForm({
+          initialValues: {
+            a: 3,
+            b: 4,
+          },
+        })
         const hiddenRef1 = ref(true)
         const hiddenRef2 = ref(true)
 
@@ -296,8 +285,8 @@ describe('baseField', () => {
           const h2 = hiddenRef2.value
           return h(Form, { form }, {
             default: () => [
-              !h1 ? h(FormItem, { path: 'a', key: 1, initialValue: 3 }) : null,
-              !h2 ? h(FormItem, { path: 'b', key: 2, initialValue: 4 }) : null,
+              !h1 ? h(FormItem, { path: 'a', key: 1 }) : null,
+              !h2 ? h(FormItem, { path: 'b', key: 2 }) : null,
             ],
           })
         }
@@ -307,10 +296,10 @@ describe('baseField', () => {
     const vm = mount(Comp)
     await nextTick()
     expect(vals[0]).toStrictEqual({ })
-    expect(vals[1]).toStrictEqual({ })
+    expect(vals[1]).toStrictEqual({ a: 3, b: 4 })
     await nextTick()
     expect(vals[2]).toStrictEqual({ a: 3 })
-    expect(vals[3]).toStrictEqual({ a: 3 })
+    expect(vals[3]).toStrictEqual({ a: 3, b: 4 })
     await nextTick()
     expect(vals[4]).toStrictEqual({ b: 4 })
     expect(vals[5]).toStrictEqual({ a: 3, b: 4 })
@@ -324,7 +313,12 @@ describe('baseField', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        const form = createForm()
+        const form = createForm({
+          initialValues: {
+            a: 3,
+            b: 4,
+          },
+        })
         const visibleRef1 = ref(true)
         const visibleRef2 = ref(true)
 
@@ -346,8 +340,8 @@ describe('baseField', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', preserve: false, visible: visibleRef1.value, initialValue: 3 }),
-              h(FormItem, { path: 'b', preserve: false, visible: visibleRef2.value, initialValue: 4 }),
+              h(FormItem, { path: 'a', preserve: false, visible: visibleRef1.value }),
+              h(FormItem, { path: 'b', preserve: false, visible: visibleRef2.value }),
             ],
           })
         }
@@ -359,8 +353,8 @@ describe('baseField', () => {
     expect(vals[0]).toStrictEqual({ b: 4 })
     expect(vals[1]).toStrictEqual({ b: 4 })
     await nextTick()
-    expect(vals[2]).toStrictEqual({ a: 3 })
-    expect(vals[3]).toStrictEqual({ a: 3 })
+    expect(vals[2]).toStrictEqual({ })
+    expect(vals[3]).toStrictEqual({ a: undefined })
     vm.unmount()
   })
 
@@ -475,7 +469,12 @@ describe('update value to trigger onChange', () => {
     const onChange = vi.fn()
     const Comp = defineComponent({
       setup() {
-        const form = createForm()
+        const form = createForm({
+          initialValues: {
+            a: 1,
+            b: 2,
+          },
+        })
 
         onMounted(() => {
           form.resetFieldValue('a')
@@ -484,8 +483,8 @@ describe('update value to trigger onChange', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', initialValue: 1, onChange }),
-              h(FormItem, { path: 'b', initialValue: 2, onChange }),
+              h(FormItem, { path: 'a', onChange }),
+              h(FormItem, { path: 'b', onChange }),
             ],
           })
         }
@@ -502,7 +501,12 @@ describe('update value to trigger onChange', () => {
     const onChange = vi.fn()
     const Comp = defineComponent({
       setup() {
-        const form = createForm()
+        const form = createForm({
+          initialValues: {
+            a: 1,
+            b: 2,
+          },
+        })
 
         onMounted(() => {
           form.resetFieldsValue()
@@ -510,8 +514,8 @@ describe('update value to trigger onChange', () => {
         return () => {
           return h(Form, { form }, {
             default: () => [
-              h(FormItem, { path: 'a', initialValue: 1, onChange }),
-              h(FormItem, { path: 'b', initialValue: 2, onChange }),
+              h(FormItem, { path: 'a', onChange }),
+              h(FormItem, { path: 'b', onChange }),
             ],
           })
         }
@@ -539,28 +543,6 @@ describe('update value to trigger onChange', () => {
             default: () => [
               h(FormItem, { path: 'a', onChange }),
               h(FormItem, { path: 'b', onChange }),
-            ],
-          })
-        }
-      },
-    })
-
-    const vm = mount(Comp)
-    await nextTick()
-    expect(onChange).toHaveBeenCalledTimes(0)
-    vm.unmount()
-  })
-
-  it('initialValue', async () => {
-    const onChange = vi.fn()
-    const Comp = defineComponent({
-      setup() {
-        const form = createForm()
-        return () => {
-          return h(Form, { form }, {
-            default: () => [
-              h(FormItem, { path: 'a', initialValue: 1, onChange }),
-              h(FormItem, { path: 'b', initialValue: 2, onChange }),
             ],
           })
         }

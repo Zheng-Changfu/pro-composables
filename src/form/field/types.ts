@@ -4,10 +4,6 @@ import type { ROW_UUID_KEY } from './useValue'
 
 export interface FieldOptions<T = any> {
   /**
-   * 初始值
-   */
-  initialValue?: T
-  /**
    * 当字段被隐藏时是否保留字段值
    * @default true
    */
@@ -99,10 +95,6 @@ export interface BaseField<T = any> {
    * @default false
    */
   touching: boolean
-  /**
-   * 用户传递进来的元信息
-   */
-  meta: FieldOptions
   /**
    * 用户自定义挂载进去的属性必须以 x- 开头
    */

@@ -19,7 +19,6 @@ export const FormItem = defineComponent({
   props: [
     'path',
     'value',
-    'initialValue',
     'dependencies',
     'onFieldMounted',
     'onChange',
@@ -30,7 +29,6 @@ export const FormItem = defineComponent({
   setup(props, { slots }) {
     const field = createField({
       path: toRef(props, 'path'),
-      initialValue: props.initialValue,
       onChange: props.onChange,
       hidden: toRef(props, 'hidden'),
       visible: toRef(props, 'visible'),
@@ -66,7 +64,6 @@ export const FormList = defineComponent({
   props: [
     'path',
     'value',
-    'initialValue',
     'dependencies',
     'onFieldMounted',
     'visible',
@@ -77,7 +74,6 @@ export const FormList = defineComponent({
   setup(props, { slots }) {
     const field = createArrayField({
       path: toRef(props, 'path'),
-      initialValue: props.initialValue,
       hidden: toRef(props, 'hidden'),
       visible: toRef(props, 'visible'),
       preserve: props.preserve,

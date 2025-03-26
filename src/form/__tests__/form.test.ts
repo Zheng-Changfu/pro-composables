@@ -205,19 +205,25 @@ describe('form api', () => {
     const vals: any[] = []
     const Comp = defineComponent({
       setup() {
-        const form = createForm()
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 2 },
+            ],
+          },
+        })
 
         onMounted(async () => {
           form.values.value = {
             a: 2,
             id: 1,
-          }
+          } as any
           await nextTick()
           vals.push(
             form.fieldsValue.value,
             form.values.value,
-            { a: form.values.value.a },
-            { id: form.values.value.id },
+            { a: (form.values.value as any).a },
+            { id: (form.values.value as any).id },
           )
         })
         return () => {
@@ -226,9 +232,6 @@ describe('form api', () => {
               h(FormItem, { path: 'a' }),
               h(FormList, {
                 path: 'list',
-                initialValue: [
-                  { a: 1, b: 2 },
-                ],
               }, {
                 default: () => [
                   h(FormItem, { path: 'a' }),
@@ -256,6 +259,26 @@ describe('form api', () => {
       setup() {
         const form = createForm({
           omitNil: false,
+          initialValues: {
+            list: [
+              {
+                a: 1,
+                b: 2,
+                list: [
+                  { a: 1, b: 2 },
+                  { a: 3, b: 4 },
+                ],
+              },
+              {
+                a: 3,
+                b: 4,
+                list: [
+                  { a: 1, b: 2 },
+                  { a: 3, b: 4 },
+                ],
+              },
+            ],
+          },
         })
 
         onMounted(async () => {
@@ -266,10 +289,14 @@ describe('form api', () => {
               {
                 a: 11,
                 c: 3,
-                list: [{ a: 11, c: 3 }, { a: 22 }, { a: 33, c: 4 }],
+                list: [
+                  { a: 11, c: 3 },
+                  { a: 22 },
+                  { a: 33, c: 4 },
+                ],
               },
             ],
-          }
+          } as any
           await nextTick()
           vals.push(
             form.fieldsValue.value,
@@ -282,20 +309,12 @@ describe('form api', () => {
               h(FormItem, { path: 'a' }),
               h(FormList, {
                 path: 'list',
-                initialValue: [
-                  { a: 1, b: 2 },
-                  { a: 3, b: 4 },
-                ],
               }, {
                 default: () => [
                   h(FormItem, { path: 'a' }),
                   h(FormItem, { path: 'b' }),
                   h(FormList, {
                     path: 'list',
-                    initialValue: [
-                      { a: 1, b: 2 },
-                      { a: 3, b: 4 },
-                    ],
                   }, {
                     default: () => [
                       h(FormItem, { path: 'a' }),

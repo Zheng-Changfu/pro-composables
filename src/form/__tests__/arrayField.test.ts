@@ -7,6 +7,91 @@ import { createForm } from '../form'
 import { Form, FormItem, FormList } from './components'
 
 describe('arrayField api', () => {
+  it('initialValues', async () => {
+    const vals: any[] = []
+    const Comp = defineComponent({
+      setup() {
+        let _field: ArrayField
+        const form = createForm({
+          initialValues: {
+            list: [
+              { a: 1, b: 1, c: 1 },
+            ],
+          },
+        })
+
+        function onArrayFieldMounted(field: ArrayField) {
+          _field = field
+        }
+
+        onMounted(async () => {
+          vals.push(
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
+          )
+          _field.remove(0)
+          await nextTick()
+          vals.push(
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
+          )
+          _field.push({ })
+          await nextTick()
+          vals.push(
+            cloneDeep(form.fieldsValue.value),
+            cloneDeep(form.values.value),
+          )
+        })
+
+        return () => {
+          return h(Form, { form }, {
+            default: () => [
+              h(FormList, {
+                path: 'list',
+                onArrayFieldMounted,
+              }, {
+                default: () => [
+                  h(FormItem, { path: 'a' }),
+                  h(FormItem, { path: 'b' }),
+                ],
+              }),
+            ],
+          })
+        }
+      },
+    })
+
+    const vm = mount(Comp)
+    expect(vals[0]).toStrictEqual({
+      list: [
+        { a: 1, b: 1 },
+      ],
+    })
+    expect(vals[1]).toMatchObject({
+      list: [
+        { a: 1, b: 1, c: 1 },
+      ],
+    })
+    await nextTick()
+    expect(vals[2]).toStrictEqual({
+      list: [],
+    })
+    expect(vals[3]).toMatchObject({
+      list: [],
+    })
+    await nextTick()
+    expect(vals[4]).toStrictEqual({
+      list: [
+        {},
+      ],
+    })
+    expect(vals[5]).toMatchObject({
+      list: [
+        {},
+      ],
+    })
+    vm.unmount()
+  })
   it('hidden', async () => {
     const vals: any[] = []
     const Comp = defineComponent({
@@ -34,7 +119,7 @@ describe('arrayField api', () => {
                 hidden: form.values.value.u1 === '1',
               }, {
                 default: () => [
-                  h(FormItem, { initialValue: '', path: 'u1' }),
+                  h(FormItem, { path: 'u1' }),
                 ],
               }),
             ],
@@ -84,7 +169,6 @@ describe('arrayField api', () => {
                   h(FormItem, {
                     path: 'u1',
                     visible: false,
-                    initialValue: null,
                   }),
                 ],
               }),
@@ -147,12 +231,10 @@ describe('arrayField api', () => {
                 default: () => [
                   h(FormItem, {
                     path: 'a1',
-                    initialValue: null,
                   }),
                   h(FormItem, {
                     path: 'a2',
                     visible: !!form.values.value.list?.[0]?.a1,
-                    initialValue: null,
                   }),
                 ],
               }),
@@ -164,16 +246,16 @@ describe('arrayField api', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(vals[0]).toStrictEqual({ list: [{ a1: null }] })
-    expect(vals[1]).toMatchObject({ list: [{ a1: null }] })
+    expect(vals[0]).toStrictEqual({ list: [{ a1: undefined }] })
+    expect(vals[1]).toMatchObject({ list: [{ a1: undefined }] })
     await nextTick()
     await nextTick()
-    expect(vals[2]).toStrictEqual({ list: [{ a1: 1, a2: null }] })
-    expect(vals[3]).toMatchObject({ list: [{ a1: 1, a2: null }] })
+    expect(vals[2]).toStrictEqual({ list: [{ a1: 1, a2: undefined }] })
+    expect(vals[3]).toMatchObject({ list: [{ a1: 1, a2: undefined }] })
     await nextTick()
     await nextTick()
     expect(vals[4]).toStrictEqual({ list: [{ a1: null }] })
-    expect(vals[5]).toMatchObject({ list: [{ a1: null, a2: null }] })
+    expect(vals[5]).toMatchObject({ list: [{ a1: null, a2: undefined }] })
     vm.unmount()
   })
 

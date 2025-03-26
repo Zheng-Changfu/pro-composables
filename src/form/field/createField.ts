@@ -21,7 +21,6 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, { isLis
   const {
     hidden,
     visible,
-    initialValue,
     path: propPath,
     preserve = true,
     onChange,
@@ -60,7 +59,6 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, { isLis
     preserve,
     stringPath,
     touching: false,
-    meta: fieldOptions,
     value,
     uidValue,
     onChange,
@@ -96,26 +94,14 @@ function mountFieldValue(form: BaseForm, field: BaseField) {
   if (field.show.value && field.path.value.length > 0) {
     form._.fieldStore.mountField(field)
     const path = field.path.value
-    const formMounted = form.mounted.value
-    const initialValue = field.meta.initialValue
     let val: any
-    /**
-     * priority：form.valueStore > initialValues > initialValue
-     */
     if (has(form.values.value, path)) {
       val = form._.valueStore.getFieldValue(path)
     }
-    else if (initialValue !== undefined) {
-      val = initialValue
-    }
-
     if (field.isList && val === undefined) {
       val = []
     }
     form._.valueStore.setFieldValue(path, val)
-    if (!formMounted) {
-      form._.valueStore.setInitialValue(path, val)
-    }
   }
 }
 
