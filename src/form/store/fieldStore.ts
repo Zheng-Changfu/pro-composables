@@ -7,7 +7,7 @@ import { stringifyPath } from '../utils/path'
 /**
  * 管理所有的字段
  */
-export class FieldStore<FieldsValue = any> {
+export class FieldStore<Values = any> {
   public omitNil: boolean
   public idToFieldMap: Map<string, BaseField>
 
@@ -17,7 +17,7 @@ export class FieldStore<FieldsValue = any> {
   }
 
   get fieldsValue() {
-    return computed<FieldsValue>(() => {
+    return computed<Values>(() => {
       const res = {} as any
       this.idToFieldMap.forEach((field) => {
         const { isList, path, value } = field
@@ -68,6 +68,6 @@ export class FieldStore<FieldsValue = any> {
   }
 }
 
-export function createFieldStore<FieldsValue = any>(omitNil = true) {
-  return new FieldStore<FieldsValue>(omitNil)
+export function createFieldStore<Values = any>(omitNil = true) {
+  return new FieldStore<Values>(omitNil)
 }

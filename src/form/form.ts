@@ -5,7 +5,7 @@ import { uid } from '../utils/id'
 import { createFieldStore } from './store/fieldStore'
 import { createValueStore } from './store/valueStore'
 
-export function createForm<Values = Record<string, any>, FieldsValue = Values>(options: FormOptions<Values> = {}) {
+export function createForm<Values = Record<string, any>>(options: FormOptions<Values> = {}) {
   const {
     omitNil,
     initialValues,
@@ -13,7 +13,7 @@ export function createForm<Values = Record<string, any>, FieldsValue = Values>(o
   } = options
 
   const mounted = useMounted()
-  const fieldStore = createFieldStore<FieldsValue>(omitNil)
+  const fieldStore = createFieldStore<Values>(omitNil)
   const valueStore = createValueStore<Values>(fieldStore, {
     initialValues,
     onValueChange: onManualValueChange,
@@ -31,7 +31,7 @@ export function createForm<Values = Record<string, any>, FieldsValue = Values>(o
     setInitialValues,
   } = valueStore
 
-  const form: BaseForm<Values, FieldsValue> = {
+  const form: BaseForm<Values> = {
     mounted,
     id: uid(),
     values,

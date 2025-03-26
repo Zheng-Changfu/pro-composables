@@ -1,4 +1,4 @@
-import type { Get, PartialDeep, SimplifyDeep } from 'type-fest'
+import type { Get, PartialDeep } from 'type-fest'
 import type { ComputedRef, Ref } from 'vue'
 import type { StringKeyof } from '../utils/types'
 import type { InternalPath } from './path'
@@ -15,7 +15,7 @@ export interface FormOptions<Values = any> {
   /**
    * 表单初始值
    */
-  initialValues?: SimplifyDeep<Values>
+  initialValues?: Values
   /**
    * 字段值发生变化后的回调(手动交互才会触发)
    * @param value 变化后的值
@@ -27,13 +27,13 @@ export interface FormOptions<Values = any> {
   }) => void
 }
 
-export interface BaseForm<Values = any, FieldsValue = Values> {
+export interface BaseForm<Values = any> {
   /**
    * 内部使用
    */
   _: {
     valueStore: ValueStore<Values>
-    fieldStore: FieldStore<FieldsValue>
+    fieldStore: FieldStore<Values>
   }
   /**
    * 唯一标识
@@ -50,7 +50,7 @@ export interface BaseForm<Values = any, FieldsValue = Values> {
   /**
    * 表单值
    */
-  fieldsValue: ComputedRef<FieldsValue>
+  fieldsValue: ComputedRef<Values>
   /**
    * 重置指定路径字段的值
    */
