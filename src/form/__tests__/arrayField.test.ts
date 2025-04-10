@@ -16,6 +16,8 @@ describe('arrayField api', () => {
           initialValues: {
             list: [
               { a: 1, b: 1, c: 1 },
+              { a: 2, b: 2, c: 2 },
+              { a: 3, b: 3, c: 3 },
             ],
           },
         })
@@ -29,13 +31,13 @@ describe('arrayField api', () => {
             cloneDeep(form.fieldsValue.value),
             cloneDeep(form.values.value),
           )
-          _field.remove(0)
+          _field.remove(1)
           await nextTick()
           vals.push(
             cloneDeep(form.fieldsValue.value),
             cloneDeep(form.values.value),
           )
-          _field.push({ })
+          _field.insert(1, {})
           await nextTick()
           vals.push(
             cloneDeep(form.fieldsValue.value),
@@ -65,29 +67,44 @@ describe('arrayField api', () => {
     expect(vals[0]).toStrictEqual({
       list: [
         { a: 1, b: 1 },
+        { a: 2, b: 2 },
+        { a: 3, b: 3 },
       ],
     })
     expect(vals[1]).toMatchObject({
       list: [
         { a: 1, b: 1, c: 1 },
+        { a: 2, b: 2, c: 2 },
+        { a: 3, b: 3, c: 3 },
       ],
     })
     await nextTick()
     expect(vals[2]).toStrictEqual({
-      list: [],
+      list: [
+        { a: 1, b: 1 },
+        { a: 3, b: 3 },
+      ],
     })
     expect(vals[3]).toMatchObject({
-      list: [],
+      list: [
+        { a: 1, b: 1, c: 1 },
+        { a: 3, b: 3, c: 3 },
+      ],
     })
+
     await nextTick()
     expect(vals[4]).toStrictEqual({
       list: [
+        { a: 1, b: 1 },
         {},
+        { a: 3, b: 3 },
       ],
     })
     expect(vals[5]).toMatchObject({
       list: [
+        { a: 1, b: 1, c: 1 },
         {},
+        { a: 3, b: 3, c: 3 },
       ],
     })
     vm.unmount()
@@ -199,7 +216,7 @@ describe('arrayField api', () => {
         }
 
         onMounted(async () => {
-          _field.push({ })
+          _field.push({})
           await nextTick()
           vals.push(
             cloneDeep(form.fieldsValue.value),
@@ -521,16 +538,20 @@ describe('arrayField api', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(vals[0]).toStrictEqual({ list: [
-      { a: 1, b: 1 },
-      { a: 2, b: 2 },
-      { a: 3, b: 3 },
-    ] })
-    expect(vals[1]).toMatchObject({ list: [
-      { a: 1, b: 1, c: 1 },
-      { a: 2, b: 2, c: 2 },
-      { a: 3, b: 3, c: 3 },
-    ] })
+    expect(vals[0]).toStrictEqual({
+      list: [
+        { a: 1, b: 1 },
+        { a: 2, b: 2 },
+        { a: 3, b: 3 },
+      ],
+    })
+    expect(vals[1]).toMatchObject({
+      list: [
+        { a: 1, b: 1, c: 1 },
+        { a: 2, b: 2, c: 2 },
+        { a: 3, b: 3, c: 3 },
+      ],
+    })
     await nextTick()
     expect(vals[2]).toStrictEqual({
       list: [
@@ -630,16 +651,20 @@ describe('arrayField api', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(vals[0]).toStrictEqual({ list: [
-      { a: 1, b: 1 },
-      { a: 2, b: 2 },
-      { a: 3, b: 3 },
-    ] })
-    expect(vals[1]).toMatchObject({ list: [
-      { a: 1, b: 1, c: 1 },
-      { a: 2, b: 2, c: 2 },
-      { a: 3, b: 3, c: 3 },
-    ] })
+    expect(vals[0]).toStrictEqual({
+      list: [
+        { a: 1, b: 1 },
+        { a: 2, b: 2 },
+        { a: 3, b: 3 },
+      ],
+    })
+    expect(vals[1]).toMatchObject({
+      list: [
+        { a: 1, b: 1, c: 1 },
+        { a: 2, b: 2, c: 2 },
+        { a: 3, b: 3, c: 3 },
+      ],
+    })
     await nextTick()
     expect(vals[2]).toStrictEqual({
       list: [
@@ -739,16 +764,20 @@ describe('arrayField api', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(vals[0]).toStrictEqual({ list: [
-      { a: 1, b: 1 },
-      { a: 2, b: 2 },
-      { a: 3, b: 3 },
-    ] })
-    expect(vals[1]).toMatchObject({ list: [
-      { a: 1, b: 1, c: 1 },
-      { a: 2, b: 2, c: 2 },
-      { a: 3, b: 3, c: 3 },
-    ] })
+    expect(vals[0]).toStrictEqual({
+      list: [
+        { a: 1, b: 1 },
+        { a: 2, b: 2 },
+        { a: 3, b: 3 },
+      ],
+    })
+    expect(vals[1]).toMatchObject({
+      list: [
+        { a: 1, b: 1, c: 1 },
+        { a: 2, b: 2, c: 2 },
+        { a: 3, b: 3, c: 3 },
+      ],
+    })
     await nextTick()
     expect(vals[2]).toStrictEqual({
       list: [
@@ -886,16 +915,20 @@ describe('arrayField api', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(vals[0]).toStrictEqual({ list: [
-      { a: 1, b: 1 },
-      { a: 2, b: 2 },
-      { a: 3, b: 3 },
-    ] })
-    expect(vals[1]).toMatchObject({ list: [
-      { a: 1, b: 1, c: 1 },
-      { a: 2, b: 2, c: 2 },
-      { a: 3, b: 3, c: 3 },
-    ] })
+    expect(vals[0]).toStrictEqual({
+      list: [
+        { a: 1, b: 1 },
+        { a: 2, b: 2 },
+        { a: 3, b: 3 },
+      ],
+    })
+    expect(vals[1]).toMatchObject({
+      list: [
+        { a: 1, b: 1, c: 1 },
+        { a: 2, b: 2, c: 2 },
+        { a: 3, b: 3, c: 3 },
+      ],
+    })
     await nextTick()
     expect(vals[2]).toStrictEqual({
       list: [
@@ -1039,16 +1072,20 @@ describe('arrayField api', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(vals[0]).toStrictEqual({ list: [
-      { a: 1, b: 1 },
-      { a: 2, b: 2 },
-      { a: 3, b: 3 },
-    ] })
-    expect(vals[1]).toMatchObject({ list: [
-      { a: 1, b: 1, c: 1 },
-      { a: 2, b: 2, c: 2 },
-      { a: 3, b: 3, c: 3 },
-    ] })
+    expect(vals[0]).toStrictEqual({
+      list: [
+        { a: 1, b: 1 },
+        { a: 2, b: 2 },
+        { a: 3, b: 3 },
+      ],
+    })
+    expect(vals[1]).toMatchObject({
+      list: [
+        { a: 1, b: 1, c: 1 },
+        { a: 2, b: 2, c: 2 },
+        { a: 3, b: 3, c: 3 },
+      ],
+    })
     await nextTick()
     expect(vals[2]).toStrictEqual({
       list: [
@@ -1162,16 +1199,20 @@ describe('arrayField api', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(vals[0]).toStrictEqual({ list: [
-      { a: 1, b: 1 },
-      { a: 2, b: 2 },
-      { a: 3, b: 3 },
-    ] })
-    expect(vals[1]).toMatchObject({ list: [
-      { a: 1, b: 1, c: 1 },
-      { a: 2, b: 2, c: 2 },
-      { a: 3, b: 3, c: 3 },
-    ] })
+    expect(vals[0]).toStrictEqual({
+      list: [
+        { a: 1, b: 1 },
+        { a: 2, b: 2 },
+        { a: 3, b: 3 },
+      ],
+    })
+    expect(vals[1]).toMatchObject({
+      list: [
+        { a: 1, b: 1, c: 1 },
+        { a: 2, b: 2, c: 2 },
+        { a: 3, b: 3, c: 3 },
+      ],
+    })
     await nextTick()
     expect(vals[2]).toStrictEqual({
       list: [
@@ -1316,16 +1357,20 @@ describe('arrayField api', () => {
 
     const vm = mount(Comp)
     await nextTick()
-    expect(vals[0]).toStrictEqual({ list: [
-      { a: 1, b: 1 },
-      { a: 2, b: 2 },
-      { a: 3, b: 3 },
-    ] })
-    expect(vals[1]).toMatchObject({ list: [
-      { a: 1, b: 1, c: 1 },
-      { a: 2, b: 2, c: 2 },
-      { a: 3, b: 3, c: 3 },
-    ] })
+    expect(vals[0]).toStrictEqual({
+      list: [
+        { a: 1, b: 1 },
+        { a: 2, b: 2 },
+        { a: 3, b: 3 },
+      ],
+    })
+    expect(vals[1]).toMatchObject({
+      list: [
+        { a: 1, b: 1, c: 1 },
+        { a: 2, b: 2, c: 2 },
+        { a: 3, b: 3, c: 3 },
+      ],
+    })
     await nextTick()
     expect(vals[2]).toStrictEqual({
       list: [
