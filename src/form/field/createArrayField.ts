@@ -19,7 +19,7 @@ export function createArrayField<T = any>(options: FieldOptions<T>) {
      * 考虑到性能问题，isList 为 true 时下面这些属性不在生效
      */
     onChange: undefined,
-    onInputValue: undefined,
+    onUpdateValue: undefined,
   }, { isList: true })
 
   function push(...items: T[]) {

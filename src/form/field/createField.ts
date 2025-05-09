@@ -24,7 +24,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, { isLis
     path: propPath,
     preserve = true,
     onChange,
-    onInputValue,
+    onUpdateValue,
     ...customValues
   } = fieldOptions
 
@@ -47,7 +47,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, { isLis
     value,
     uidValue,
     doUpdateValue,
-  } = useValue(id, path, { onInputValue })
+  } = useValue(id, path, { onUpdateValue })
 
   const field: BaseField = {
     id,

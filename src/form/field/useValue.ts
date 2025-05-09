@@ -1,11 +1,11 @@
-import type { ComputedRef, Ref } from 'vue'
+import type { ComputedRef } from 'vue'
 import { isArray } from 'lodash-es'
 import { computed, toRaw } from 'vue'
 import { uid } from '../../utils/id'
 import { useInjectInternalForm } from '../context'
 
 interface UseValueOptions {
-  onInputValue?: (fieldValue: Ref<any>, inputValue: any, ...args: any[]) => void
+  onUpdateValue?: (value: any, ...args: any[]) => void
 }
 
 export const ROW_UUID_KEY = Symbol(
@@ -15,7 +15,7 @@ export const ROW_UUID_KEY = Symbol(
 )
 export function useValue<T = any>(id: string, path: ComputedRef<string[]>, options: UseValueOptions) {
   const form = useInjectInternalForm()
-  const { onInputValue } = options
+  const { onUpdateValue } = options
   const listItemToUUIDMap = new WeakMap<object, string>()
 
   const proxy = computed({
@@ -62,8 +62,8 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
       if (field) {
         field.touching = true
       }
-      if (onInputValue) {
-        onInputValue(proxy, value, ...args)
+      if (onUpdateValue) {
+        onUpdateValue(value, ...args)
         return
       }
       proxy.value = value

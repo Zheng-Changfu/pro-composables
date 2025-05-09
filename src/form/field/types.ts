@@ -22,10 +22,9 @@ export interface FieldOptions<T = any> {
   hidden?: Ref<boolean | undefined>
   /**
    * 手动更新值（isList 为 true 时 无效）
-   * @param fieldValue 表单值
-   * @param inputValue 输入值
+   * @param value 输入值
    */
-  onInputValue?: (fieldValue: Ref<any>, inputValue: any, ...args: any[]) => void
+  onUpdateValue?: (value: any, ...args: any[]) => void
   /**
    * 值变化后的回调(手动交互导致值的改变，isList 为 true 时 无效)
    */
