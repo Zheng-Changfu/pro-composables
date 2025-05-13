@@ -13,6 +13,11 @@ export interface FormOptions<Values = any> {
    */
   omitNil?: boolean
   /**
+   * 取 fieldsValue 值时是否清空空字符串的值
+   * @default true
+   */
+  omitEmptyString?: boolean
+  /**
    * 表单初始值
    */
   initialValues?: Values

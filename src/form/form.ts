@@ -9,11 +9,12 @@ export function createForm<Values = Record<string, any>>(options: FormOptions<Va
   const {
     omitNil,
     initialValues,
+    omitEmptyString,
     onValueChange,
   } = options
 
   const mounted = useMounted()
-  const fieldStore = createFieldStore<Values>(omitNil)
+  const fieldStore = createFieldStore<Values>(omitNil, omitEmptyString)
   const valueStore = createValueStore<Values>(fieldStore, {
     initialValues,
     onValueChange: onManualValueChange,

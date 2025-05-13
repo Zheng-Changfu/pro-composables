@@ -9,10 +9,12 @@ import { stringifyPath } from '../utils/path'
  */
 export class FieldStore<Values = any> {
   public omitNil: boolean
+  public omitEmptyString: boolean
   public idToFieldMap: Map<string, BaseField>
 
-  constructor(omitNil: boolean) {
+  constructor(omitNil: boolean, omitEmptyString: boolean) {
     this.omitNil = omitNil
+    this.omitEmptyString = omitEmptyString
     this.idToFieldMap = shallowReactive(new Map())
   }
 
@@ -32,9 +34,13 @@ export class FieldStore<Values = any> {
         const { isList, path, value } = field
         const val = value.value
         if (!isList) {
-          if (!this.omitNil || !isNil(val)) {
-            set(res, path.value, toRaw(val))
+          if (this.omitNil && isNil(val)) {
+            return
           }
+          if (this.omitEmptyString && val === '') {
+            return
+          }
+          set(res, path.value, toRaw(val))
         }
       })
       return res
@@ -68,6 +74,6 @@ export class FieldStore<Values = any> {
   }
 }
 
-export function createFieldStore<Values = any>(omitNil = true) {
-  return new FieldStore<Values>(omitNil)
+export function createFieldStore<Values = any>(omitNil = true, omitEmptyString = true) {
+  return new FieldStore<Values>(omitNil, omitEmptyString)
 }
