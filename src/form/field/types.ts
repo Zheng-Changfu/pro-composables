@@ -72,7 +72,7 @@ export interface BaseField<T = any> {
   /**
    * 列表字段值(携带 uid)
    */
-  uidValue: ComputedRef<{
+  valueWithUid: ComputedRef<{
     [ROW_UUID_KEY]: string
     [key: PropertyKey]: any
   }[]>

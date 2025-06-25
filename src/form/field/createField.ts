@@ -45,7 +45,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, { isLis
 
   const {
     value,
-    uidValue,
+    valueWithUid,
     doUpdateValue,
   } = useValue(id, path, { onUpdateValue })
 
@@ -60,7 +60,7 @@ export function createField<T = any>(fieldOptions: FieldOptions<T> = {}, { isLis
     stringPath,
     touching: false,
     value,
-    uidValue,
+    valueWithUid,
     onChange,
     doUpdateValue,
     ...customValues,

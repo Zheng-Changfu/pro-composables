@@ -23,10 +23,10 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
     set,
   })
 
-  const uidValue = computed(() => {
+  const valueWithUid = computed(() => {
     const value = proxy.value
     if (!isArray(value)) {
-      return value
+      return []
     }
     return value.map((item) => {
       const rawItem = toRaw(item)
@@ -71,7 +71,7 @@ export function useValue<T = any>(id: string, path: ComputedRef<string[]>, optio
   }
 
   return {
-    uidValue,
+    valueWithUid,
     doUpdateValue,
     value: proxy as ComputedRef<T>,
   }
