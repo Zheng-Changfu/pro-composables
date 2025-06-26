@@ -100,6 +100,10 @@ function mountFieldValue(form: BaseForm, field: BaseField) {
     }
     if (field.isList && val === undefined) {
       val = []
+      if (!form.mounted.value) {
+        // 数组字段在未挂载时，初始值为 []
+        form._.valueStore.setInitialValue(path, val)
+      }
     }
     form._.valueStore.setFieldValue(path, val)
   }
