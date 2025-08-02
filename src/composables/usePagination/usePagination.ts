@@ -1,3 +1,4 @@
+import type { UseRequestPlugin } from '../useRequest'
 import type { Data, PaginationOptions, PaginationResult, Params, Service } from './types'
 import { isNil } from 'lodash-es'
 import { computed, onMounted, watch } from 'vue'
@@ -9,6 +10,7 @@ export function usePagination<
 >(
   service: Service<TData, TParams>,
   options: PaginationOptions<TData, TParams> = {},
+  plugins: UseRequestPlugin<TData, TParams>[] = [],
 ) {
   const {
     manual,
@@ -22,7 +24,7 @@ export function usePagination<
     refreshDeps: [],
     ...rest,
     manual: true,
-  })
+  }, plugins)
 
   const total = computed(() => {
     return result.data.value?.total ?? 0
