@@ -54,19 +54,16 @@ export interface Options<Data, Params extends any[]> {
 }
 
 export interface Plugin<Data, Params extends any[]> {
-  (fetchInstance: Fetch<Data, Params>, options: Options<Data, Params>): PluginReturn<
-    Data,
-    Params
-  >
+  (fetchInstance: Fetch<Data, Params>, options: Options<Data, Params>): PluginReturn<Data, Params>
   onInit?: (options: Options<Data, Params>) => Partial<FetchState<Data, Params>>
 }
 
 export interface PluginReturn<Data, Params extends any[]> {
   onBefore?: (params: Params) =>
     | ({
-      stopNow?: boolean
-      returnNow?: boolean
-    } & Partial<FetchState<Data, Params>>)
+        stopNow?: boolean
+        returnNow?: boolean
+      } & Partial<FetchState<Data, Params>>)
     | void
 
   onRequest?: (
@@ -83,11 +80,11 @@ export interface PluginReturn<Data, Params extends any[]> {
   onMutate?: (data: Data) => void
 }
 
-export interface Result<Data, Params extends any[]> {
-  data: Ref<Data>
-  error: Ref<Error>
-  params: Ref<Params>
-  loading: Ref<boolean>
+export interface Result<Data, Params extends any[], State extends FetchState<Data, Params>> {
+  data: Ref<State['data']>
+  error: Ref<State['error']>
+  params: Ref<State['params']>
+  loading: Ref<State['loading']>
   run: Fetch<Data, Params>['run']
   mutate: Fetch<Data, Params>['mutate']
   cancel: Fetch<Data, Params>['cancel']
